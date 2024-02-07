@@ -1,0 +1,19 @@
+---
+# Lint all files on push
+name: ESLint
+on: push
+jobs:
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: '${{ github.ref }}'
+      - name: Install Modules
+        run: |
+          cd Volunteering
+          npm install --save-dev
+      - name: Run ESLint
+        run: |
+          cd Volunteering
+          npx eslint . --ext .js,.jsx

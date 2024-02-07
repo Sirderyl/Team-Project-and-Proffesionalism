@@ -2,7 +2,9 @@
 
 ## React modules installed and configured
 React Router DOM
+
 Tailwind CSS
+
 React Hot Toast
 
 ## How to use

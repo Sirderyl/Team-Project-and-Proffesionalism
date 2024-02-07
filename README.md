@@ -12,4 +12,4 @@ cd Volunteering
 npm install
 npm run dev
 ```
-Note: You can omit `npm install` if you have the `node_modules` folder already
+Note: You can omit `npm install` if you have the `node_modules` folder up-to-date

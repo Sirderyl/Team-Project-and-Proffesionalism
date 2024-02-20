@@ -4,7 +4,10 @@
 			"path": "."
 		}
 	],
-	"settings": {},
+	"settings": {
+		"phpstan.configFile": "api/phpstan.neon",
+		"phpstan.binPath": "api/vendor/bin/phpstan"
+	},
 	"extensions": {
 		"recommendations": [
 			"42crunch.vscode-openapi",

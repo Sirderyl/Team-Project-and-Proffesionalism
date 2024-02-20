@@ -7,8 +7,12 @@
 	"settings": {},
 	"extensions": {
 		"recommendations": [
+			"42crunch.vscode-openapi",
 			"bradlc.vscode-tailwindcss",
 			"dbaeumer.vscode-eslint",
+			"devsense.phptools-vscode",
+			"junstyle.php-cs-fixer",
+			"sanderronde.phpstan-vscode",
 		]
 	}
 }

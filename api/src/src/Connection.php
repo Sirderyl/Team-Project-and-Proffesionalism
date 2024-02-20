@@ -4,13 +4,14 @@ interface Connection
 {
     /**
      * Execute a query and return the result
-     * @param array<string, string,int,float,bool,null> $params
+     * @param array<string, string|int|float|bool|null> $params
      */
+    // @phpstan-ignore-next-line - Return type depends on the query. Individual methods should specify the return type
     public function query(string $query, array $params = []): array;
 
     /**
      * Run a statement that modifies the database and return the number of affected rows
-     * @param array<string, string,int,float,bool,null> $params
+     * @param array<string, string|int|float|bool|null> $params
      */
     public function execute(string $query, array $params = []): int;
 

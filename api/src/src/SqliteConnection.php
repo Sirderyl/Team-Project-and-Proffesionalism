@@ -6,7 +6,7 @@ namespace App;
  * A connection to a SQLite database
  * @author Kieran
  */
-class SqliteConnection implements Connection
+class SqliteConnection implements ConnectionInterface
 {
     private \PDO $pdo;
 

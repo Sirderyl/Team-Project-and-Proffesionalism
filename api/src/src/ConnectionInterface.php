@@ -11,7 +11,7 @@ namespace App;
  *  - Be thread-safe
  * @author Kieran
  */
-interface Connection
+interface ConnectionInterface
 {
     /**
      * Execute a query and return the result

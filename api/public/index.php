@@ -30,6 +30,14 @@ $app->get('/greetings[/{language}]', function (Request $request, Response $respo
     return $response->withHeader('Content-Type', 'application/json');
 });
 
+$app->get('/managerSchedule', function (Request $request, Response $response, array $args) {
+    $schedule = $this->get(App\Scheduler::class);
+    $data = $schedule->getManagerSchedule();
+    $body = json_encode($data, JSON_PRETTY_PRINT);
+    $response->getBody()->write($body);
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
 $app->setBasePath('/api');
 $app->addErrorMiddleware(true, true, true);
 

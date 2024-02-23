@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Database;
 
 /**
  * Interface for a connection to a database.

@@ -4,7 +4,7 @@ import { useState } from 'react'
  * Signup page
  * @author Kieran
  */
-export default function Signup() {
+export default function SignUp() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
@@ -37,7 +37,7 @@ export default function Signup() {
 
     return (
         <main>
-            <h1>Signup</h1>
+            <h1>Sign up</h1>
             <form onSubmit={handleSubmit}>
                 <label>Email: <input
                     type='email'

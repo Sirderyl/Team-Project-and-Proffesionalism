@@ -1,44 +1,43 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 
 /**
- * Login page
+ * Signup page
  * @author Kieran
  */
-export default function Login() {
+export default function Signup() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
-    // TODO: Clear this when changing credentials, or use a pop-up
+    const [confirmPassword, setConfirmPassword] = useState('')
+    // TODO: Use the same error handling as in Login. Probably a component to reuse
     const [error, setError] = useState()
 
     async function handleSubmit(e) {
         e.preventDefault()
 
+        if (password !== confirmPassword) {
+            setError('Passwords do not match')
+            return
+        }
+
         try {
-            const response = await fetch('/api/login', {
-                headers: { 'Authorization': `Bearer ${btoa(`${email}:${password}`)}` }
+            const response = await fetch('/api/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
             })
             const data = await response.json()
 
             if (!response.ok) throw new Error(data.message)
 
-            // TODO: Store token in local storage
-            console.log(response)
-
-            // Only clear the email if the login was successful
-            setEmail('')
         } catch (error) {
             console.error(error)
             setError(error.message)
-        } finally {
-            // Always clear the password
-            setPassword('')
-        }
+        } // No finally block, we want to let the user try again if there was an error
     }
 
     return (
         <main>
-            <h1>Login</h1>
+            <h1>Signup</h1>
             <form onSubmit={handleSubmit}>
                 <label>Email: <input
                     type='email'
@@ -54,12 +53,17 @@ export default function Login() {
                     required
                 /></label><br />
 
-                <button type='submit'>Log in</button>
+                <label>Confirm password: <input
+                    type='password'
+                    value={confirmPassword}
+                    onChange={e => setConfirmPassword(e.target.value)}
+                    required
+                /></label><br />
+
+                <button type='submit'>Sign up</button>
             </form>
 
             {error && <p>{error}</p>}
-
-            <p>New user? <Link to='/signup'>Sign up here</Link></p>
         </main>
     )
 }

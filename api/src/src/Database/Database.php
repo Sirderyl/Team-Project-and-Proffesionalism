@@ -8,13 +8,10 @@ namespace App\Database;
  */
 class Database implements DatabaseInterface
 {
-    private readonly ConnectionInterface $connection;
-
     private readonly UsersDatabaseInterface $users;
 
     public function __construct(ConnectionInterface $connection)
     {
-        $this->connection = $connection;
         $this->users = new UsersDatabase($connection);
     }
 

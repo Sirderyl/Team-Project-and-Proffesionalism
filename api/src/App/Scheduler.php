@@ -45,17 +45,17 @@ class Scheduler {
         $this->taskOne->taskId = 1;
         $this->taskOne->taskName = "Serving Food";
         $this->taskOne->startTime = new \DateTime('2024-02-28 12:30:00');
-        $this->taskOne->endTime = new \DateTime('2024-02-28 12:30:00');
+        $this->taskOne->endTime = new \DateTime('2024-02-28 13:00:00');
 
         $this->taskTwo->taskId = 2;
         $this->taskTwo->taskName = "Walking Dogs";
         $this->taskTwo->startTime = new \DateTime('2024-02-27 12:30:00');
-        $this->taskTwo->endTime = new \DateTime('2024-02-27 12:30:00');
+        $this->taskTwo->endTime = new \DateTime('2024-02-27 13:00:00');
 
         $this->taskThree->taskId = 3;
         $this->taskThree->taskName = "Answering Calls";
         $this->taskThree->startTime = new \DateTime('2024-02-26 12:30:00');
-        $this->taskThree->endTime = new \DateTime('2024-02-26 12:30:00');
+        $this->taskThree->endTime = new \DateTime('2024-02-26 13:00:00');
 
         $this->tasks = [$this->taskOne, $this->taskTwo, $this->taskThree];
     }
@@ -71,11 +71,17 @@ class Scheduler {
         {
             if($user->availability[$taskDayOfWeek]["startTime"] !== null)
             {
-                $schedule[$task->taskName][] = $user->userName;
+                $userAvailableStart = new \DateTime($user->availability[$taskDayOfWeek]["startTime"]->format('H:i:s'));
+                $userAvailableEnd= new \DateTime($user->availability[$taskDayOfWeek]["endTime"]->format('H:i:s'));
+                $taskStart = new \DateTime($task->startTime->format('H:i:s'));
+                $taskEnd = new \DateTime($task->endTime->format('H:i:s'));
+               if(($taskStart < $userAvailableEnd) && ($taskEnd > $userAvailableStart))
+                 {
+                    $schedule[$task->taskName][] = $user->userName;
+                 }
             }
         }
-
-    }
-    return $schedule;
+    } 
+    return  $schedule;
 }
 }

@@ -6,7 +6,7 @@ import AddScheduleRecord from './pages/AddScheduleRecord'
 
 function App() {
 
-  const [scheduleRecords, setScheduleRecords] = useState([
+  const [scheduleRecords] = useState([
     {
       ID: 0,
       date: new Date('2024-02-26'),

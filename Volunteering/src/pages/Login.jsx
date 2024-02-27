@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import { inputStyle } from '../utils/styles'
+import { buttonStyle, inputStyle } from '../utils/styles'
 
 /**
  * Login page
@@ -58,7 +58,7 @@ export default function Login() {
                     required
                 /></label><br />
 
-                <button type='submit'>Log in</button>
+                <button type='submit' className={buttonStyle}>Log in</button>
             </form>
 
             {error && <p>{error}</p>}

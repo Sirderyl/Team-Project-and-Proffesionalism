@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { inputStyle } from '../utils/styles'
+import { buttonStyle, inputStyle } from '../utils/styles'
 
 /**
  * Signup page
@@ -64,7 +64,7 @@ export default function SignUp() {
                     required
                 /></label><br />
 
-                <button type='submit'>Sign up</button>
+                <button className={buttonStyle} type='submit'>Sign up</button>
             </form>
 
             {error && <p>{error}</p>}

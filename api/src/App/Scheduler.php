@@ -77,7 +77,11 @@ class Scheduler {
                 $taskEnd = new \DateTime($task->endTime->format('H:i:s'));
                if(($taskStart < $userAvailableEnd) && ($taskEnd > $userAvailableStart))
                  {
-                    $schedule[$task->taskName][] = $user->userName;
+                    $schedule[$task->taskName][] = 
+                    ['user' => $user->userName,
+                    'startTime' => $task->startTime->format('Y-m-d H:i:s'),
+                    'endTime' => $task->endTime->format('Y-m-d H:i:s')
+                ];
                  }
             }
         }

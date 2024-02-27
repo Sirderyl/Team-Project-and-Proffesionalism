@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
+import { inputStyle } from '../utils/styles'
+
 /**
  * Login page
  * @author Kieran
@@ -41,6 +43,7 @@ export default function Login() {
             <h1>Login</h1>
             <form onSubmit={handleSubmit}>
                 <label>Email: <input
+                    className={inputStyle}
                     type='email'
                     value={email}
                     onChange={e => setEmail(e.target.value)}
@@ -48,6 +51,7 @@ export default function Login() {
                 /></label><br />
 
                 <label>Password: <input
+                    className={inputStyle}
                     type='password'
                     value={password}
                     onChange={e => setPassword(e.target.value)}

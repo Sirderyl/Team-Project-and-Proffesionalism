@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { inputStyle } from '../utils/styles'
 
 /**
  * Signup page
@@ -40,6 +41,7 @@ export default function SignUp() {
             <h1>Sign up</h1>
             <form onSubmit={handleSubmit}>
                 <label>Email: <input
+                    className={inputStyle}
                     type='email'
                     value={email}
                     onChange={e => setEmail(e.target.value)}
@@ -47,6 +49,7 @@ export default function SignUp() {
                 /></label><br />
 
                 <label>Password: <input
+                    className={inputStyle}
                     type='password'
                     value={password}
                     onChange={e => setPassword(e.target.value)}
@@ -54,6 +57,7 @@ export default function SignUp() {
                 /></label><br />
 
                 <label>Confirm password: <input
+                    className={inputStyle}
                     type='password'
                     value={confirmPassword}
                     onChange={e => setConfirmPassword(e.target.value)}

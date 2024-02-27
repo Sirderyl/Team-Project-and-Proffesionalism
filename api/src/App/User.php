@@ -7,10 +7,10 @@ namespace App;
 use DateTime;
 
 class User {
-    public int $userId;
+    public string $userId;
     public string $userName;
     public array $availability;
-    
+
     public function setAvailability(
     ?DateTime $monStart, ?DateTime $monEnd,
     ?DateTime $tueStart, ?DateTime $tueEnd,

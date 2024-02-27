@@ -15,10 +15,15 @@ class UsersDatabase implements UsersDatabaseInterface
         $this->connection = $connection;
     }
 
-    public function getPasswordHash(string $email): array
+    public function get(string $email): \App\User
     {
         $result = $this->connection->query(
-            'SELECT id, password_hash FROM user WHERE email = :email COLLATE NOCASE',
+            'SELECT
+                user.id, user.name, user.email, user.password_hash,
+                user_availability.day_of_week, user_availability.start_hour, user_availability.end_hour
+            FROM user
+            WHERE email = :email COLLATE NOCASE
+            LEFT JOIN user_availability ON user.id = user_availability.user_id',
             ['email' => $email]
         );
 
@@ -26,16 +31,57 @@ class UsersDatabase implements UsersDatabaseInterface
             throw new NotFoundException();
         }
 
-        return $result[0];
+        $user = new \App\User();
+        $user->userId = $result['id'];
+        $user->userName = $result['name'];
+        // TODO
+        // $user->email
+
+        // FIXME: The setter has 14 parameters! This is a code smell.
+        // Just pass it manually for now.
+        $availability = [];
+        foreach ($result as $row) {
+            if ($row['day_of_week'] === null) {
+                continue;
+            }
+
+            // FIXME: startTime and endTime should be startTime and endTime.
+            $availability[$row['day_of_week']] = [
+                'startTime' => $row['start_hour'],
+                'endTime' => $row['end_hour'],
+            ];
+        }
+
+        $user->availability = $availability;
+        return $user;
     }
 
-    public function create(array $data): string
+    public function create(\App\User $user): void
     {
         $this->connection->execute(
             'INSERT INTO user (name, email, password_hash) VALUES (:name, :email, :password_hash)',
-            $data
+            [
+                'name' => $user->userName,
+                // TODO
+                'email' => $user->userName . '@example.com',
+                // TODO
+                'password_hash' => '12345',
+                // 'email' => $data->
+            ]
         );
 
-        return $this->connection->lastInsertId();
+        $user->userId = $this->connection->lastInsertId();
+
+        foreach ($user->availability as $day => $times) {
+            $this->connection->execute(
+                'INSERT INTO user_availability (user_id, day_of_week, start_hour, end_hour) VALUES (:user_id, :day_of_week, :start_hour, :end_hour)',
+                [
+                    'user_id' => $user->userId,
+                    'day_of_week' => $day,
+                    'start_hour' => $times['startTime'],
+                    'end_hour' => $times['endTime'],
+                ]
+            );
+        }
     }
 }

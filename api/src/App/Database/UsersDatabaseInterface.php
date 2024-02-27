@@ -9,24 +9,14 @@ namespace App\Database;
 interface UsersDatabaseInterface
 {
     /**
-     * Get a user's password hash from their email
+     * Get a user by their email
      * @param string $email
-     * @return array{
-     *  'id': int,
-     *  'password_hash': string
-     * }
      * @throws NotFoundException If the user is not found
      */
-    public function getPasswordHash(string $email): array;
+    public function get(string $email): \App\User;
 
     /**
-     * Create a new user
-     * @param array{
-     *  'name': string,
-     *  'email': string,
-     *  'password_hash': string
-     * } $data
-     * @return string The ID of the new user
+     * Create a new user. Sets the user's ID on the User object.
      */
-    public function create(array $data): string;
+    public function create(\App\User $user): void;
 }

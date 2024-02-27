@@ -1,14 +1,6 @@
 -- Schema for the database
 -- Expected to be run on an empty database
 
-CREATE TABLE user (
-    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    email TEXT NOT NULL UNIQUE COLLATE NOCASE,
-    password_hash TEXT NOT NULL,
-    profile_picture BLOB
-);
-
 CREATE TABLE organization (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
@@ -25,6 +17,27 @@ CREATE TABLE activity (
     start_time DATETIME NOT NULL,
     end_time DATETIME NOT NULL,
     needed_volunteers INTEGER NOT NULL
+);
+
+CREATE TABLE user (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    email TEXT NOT NULL UNIQUE COLLATE NOCASE,
+    password_hash TEXT NOT NULL,
+    profile_picture BLOB
+);
+
+CREATE TABLE user_availability (
+    user_id INTEGER NOT NULL REFERENCES user(id),
+    day_of_week TEXT NOT NULL,
+    start_hour INTEGER NOT NULL,
+    end_hour INTEGER NOT NULL,
+
+    CHECK (day_of_week IN ('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday')),
+    CHECK (start_hour >= 0 AND start_hour < 24),
+    CHECK (end_hour > 0 AND end_hour <= 24),
+    CHECK (start_hour < end_hour),
+    PRIMARY KEY (user_id, day_of_week)
 );
 
 CREATE TABLE user_activity (

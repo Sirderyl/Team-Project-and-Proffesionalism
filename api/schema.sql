@@ -4,7 +4,7 @@
 CREATE TABLE organization (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    manager_id INTEGER NOT NULL REFERENCES user(id)
+    admin_id INTEGER NOT NULL REFERENCES user(id)
 );
 
 CREATE TABLE activity (
@@ -38,6 +38,16 @@ CREATE TABLE user_availability (
     CHECK (end_hour > 0 AND end_hour <= 24),
     CHECK (start_hour < end_hour),
     PRIMARY KEY (user_id, day_of_week)
+);
+
+CREATE TABLE user_organization (
+    user_id INTEGER NOT NULL REFERENCES user(id),
+    organization_id INTEGER NOT NULL REFERENCES organization(id),
+
+    status TEXT NOT NULL,
+
+    PRIMARY KEY (user_id, organization_id),
+    CHECK (status IN ('Invited', 'Applied', 'Member', 'Manager'))
 );
 
 CREATE TABLE user_activity (

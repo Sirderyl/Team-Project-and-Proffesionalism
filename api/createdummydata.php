@@ -8,7 +8,8 @@
 
 require_once './vendor/autoload.php';
 
-const NUM_USERS = 20;
+const NUM_USERS = 50;
+const NUM_ACTIVITIES = 20;
 const DAYS = [
     'Monday',
     'Tuesday',
@@ -25,6 +26,16 @@ $database = new App\Database\Database($connection);
 $faker = Faker\Factory::create();
 
 $database->beginTransaction();
+
+for ($i = 0; $i < NUM_ACTIVITIES; $i++) {
+    $activity = new App\Activity();
+    $activity->name = $faker->unique()->realText(20);
+    $activity->shortDescription = $faker->realText(100);
+    $activity->longDescription = $faker->realText(400);
+    $activity->neededVolunteers = rand(1, 5);
+
+    $database->activities()->create($activity);
+}
 
 for ($i = 0; $i < NUM_USERS; $i++) {
     $user = new App\User();

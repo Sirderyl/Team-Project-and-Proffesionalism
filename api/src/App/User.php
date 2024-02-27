@@ -11,6 +11,8 @@ class User {
     public string $userName;
     public array $availability;
 
+    public string $phoneNumber;
+
     public function setAvailability(
     ?DateTime $monStart, ?DateTime $monEnd,
     ?DateTime $tueStart, ?DateTime $tueEnd,

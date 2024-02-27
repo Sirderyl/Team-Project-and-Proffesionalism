@@ -19,7 +19,7 @@ class UsersDatabase implements UsersDatabaseInterface
     {
         $result = $this->connection->query(
             'SELECT
-                user.id, user.name, user.email, user.password_hash,
+                user.id, user.name, user.email, user.password_hash, user.phone_number,
                 user_availability.day_of_week, user_availability.start_hour, user_availability.end_hour
             FROM user
             WHERE email = :email COLLATE NOCASE
@@ -36,6 +36,7 @@ class UsersDatabase implements UsersDatabaseInterface
         $user->userName = $result['name'];
         // TODO
         // $user->email
+        $user->phoneNumber = $result['phone_number'];
 
         // FIXME: The setter has 14 parameters! This is a code smell.
         // Just pass it manually for now.
@@ -59,7 +60,17 @@ class UsersDatabase implements UsersDatabaseInterface
     public function create(\App\User $user): void
     {
         $this->connection->execute(
-            'INSERT INTO user (name, email, password_hash) VALUES (:name, :email, :password_hash)',
+            'INSERT INTO user (
+                name,
+                email,
+                password_hash,
+                phone_number
+            ) VALUES (
+                :name,
+                :email,
+                :password_hash,
+                :phone_number
+            )',
             [
                 'name' => $user->userName,
                 // TODO
@@ -67,6 +78,7 @@ class UsersDatabase implements UsersDatabaseInterface
                 // TODO
                 'password_hash' => '12345',
                 // 'email' => $data->
+                'phone_number' => $user->phoneNumber,
             ]
         );
 

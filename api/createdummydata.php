@@ -23,7 +23,7 @@ const DAYS = [
 $connection = new App\Database\SqliteConnection("database.db");
 $database = new App\Database\Database($connection);
 
-$faker = Faker\Factory::create();
+$faker = Faker\Factory::create('en_GB');
 
 $database->beginTransaction();
 
@@ -40,6 +40,8 @@ for ($i = 0; $i < NUM_ACTIVITIES; $i++) {
 for ($i = 0; $i < NUM_USERS; $i++) {
     $user = new App\User();
     $user->userName = $faker->unique()->name();
+    $user->phoneNumber = $faker->unique()->e164PhoneNumber();
+
     $user->availability = [];
     foreach (DAYS as $day) {
         if (rand(0, 100) > 50) {

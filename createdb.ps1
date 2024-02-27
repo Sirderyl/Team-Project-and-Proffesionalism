@@ -1,8 +1,9 @@
 # Create the database and schema for the application
 # Requires sqlite3 to be on the system path
+# pdo_sqlite extension must be enabled in php.ini
 
 # Path to the database file and schema file
-$DB_PATH = ".\database.db"
+$DB_PATH = ".\api\database.db"
 $SCHEMA_PATH = ".\api\schema.sql"
 
 # Check if the database file already exists
@@ -20,3 +21,7 @@ if (Test-Path $DB_PATH) {
 Get-Content $SCHEMA_PATH | sqlite3 $DB_PATH
 
 # TODO: Generate dummy data for the database
+
+cd api
+php createdummydata.php
+cd ..

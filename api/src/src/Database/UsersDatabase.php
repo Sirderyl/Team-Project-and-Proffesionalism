@@ -18,7 +18,7 @@ class UsersDatabase implements UsersDatabaseInterface
     public function getPasswordHash(string $email): array
     {
         $result = $this->connection->query(
-            'SELECT id, password_hash FROM users WHERE email = :email COLLATE NOCASE',
+            'SELECT id, password_hash FROM user WHERE email = :email COLLATE NOCASE',
             ['email' => $email]
         );
 
@@ -32,7 +32,7 @@ class UsersDatabase implements UsersDatabaseInterface
     public function create(array $data): string
     {
         $this->connection->execute(
-            'INSERT INTO users (name, email, password_hash) VALUES (:name, :email, :password_hash)',
+            'INSERT INTO user (name, email, password_hash) VALUES (:name, :email, :password_hash)',
             $data
         );
 

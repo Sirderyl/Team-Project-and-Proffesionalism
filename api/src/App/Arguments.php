@@ -38,7 +38,7 @@ class Arguments
     {
         $value = $arr[$key] ?? null;
         if (!is_string($value)) {
-            throw new InvalidArgumentException("Expected $key to be a string");
+            throw new \InvalidArgumentException("Expected $key to be a string");
         }
         return $value;
     }

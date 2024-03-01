@@ -15,8 +15,12 @@ AppFactory::setContainer($container);
 
 $app = AppFactory::create();
 
-$app->get('/greetings[/{language}]', function (Request $request, Response $response, array $args) {
-    $greetings = $this->get(App\Greetings::class);
+// TODO: Settings class for database path
+$connection = new App\Database\SqliteConnection("database.db");
+$database = new App\Database\Database($connection);
+
+$app->get('/greetings[/{language}]', function (Request $request, Response $response, array $args) use ($container) {
+    $greetings = $container->get(App\Greetings::class);
     $language = $args['language'] ?? null;
 
     if($language !== null){
@@ -30,18 +34,20 @@ $app->get('/greetings[/{language}]', function (Request $request, Response $respo
     return $response->withHeader('Content-Type', 'application/json');
 });
 
-$app->get('/managerSchedule', function (Request $request, Response $response, array $args) {
-    $schedule = $this->get(App\Scheduler::class);
+$app->get('/managerSchedule', function (Request $request, Response $response, array $args) use ($container) {
+    $schedule = $container->get(App\Scheduler::class);
     $data = $schedule->getManagerSchedule();
     $body = json_encode($data, JSON_PRETTY_PRINT);
     $response->getBody()->write($body);
     return $response->withHeader('Content-Type', 'application/json');
 });
 
-$app->post('/user/register', function (Request $request, Response $response, array $args) {
-    $register = new Register();
+$app->post('/user/register', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $register = $container->make(App\Register::class, ['database' => $database]);
     $body = $register->parseBody($request->getBody()->getContents());
 
+    $response->getBody()->write(json_encode($register->execute($body)));
+    return $response->withHeader('Content-Type', 'application/json');
 });
 
 $app->setBasePath('/api');

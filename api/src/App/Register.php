@@ -52,7 +52,8 @@ class Register
         $user = new User();
         $user->userName = $body['name'];
         $user->phoneNumber = $body['phone'];
-        // TODO: Email and password
+        $user->email = $body['email'];
+        $user->passwordHash = password_hash($body['password'], PASSWORD_DEFAULT);
 
         $this->database->users()->create($user);
 

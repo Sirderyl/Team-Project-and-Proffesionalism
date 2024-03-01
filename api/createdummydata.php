@@ -39,8 +39,13 @@ for ($i = 0; $i < NUM_ACTIVITIES; $i++) {
 
 for ($i = 0; $i < NUM_USERS; $i++) {
     $user = new App\User();
-    $user->userName = $faker->unique()->name();
+    // Normally a username would never include the password, but this is just dummy data
+    // and we want to be able to log in as a dummy user
+    $password = $faker->password();
+    $user->userName = $faker->unique()->name() . ' password: ' . $password;
     $user->phoneNumber = $faker->unique()->e164PhoneNumber();
+    $user->email = $faker->unique()->email();
+    $user->passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
     $user->availability = [];
     foreach (DAYS as $day) {

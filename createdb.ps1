@@ -20,8 +20,6 @@ if (Test-Path $DB_PATH) {
 # Execute the schema to create the database
 Get-Content $SCHEMA_PATH | sqlite3 $DB_PATH
 
-# TODO: Generate dummy data for the database
-
 cd api
 php createdummydata.php
 cd ..

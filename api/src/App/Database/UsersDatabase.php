@@ -34,8 +34,8 @@ class UsersDatabase implements UsersDatabaseInterface
         $user = new \App\User();
         $user->userId = $result['id'];
         $user->userName = $result['name'];
-        // TODO
-        // $user->email
+        $user->email = $result['email'];
+        $user->passwordHash = $result['password_hash'];
         $user->phoneNumber = $result['phone_number'];
 
         // FIXME: The setter has 14 parameters! This is a code smell.
@@ -46,7 +46,7 @@ class UsersDatabase implements UsersDatabaseInterface
                 continue;
             }
 
-            // FIXME: startTime and endTime should be startTime and endTime.
+            // FIXME: startTime and endTime should be startHour and endHour
             $availability[$row['day_of_week']] = [
                 'startTime' => $row['start_hour'],
                 'endTime' => $row['end_hour'],
@@ -73,11 +73,8 @@ class UsersDatabase implements UsersDatabaseInterface
             )',
             [
                 'name' => $user->userName,
-                // TODO
-                'email' => $user->userName . '@example.com',
-                // TODO
-                'password_hash' => '12345',
-                // 'email' => $data->
+                'email' => $user->email,
+                'password_hash' => $user->passwordHash,
                 'phone_number' => $user->phoneNumber,
             ]
         );

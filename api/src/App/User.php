@@ -13,6 +13,9 @@ class User {
 
     public string $phoneNumber;
 
+    public string $email;
+    public string $passwordHash;
+
     public function setAvailability(
     ?DateTime $monStart, ?DateTime $monEnd,
     ?DateTime $tueStart, ?DateTime $tueEnd,

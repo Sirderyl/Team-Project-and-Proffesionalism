@@ -18,12 +18,12 @@ $app = AppFactory::create();
 $app->get('/greetings[/{language}]', function (Request $request, Response $response, array $args) {
     $greetings = $this->get(App\Greetings::class);
     $language = $args['language'] ?? null;
-   
+
     if($language !== null){
         $data = $greetings->getGreeting($args['language']);
     }else {
         $data = $greetings->getGreetings();
-    } 
+    }
 
     $body = json_encode($data, JSON_PRETTY_PRINT);
     $response->getBody()->write($body);
@@ -36,6 +36,12 @@ $app->get('/managerSchedule', function (Request $request, Response $response, ar
     $body = json_encode($data, JSON_PRETTY_PRINT);
     $response->getBody()->write($body);
     return $response->withHeader('Content-Type', 'application/json');
+});
+
+$app->post('/user/register', function (Request $request, Response $response, array $args) {
+    $register = new Register();
+    $body = $register->parseBody($request->getBody()->getContents());
+
 });
 
 $app->setBasePath('/api');

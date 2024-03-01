@@ -1,5 +1,7 @@
 <?php
 
+namespace App;
+
 /**
  * Utility class for argument parsing
  * @author Kieran
@@ -14,16 +16,16 @@ class Arguments
      * Parse a string as a JSON object or array
      * @param string $json
      * @return array<string|int, mixed>
-     * @throws InvalidArgumentException if the string is not a JSON object or array
+     * @throws \InvalidArgumentException if the string is not a JSON object or array
      */
     public static function parseJson(string $json): array
     {
         $data = json_decode($json, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
-            throw new InvalidArgumentException('Invalid JSON');
+            throw new \InvalidArgumentException('Invalid JSON');
         }
         if (!is_array($data)) {
-            throw new InvalidArgumentException('JSON is not an object or array');
+            throw new \InvalidArgumentException('JSON is not an object or array');
         }
         return $data;
     }

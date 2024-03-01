@@ -3,7 +3,8 @@ info:
   title: Team Project Volunteering API
   version: "1.0"
 servers:
-  - url: https://YOUR_STUDENT_ID.nuwebspace.co.uk/
+  - url: https://YOUR_STUDENT_ID.nuwebspace.co.uk/api/
+    description: Production server
 paths:
   /user/register:
     post:

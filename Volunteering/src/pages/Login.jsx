@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import { buttonStyle } from '../utils/styles'
+import Button from '../components/Button'
 import FormField from '../components/FormField'
 
 /**
@@ -58,7 +58,8 @@ export default function Login() {
                     setValue={setPassword}
                     required
                 />
-                <button type='submit' className={buttonStyle}>Log in</button>
+
+                <Button type='submit'>Log in</Button>
             </form>
 
             {error && <p>{error}</p>}

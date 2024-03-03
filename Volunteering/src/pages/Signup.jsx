@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { buttonStyle } from '../utils/styles'
+import Button from '../components/Button'
 import FormField from '../components/FormField'
 
 /**
@@ -74,7 +74,7 @@ export default function SignUp() {
                     required
                 />
 
-                <button className={buttonStyle} type='submit'>Sign up</button>
+                <Button type='submit'>Sign up</Button>
             </form>
 
             {error && <p>{error}</p>}

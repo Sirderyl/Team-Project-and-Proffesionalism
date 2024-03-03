@@ -57,9 +57,8 @@ class Register
 
         $this->database->users()->create($user);
 
-        // TODO: Issue a token
         return [
-            'token' => 'TODO'
+            'token' => Token::issue($user->userId)
         ];
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+namespace App;
+
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
 
@@ -18,9 +20,9 @@ class Token
 
     /**
      * Issue a token
-     * @param int $userId
+     * @param string $userId
      */
-    public static function issue(int $userId): string
+    public static function issue(string $userId): string
     {
         $payload = [
             "iat" => time(),
@@ -38,7 +40,7 @@ class Token
      * Verify a token and get the user it was issued for
      * @param string $token
      */
-    public static function verify(string $token): int
+    public static function verify(string $token): string
     {
         $payload = JWT::decode($token, new Key(self::JWT_SECRET, 'HS256'));
 

@@ -49,6 +49,12 @@ $app->post('/user/register', function (Request $request, Response $response, arr
     $response->getBody()->write(json_encode($register->execute($body)));
     return $response->withHeader('Content-Type', 'application/json');
 });
+$app->post('/user/login', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $login = $container->make(App\Login::class, ['database' => $database]);
+
+    $response->getBody()->write(json_encode($login->execute()));
+    return $response->withHeader('Content-Type', 'application/json');
+});
 
 $app->setBasePath('/api');
 $app->addErrorMiddleware(true, true, true);

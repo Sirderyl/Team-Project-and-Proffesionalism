@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { buttonStyle, inputStyle } from '../utils/styles'
+import { buttonStyle } from '../utils/styles'
+import FormField from '../components/FormField'
 
 /**
  * Signup page
@@ -9,6 +10,7 @@ export default function SignUp() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
+    const [phoneNumber, setPhoneNumber] = useState('')
     // TODO: Use the same error handling as in Login. Probably a component to reuse
     const [error, setError] = useState()
 
@@ -40,29 +42,37 @@ export default function SignUp() {
         <main>
             <h1>Sign up</h1>
             <form onSubmit={handleSubmit}>
-                <label>Email: <input
-                    className={inputStyle}
+                <FormField
+                    label='Email'
                     type='email'
                     value={email}
-                    onChange={e => setEmail(e.target.value)}
-                    required
-                /></label><br />
+                    setValue={setEmail}
+                    reason='You will use this to log in and receive notifications.'
+                />
 
-                <label>Password: <input
-                    className={inputStyle}
+                <FormField
+                    label='Password'
                     type='password'
                     value={password}
-                    onChange={e => setPassword(e.target.value)}
-                    required
-                /></label><br />
+                    setValue={setPassword}
+                />
 
-                <label>Confirm password: <input
-                    className={inputStyle}
+                <FormField
+                    label='Confirm password'
                     type='password'
                     value={confirmPassword}
-                    onChange={e => setConfirmPassword(e.target.value)}
+                    setValue={setConfirmPassword}
                     required
-                /></label><br />
+                />
+
+                <FormField
+                    label='Phone Number'
+                    type='tel'
+                    value={phoneNumber}
+                    setValue={setPhoneNumber}
+                    reason='For managers to contact you if are needed at short notice.'
+                    required
+                />
 
                 <button className={buttonStyle} type='submit'>Sign up</button>
             </form>

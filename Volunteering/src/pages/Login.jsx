@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
-import { buttonStyle, inputStyle } from '../utils/styles'
+import { buttonStyle } from '../utils/styles'
+import FormField from '../components/FormField'
 
 /**
  * Login page
@@ -42,22 +43,21 @@ export default function Login() {
         <main>
             <h1>Login</h1>
             <form onSubmit={handleSubmit}>
-                <label>Email: <input
-                    className={inputStyle}
+                <FormField
+                    label='Email'
                     type='email'
                     value={email}
-                    onChange={e => setEmail(e.target.value)}
+                    setValue={setEmail}
                     required
-                /></label><br />
+                />
 
-                <label>Password: <input
-                    className={inputStyle}
+                <FormField
+                    label='Password'
                     type='password'
                     value={password}
-                    onChange={e => setPassword(e.target.value)}
+                    setValue={setPassword}
                     required
-                /></label><br />
-
+                />
                 <button type='submit' className={buttonStyle}>Log in</button>
             </form>
 

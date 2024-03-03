@@ -14,6 +14,9 @@ class Login
         $this->database = $database;
     }
 
+    /**
+     * Throw an exception indicating an invalid username OR password
+     */
     private function throwInvalidCredentials(): never
     {
         throw new \InvalidArgumentException('Invalid username or password');
@@ -42,7 +45,7 @@ class Login
         }
 
         if (!password_verify($pass, $user->passwordHash)) {
-            throw new \InvalidArgumentException('Invalid username or password');
+            $this->throwInvalidCredentials();
         }
 
         return [

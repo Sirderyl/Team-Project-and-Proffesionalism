@@ -38,16 +38,16 @@ class UsersDatabase implements UsersDatabaseInterface
         $user->passwordHash = $result['password_hash'];
         $user->phoneNumber = $result['phone_number'];
 
-        // FIXME: The setter has 14 parameters! This is a code smell.
         // Just pass it manually for now.
         $availability = [];
         foreach ($result as $row) {
-            if ($row['day_of_week'] === null) {
+            /** @var string|null $day */
+            $day = $row['day_of_week'];
+            if ($day === null) {
                 continue;
             }
 
-            // FIXME: startTime and endTime should be startHour and endHour
-            $availability[$row['day_of_week']] = [
+            $availability[$day] = [
                 'startTime' => $row['start_hour'],
                 'endTime' => $row['end_hour'],
             ];

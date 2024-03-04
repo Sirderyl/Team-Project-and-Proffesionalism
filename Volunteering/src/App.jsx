@@ -3,6 +3,9 @@ import { useState } from 'react'
 import Home from './pages/Home'
 import AccountDetails from './pages/AccountDetails'
 import AddScheduleRecord from './pages/AddScheduleRecord'
+import Login from './pages/Login'
+import SignUp from './pages/SignUp'
+import NavMenu from './components/NavMenu'
 
 function App() {
 
@@ -19,13 +22,23 @@ function App() {
     }
   ])
 
+  const routes = [
+    { path: '/', name: 'Home', element: <Home /> },
+    { path: '/login', name: 'Login', element: <Login /> },
+    { path: '/signup', name: 'Sign up', element: <SignUp /> },
+    { path: '/account-details', name: 'Account Details', element: <AccountDetails scheduleRecords={scheduleRecords} /> },
+    { path: '/account-details/add-schedule-record', name: 'Add Schedule Record', element: <AddScheduleRecord scheduleRecords={scheduleRecords} /> },
+  ]
+
   return (
     <div className='App'>
+      <NavMenu routes={routes} />
+
       <Routes>
-        <Route path='/' element={<Home />} />
-        <Route path='/account-details' element={<AccountDetails scheduleRecords={scheduleRecords} />} />
-        <Route path='/account-details/add-schedule-record' element={<AddScheduleRecord scheduleRecords={scheduleRecords} />} />
-      </Routes>
+        {routes.map((route, index) => (
+          <Route key={index} path={route.path} element={route.element} />
+        ))}
+       </Routes>
     </div>
   )
 }

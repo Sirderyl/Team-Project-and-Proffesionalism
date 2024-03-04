@@ -10,15 +10,6 @@ require_once './vendor/autoload.php';
 
 const NUM_USERS = 50;
 const NUM_ACTIVITIES = 20;
-const DAYS = [
-    'Monday',
-    'Tuesday',
-    'Wednesday',
-    'Thursday',
-    'Friday',
-    'Saturday',
-    'Sunday'
-];
 
 $connection = new App\Database\SqliteConnection("database.db");
 $database = new App\Database\Database($connection);
@@ -94,12 +85,12 @@ for ($i = 0; $i < NUM_USERS; $i++) {
     $user->email = $faker->unique()->email();
     $user->passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
-    foreach (DAYS as $day) {
+    foreach (App\DayOfWeek::cases() as $day) {
         if (rand(0, 100) > 50) {
             $start = $faker->numberBetween(9, 14);
             $end = $faker->numberBetween($start + 1, 17);
 
-            $user->setAvailability(App\DayOfWeek::from($day), new App\TimeRange($start, $end));
+            $user->setAvailability($day, new App\TimeRange($start, $end));
         }
     }
 

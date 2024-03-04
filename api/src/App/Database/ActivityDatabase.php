@@ -33,11 +33,8 @@ class ActivityDatabase implements ActivityDatabaseInterface {
                 ':name' => $activity->name,
                 ':shortDescription' => $activity->shortDescription,
                 ':longDescription' => $activity->longDescription,
-                // TODO
-                ":startTime" => "9",
-                ":endTime" => "17",
-                // $activity->startTime,
-                // $activity->endTime
+                ":startTime" => $activity->time->start,
+                ":endTime" => $activity->time->end,
 
                 ":neededVolunteers" => $activity->neededVolunteers
             ]

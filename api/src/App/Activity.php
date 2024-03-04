@@ -15,4 +15,6 @@ class Activity {
 
     // The number of volunteers needed for the activity
     public int $neededVolunteers;
+
+    public TimeRange $time;
 }

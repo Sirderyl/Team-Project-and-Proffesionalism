@@ -33,6 +33,9 @@ for ($i = 0; $i < NUM_ACTIVITIES; $i++) {
     $activity->shortDescription = $faker->realText(100);
     $activity->longDescription = $faker->realText(400);
     $activity->neededVolunteers = rand(1, 5);
+    $start = $faker->numberBetween(9, 14);
+    $end = $faker->numberBetween($start + 1, 17);
+    $activity->time = new App\TimeRange($start, $end);
 
     $database->activities()->create($activity);
 }

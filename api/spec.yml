@@ -54,6 +54,25 @@ paths:
         401: { $ref: "#/components/responses/Unauthorized" }
         403: { $ref: "#/components/responses/Forbidden" }
 
+  /user/{id}/profilepicture:
+    get:
+      summary: Get a user's profile picture
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 123
+      responses:
+        200:
+          description: OK
+          content:
+            image/jpeg:
+              schema:
+                type: string
+                format: binary
+
 components:
   securitySchemes:
     basic:

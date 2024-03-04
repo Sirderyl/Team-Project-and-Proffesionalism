@@ -71,6 +71,12 @@ $app->post('/user/login', function (Request $request, Response $response, array 
     $response->getBody()->write(json_encode($login->execute()));
     return $response->withHeader('Content-Type', 'application/json');
 });
+$app->get('/user/{id}/profilepicture', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\ProfilePicture::class, ['database' => $database]);
+    $data = $handler->execute($args['id']);
+    $response->getBody()->write($data);
+    return $response->withHeader('Content-Type', $handler->getContentType());
+});
 
 function getErrorCode(Throwable $exception): int
 {

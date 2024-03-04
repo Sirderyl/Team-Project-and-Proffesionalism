@@ -40,6 +40,13 @@ for ($i = 0; $i < NUM_ACTIVITIES; $i++) {
     $database->activities()->create($activity);
 }
 
+// Get a random image for profile pictures. Don't want to
+// make too many requests to the server
+$dummyProfile = file_get_contents('https://thispersondoesnotexist.com');
+if ($dummyProfile) {
+    throw new Exception('Failed to get dummy profile pictures');
+}
+
 for ($i = 0; $i < NUM_USERS; $i++) {
     $user = new App\User();
     // Normally a username would never include the password, but this is just dummy data
@@ -60,6 +67,7 @@ for ($i = 0; $i < NUM_USERS; $i++) {
     }
 
     $database->users()->create($user);
+    $database->users()->setProfilePicture($user->userId, $dummyProfile);
 }
 
 $database->commit();

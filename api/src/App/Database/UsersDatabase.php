@@ -90,4 +90,26 @@ class UsersDatabase implements UsersDatabaseInterface
             );
         }
     }
+
+    public function getProfilePicture(string $userId): string
+    {
+        $result = $this->connection->query(
+            'SELECT profile_picture FROM user WHERE id = :id',
+            ['id' => $userId]
+        );
+
+        if (empty($result)) {
+            throw new NotFoundException();
+        }
+
+        return $result[0]['profile_picture'];
+    }
+
+    public function setProfilePicture(string $userId, string|null $data): void
+    {
+        $this->connection->execute(
+            'UPDATE user SET profile_picture = :data WHERE id = :id',
+            ['data' => $data, 'id' => $userId]
+        );
+    }
 }

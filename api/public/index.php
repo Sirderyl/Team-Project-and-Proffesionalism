@@ -5,6 +5,7 @@ declare(strict_types = 1);
 use App\Database\NotFoundException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Slim\Factory\AppFactory;
 use DI\Container;
 
@@ -56,6 +57,20 @@ $app->post('/user/login', function (Request $request, Response $response, array 
     $response->getBody()->write(json_encode($login->execute()));
     return $response->withHeader('Content-Type', 'application/json');
 });
+
+
+// Allow CORS
+$app->options('/{routes:.+}', function ($request, $response, $args) {
+    return $response;
+});
+
+$app->add(function (Request $request, RequestHandler $handler) {
+    $response = $handler->handle($request);
+    return $response
+        ->withHeader('Access-Control-Allow-Origin', '*')
+        ->withHeader('Access-Control-Allow-Headers', 'Authorization');
+});
+
 
 function getErrorCode(Throwable $exception): int
 {

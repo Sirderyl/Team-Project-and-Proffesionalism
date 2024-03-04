@@ -89,6 +89,23 @@ components:
         message:
           type: string
           example: "Something went wrong."
+        # TODO: We may not want to include this in production
+        trace:
+          type: array
+          items: { $ref: "#/components/schemas/TraceItem" }
+      required: [message, trace]
+
+    TraceItem:
+      type: object
+      properties:
+        file:
+          type: string
+          example: "/path/to/file.php"
+        line: { type: integer, example: 123 }
+        function: { type: string, example: "functionName" }
+        class: { type: string, example: "ClassName" }
+        type: { type: string, example: "->" }
+      required: [file, line, function]
 
     Token:
       type: object
@@ -97,3 +114,4 @@ components:
           type: string
           description: Base64 encoded JWT token
           pattern: ^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$
+      required: [token]

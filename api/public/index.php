@@ -99,6 +99,8 @@ $errorMiddleware->setDefaultErrorHandler(function (Request $request, Throwable $
     ]));
     return $response
         ->withStatus(getErrorCode($exception))
+        // Need to duplicate this line because the CORS middleware is not called for errors
+        ->withHeader('Access-Control-Allow-Origin', '*')
         ->withHeader('Content-Type', 'application/json');
 });
 

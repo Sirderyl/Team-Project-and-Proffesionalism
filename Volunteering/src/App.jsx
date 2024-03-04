@@ -31,7 +31,7 @@ function App() {
   const routes = [
     { path: '/', name: 'Home', element: <Home /> },
     { path: '/login', name: 'Login', element: <Login handleLogin={handleLogin} />, navigable: token === null },
-    { path: '/signup', name: 'Sign up', element: <SignUp />, navigable: token === null },
+    { path: '/signup', name: 'Sign up', element: <SignUp handleLogin={handleLogin} />, navigable: token === null },
     { path: '/account-details', name: 'Account Details', element: <AccountDetails scheduleRecords={scheduleRecords} /> },
     { path: '/account-details/add-schedule-record', name: 'Add Schedule Record', element: <AddScheduleRecord scheduleRecords={scheduleRecords} /> },
   ]

@@ -1,14 +1,17 @@
 import { useState } from 'react'
+import PropTypes from 'prop-types'
+
 import { apiRoot } from '../settings'
 import Button from '../components/Button'
 import FormField from '../components/FormField'
-import { Form } from 'react-router-dom'
 
 /**
  * Signup page
  * @author Kieran
  */
-export default function SignUp() {
+export default function SignUp({
+    handleLogin
+}) {
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -19,6 +22,7 @@ export default function SignUp() {
 
     async function handleSubmit(e) {
         e.preventDefault()
+        setError('') // Clear any previous errors
 
         if (password !== confirmPassword) {
             setError('Passwords do not match')
@@ -28,12 +32,13 @@ export default function SignUp() {
         try {
             const response = await fetch(`${apiRoot}/user/register`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name, email, password, phone: phoneNumber })
             })
             const data = await response.json()
 
-            if (!response.ok) throw new Error(data.message)
+            if (!response.ok) throw new Error(data.error)
+
+            handleLogin(data.token)
 
         } catch (error) {
             console.error(error)
@@ -90,7 +95,10 @@ export default function SignUp() {
                 <Button type='submit'>Sign up</Button>
             </form>
 
-            {error && <p>{error}</p>}
+            {error && <p className='text-red-700'>{error}</p>}
         </main>
     )
+}
+SignUp.propTypes = {
+    handleLogin: PropTypes.func.isRequired
 }

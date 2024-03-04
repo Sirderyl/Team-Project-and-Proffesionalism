@@ -2,6 +2,7 @@
 
 declare(strict_types = 1);
 
+use App\Database\NotFoundException;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
@@ -54,6 +55,29 @@ $app->post('/user/login', function (Request $request, Response $response, array 
 
     $response->getBody()->write(json_encode($login->execute()));
     return $response->withHeader('Content-Type', 'application/json');
+});
+
+function getErrorCode(Throwable $exception): int
+{
+    if ($exception instanceof NotFoundException) {
+        return 404;
+    }
+    if ($exception instanceof InvalidArgumentException) {
+        return 400;
+    }
+
+    return 500;
+}
+
+$errorMiddleware = $app->addErrorMiddleware(true, true, true);
+$errorMiddleware->setDefaultErrorHandler(function (Request $request, Throwable $exception, bool $displayErrorDetails, bool $logErrors, bool $logErrorDetails) use ($app) {
+    $response = $app->getResponseFactory()->createResponse();
+    $response->getBody()->write(json_encode([
+        'error' => $exception->getMessage()
+    ]));
+    return $response
+        ->withStatus(getErrorCode($exception))
+        ->withHeader('Content-Type', 'application/json');
 });
 
 $app->setBasePath('/api');

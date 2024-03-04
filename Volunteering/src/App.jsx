@@ -8,6 +8,11 @@ import SignUp from './pages/SignUp'
 import NavMenu from './components/NavMenu'
 
 function App() {
+  const [token, setToken] = useState(localStorage.getItem('token'))
+  function handleLogin(token) {
+    setToken(token)
+    localStorage.setItem('token', token)
+  }
 
   const [scheduleRecords] = useState([
     {
@@ -22,17 +27,18 @@ function App() {
     }
   ])
 
+  // Routes for the app. Set navigable: false to hide a route from the NavMenu while keeping it in the app
   const routes = [
     { path: '/', name: 'Home', element: <Home /> },
-    { path: '/login', name: 'Login', element: <Login /> },
-    { path: '/signup', name: 'Sign up', element: <SignUp /> },
+    { path: '/login', name: 'Login', element: <Login handleLogin={handleLogin} />, navigable: token === null },
+    { path: '/signup', name: 'Sign up', element: <SignUp />, navigable: token === null },
     { path: '/account-details', name: 'Account Details', element: <AccountDetails scheduleRecords={scheduleRecords} /> },
     { path: '/account-details/add-schedule-record', name: 'Add Schedule Record', element: <AddScheduleRecord scheduleRecords={scheduleRecords} /> },
   ]
 
   return (
     <div className='App'>
-      <NavMenu routes={routes} />
+      <NavMenu routes={routes.filter(route => route.navigable !== false)} />
 
       <Routes>
         {routes.map((route, index) => (

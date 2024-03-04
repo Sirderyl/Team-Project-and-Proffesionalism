@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
+import PropTypes from 'prop-types'
 import { apiRoot } from '../settings'
 import Button from '../components/Button'
 import FormField from '../components/FormField'
@@ -9,7 +10,10 @@ import FormField from '../components/FormField'
  * Login page
  * @author Kieran
  */
-export default function Login() {
+export default function Login({
+    // Function to handle the login and set the token
+    handleLogin
+}) {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     // TODO: Clear this when changing credentials, or use a pop-up
@@ -27,8 +31,7 @@ export default function Login() {
 
             if (!response.ok) throw new Error(data.message)
 
-            // TODO: Store token in local storage
-            console.log(data)
+                handleLogin(data.token)
 
             // Only clear the email if the login was successful
             setEmail('')
@@ -69,4 +72,7 @@ export default function Login() {
             <p>New user? <Link to='/signup'>Sign up here</Link></p>
         </main>
     )
+}
+Login.propTypes = {
+    handleLogin: PropTypes.func.isRequired
 }

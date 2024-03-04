@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 
+import { apiRoot } from '../settings'
 import Button from '../components/Button'
 import FormField from '../components/FormField'
 
@@ -18,15 +19,16 @@ export default function Login() {
         e.preventDefault()
 
         try {
-            const response = await fetch('/api/login', {
-                headers: { 'Authorization': `Bearer ${btoa(`${email}:${password}`)}` }
+            const response = await fetch(`${apiRoot}/user/login`, {
+                headers: { 'Authorization': `Basic ${btoa(`${email}:${password}`)}` },
+                method: 'POST'
             })
             const data = await response.json()
 
             if (!response.ok) throw new Error(data.message)
 
             // TODO: Store token in local storage
-            console.log(response)
+            console.log(data)
 
             // Only clear the email if the login was successful
             setEmail('')

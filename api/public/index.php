@@ -21,6 +21,20 @@ $app = AppFactory::create();
 $connection = new App\Database\SqliteConnection("../database.db");
 $database = new App\Database\Database($connection);
 
+
+// Allow CORS
+$app->options('/{routes:.+}', function ($request, $response, $args) {
+    return $response;
+});
+
+$app->add(function (Request $request, RequestHandler $handler) {
+    $response = $handler->handle($request);
+    return $response
+        ->withHeader('Access-Control-Allow-Origin', '*')
+        ->withHeader('Access-Control-Allow-Headers', 'Authorization');
+});
+
+
 $app->get('/greetings[/{language}]', function (Request $request, Response $response, array $args) use ($container) {
     $greetings = $container->get(App\Greetings::class);
     $language = $args['language'] ?? null;
@@ -57,20 +71,6 @@ $app->post('/user/login', function (Request $request, Response $response, array 
     $response->getBody()->write(json_encode($login->execute()));
     return $response->withHeader('Content-Type', 'application/json');
 });
-
-
-// Allow CORS
-$app->options('/{routes:.+}', function ($request, $response, $args) {
-    return $response;
-});
-
-$app->add(function (Request $request, RequestHandler $handler) {
-    $response = $handler->handle($request);
-    return $response
-        ->withHeader('Access-Control-Allow-Origin', '*')
-        ->withHeader('Access-Control-Allow-Headers', 'Authorization');
-});
-
 
 function getErrorCode(Throwable $exception): int
 {

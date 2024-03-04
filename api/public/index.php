@@ -88,7 +88,8 @@ $errorMiddleware = $app->addErrorMiddleware(true, true, true);
 $errorMiddleware->setDefaultErrorHandler(function (Request $request, Throwable $exception, bool $displayErrorDetails, bool $logErrors, bool $logErrorDetails) use ($app) {
     $response = $app->getResponseFactory()->createResponse();
     $response->getBody()->write(json_encode([
-        'error' => $exception->getMessage()
+        'error' => $exception->getMessage(),
+        'trace' => $exception->getTrace(),
     ]));
     return $response
         ->withStatus(getErrorCode($exception))

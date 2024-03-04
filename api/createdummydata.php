@@ -72,9 +72,6 @@ function getProfilePicture(): string {
     }
     imagejpeg($resized, $stream);
 
-    imagedestroy($img);
-    imagedestroy($resized);
-
     rewind($stream);
     $contents = stream_get_contents($stream);
     fclose($stream);

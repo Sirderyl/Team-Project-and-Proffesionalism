@@ -22,8 +22,8 @@ class UsersDatabase implements UsersDatabaseInterface
                 user.id, user.name, user.email, user.password_hash, user.phone_number,
                 user_availability.day_of_week, user_availability.start_hour, user_availability.end_hour
             FROM user
-            WHERE email = :email COLLATE NOCASE
-            LEFT JOIN user_availability ON user.id = user_availability.user_id',
+            LEFT JOIN user_availability ON user.id = user_availability.user_id
+            WHERE email = :email COLLATE NOCASE',
             ['email' => $email]
         );
 
@@ -32,11 +32,12 @@ class UsersDatabase implements UsersDatabaseInterface
         }
 
         $user = new \App\User();
-        $user->userId = $result['id'];
-        $user->userName = $result['name'];
-        $user->email = $result['email'];
-        $user->passwordHash = $result['password_hash'];
-        $user->phoneNumber = $result['phone_number'];
+        $firstRow = $result[0];
+        $user->userId = $firstRow['id'];
+        $user->userName = $firstRow['name'];
+        $user->email = $firstRow['email'];
+        $user->passwordHash = $firstRow['password_hash'];
+        $user->phoneNumber = $firstRow['phone_number'];
 
         // Just pass it manually for now.
         $availability = [];

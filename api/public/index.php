@@ -18,7 +18,7 @@ AppFactory::setContainer($container);
 $app = AppFactory::create();
 
 // TODO: Settings class for database path
-$connection = new App\Database\SqliteConnection("database.db");
+$connection = new App\Database\SqliteConnection("../database.db");
 $database = new App\Database\Database($connection);
 
 $app->get('/greetings[/{language}]', function (Request $request, Response $response, array $args) use ($container) {
@@ -97,6 +97,5 @@ $errorMiddleware->setDefaultErrorHandler(function (Request $request, Throwable $
 });
 
 $app->setBasePath('/api');
-$app->addErrorMiddleware(true, true, true);
 
 $app->run();

@@ -27,6 +27,11 @@ $faker = Faker\Factory::create('en_GB');
 
 $database->beginTransaction();
 
+$dummyActivityImg = file_get_contents('https://picsum.photos/200/200');
+if ($dummyActivityImg === false) {
+    throw new Exception('Failed to get dummy activity pictures');
+}
+
 for ($i = 0; $i < NUM_ACTIVITIES; $i++) {
     $activity = new App\Activity();
     $activity->name = $faker->unique()->realText(20);
@@ -38,12 +43,13 @@ for ($i = 0; $i < NUM_ACTIVITIES; $i++) {
     $activity->time = new App\TimeRange($start, $end);
 
     $database->activities()->create($activity);
+    $database->activities()->setPreviewPicture($activity->id, $dummyActivityImg);
 }
 
 // Get a random image for profile pictures. Don't want to
 // make too many requests to the server
 $dummyProfile = file_get_contents('https://thispersondoesnotexist.com');
-if ($dummyProfile) {
+if ($dummyProfile === false) {
     throw new Exception('Failed to get dummy profile pictures');
 }
 

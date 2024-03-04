@@ -42,4 +42,23 @@ class ActivityDatabase implements ActivityDatabaseInterface {
 
         $activity->id = $this->connection->lastInsertId();
     }
+
+    public function setPreviewPicture(string $activityId, string $image): void {
+        $this->connection->execute(
+            "UPDATE activity SET preview_picture = :image WHERE id = :id",
+            [
+                ':id' => $activityId,
+                ':image' => $image
+            ]
+        );
+    }
+
+    public function getPreviewPicture(string $activityId): string {
+        $result = $this->connection->query(
+            "SELECT preview_picture FROM activity WHERE id = :id",
+            [':id' => $activityId]
+        );
+
+        return $result[0]['preview_picture'];
+    }
 }

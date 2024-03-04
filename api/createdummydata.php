@@ -47,16 +47,12 @@ for ($i = 0; $i < NUM_USERS; $i++) {
     $user->email = $faker->unique()->email();
     $user->passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
-    $user->availability = [];
     foreach (DAYS as $day) {
         if (rand(0, 100) > 50) {
-            $start = rand(9, 14);
-            $end = rand($start + 1, 17);
+            $start = $faker->numberBetween(9, 14);
+            $end = $faker->numberBetween($start + 1, 17);
 
-            $user->availability[$day] = [
-                'startTime' => $start,
-                'endTime' => $end
-            ];
+            $user->setAvailability(App\DayOfWeek::from($day), new App\TimeRange($start, $end));
         }
     }
 

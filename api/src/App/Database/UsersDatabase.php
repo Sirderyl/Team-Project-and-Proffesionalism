@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Database;
+use App\TimeRange;
 
 /**
  * Implementation of UsersDatabaseInterface
@@ -39,22 +40,17 @@ class UsersDatabase implements UsersDatabaseInterface
         $user->passwordHash = $firstRow['password_hash'];
         $user->phoneNumber = $firstRow['phone_number'];
 
-        // Just pass it manually for now.
-        $availability = [];
         foreach ($result as $row) {
             /** @var string|null $day */
             $day = $row['day_of_week'];
             if ($day === null) {
                 continue;
             }
-
-            $availability[$day] = [
-                'startTime' => $row['start_hour'],
-                'endTime' => $row['end_hour'],
-            ];
+            $user->setAvailability(\App\DayOfWeek::from($day), new TimeRange(
+                $row['start_hour'],
+                $row['end_hour']
+            ));
         }
-
-        $user->availability = $availability;
         return $user;
     }
 
@@ -88,8 +84,8 @@ class UsersDatabase implements UsersDatabaseInterface
                 [
                     'user_id' => $user->userId,
                     'day_of_week' => $day,
-                    'start_hour' => $times['startTime'],
-                    'end_hour' => $times['endTime'],
+                    'start_hour' => $times->start,
+                    'end_hour' => $times->end
                 ]
             );
         }

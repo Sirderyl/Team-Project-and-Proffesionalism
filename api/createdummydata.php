@@ -46,12 +46,46 @@ for ($i = 0; $i < NUM_ACTIVITIES; $i++) {
     $database->activities()->setPreviewPicture($activity->id, $dummyActivityImg);
 }
 
-// Get a random image for profile pictures. Don't want to
-// make too many requests to the server
-$dummyProfile = file_get_contents('https://thispersondoesnotexist.com');
-if ($dummyProfile === false) {
-    throw new Exception('Failed to get dummy profile pictures');
+function getProfilePicture(): string {
+    // All these checks for false, if only PHP had a way to handle exceptional cases
+
+    // Get a random image for profile pictures. Don't want to
+    // make too many requests to the server
+    $dummyProfile = file_get_contents('https://thispersondoesnotexist.com');
+    if ($dummyProfile === false) {
+        throw new Exception('Failed to get dummy profile pictures');
+    }
+
+    // Resize the image, API returns 1024x1024 images which are overkill for a profile picture
+    $img = imagecreatefromstring($dummyProfile);
+    if (!($img instanceof GdImage)) {
+        throw new Exception('Failed to create image from data');
+    }
+    $resized = imagescale($img, 256, 256);
+    if ($resized === false) {
+        throw new Exception('Failed to resize image');
+    }
+
+    $stream = fopen('php://memory', 'r+');
+    if ($stream === false) {
+        throw new Exception('Failed to open memory stream');
+    }
+    imagejpeg($resized, $stream);
+
+    imagedestroy($img);
+    imagedestroy($resized);
+
+    rewind($stream);
+    $contents = stream_get_contents($stream);
+    fclose($stream);
+    if ($contents === false) {
+        throw new Exception('Failed to read from memory stream');
+    }
+    return $contents;
 }
+
+$profilePicture = getProfilePicture();
+
 
 for ($i = 0; $i < NUM_USERS; $i++) {
     $user = new App\User();
@@ -73,7 +107,7 @@ for ($i = 0; $i < NUM_USERS; $i++) {
     }
 
     $database->users()->create($user);
-    $database->users()->setProfilePicture($user->userId, $dummyProfile);
+    $database->users()->setProfilePicture($user->userId, $profilePicture);
 }
 
 $database->commit();

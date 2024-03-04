@@ -1,12 +1,15 @@
 import { useState } from 'react'
+import { apiRoot } from '../settings'
 import Button from '../components/Button'
 import FormField from '../components/FormField'
+import { Form } from 'react-router-dom'
 
 /**
  * Signup page
  * @author Kieran
  */
 export default function SignUp() {
+    const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [confirmPassword, setConfirmPassword] = useState('')
@@ -23,10 +26,10 @@ export default function SignUp() {
         }
 
         try {
-            const response = await fetch('/api/signup', {
+            const response = await fetch(`${apiRoot}/user/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
+                body: JSON.stringify({ name, email, password, phone: phoneNumber })
             })
             const data = await response.json()
 
@@ -43,11 +46,20 @@ export default function SignUp() {
             <h1>Sign up</h1>
             <form onSubmit={handleSubmit}>
                 <FormField
+                    label='Name'
+                    value={name}
+                    setValue={setName}
+                    reason='Your full name, as it will appear to others.'
+                    required
+                />
+
+                <FormField
                     label='Email'
                     type='email'
                     value={email}
                     setValue={setEmail}
                     reason='You will use this to log in and receive notifications.'
+                    required
                 />
 
                 <FormField
@@ -55,6 +67,7 @@ export default function SignUp() {
                     type='password'
                     value={password}
                     setValue={setPassword}
+                    required
                 />
 
                 <FormField

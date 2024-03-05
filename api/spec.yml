@@ -36,6 +36,10 @@ paths:
                     example: "Help us clean up the local park."
                   time:
                     $ref: "#/components/schemas/TimeRange"
+                  neededVolunteers:
+                    type: integer
+                    description: The ideal number of volunteers for this activity
+                    example: 3
                   organization:
                     type: object
                     properties:
@@ -46,7 +50,7 @@ paths:
                         type: integer
                         example: 123
                     required: [name, id]
-                required: [name, description, time, organization]
+                required: [name, description, time, neededVolunteers, organization]
 
   /activity/{id}/previewimage:
     get:

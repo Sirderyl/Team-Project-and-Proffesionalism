@@ -12,6 +12,25 @@ class ActivityDatabase implements ActivityDatabaseInterface {
         $this->connection = $connection;
     }
 
+    public function get(string $id): \App\Activity {
+        $row = $this->connection->query(
+            "SELECT
+                id,
+                organization_id,
+                name,
+                short_description,
+                long_description,
+                start_time,
+                end_time,
+                needed_volunteers
+            FROM activity
+            WHERE id = :id",
+            [':id' => $id]
+        )[0];
+
+        return \App\Activity::fromRow($row);
+    }
+
     public function create(\App\Activity $activity): void {
         $this->connection->execute(
             "INSERT INTO activity (

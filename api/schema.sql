@@ -9,10 +9,9 @@ CREATE TABLE organization (
 
 CREATE TABLE activity (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-
     organization_id INTEGER NOT NULL REFERENCES organization(id),
 
+    name TEXT NOT NULL,
     short_description TEXT NOT NULL,
     long_description TEXT NOT NULL,
     preview_picture BLOB,

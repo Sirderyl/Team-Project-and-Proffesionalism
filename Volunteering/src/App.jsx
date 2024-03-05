@@ -3,6 +3,7 @@ import { useState } from 'react'
 import Home from './pages/Home'
 import AccountDetails from './pages/AccountDetails'
 import AddScheduleRecord from './pages/AddScheduleRecord'
+import Feedback from './pages/Feedback'
 
 function App() {
 
@@ -25,6 +26,7 @@ function App() {
         <Route path='/' element={<Home />} />
         <Route path='/account-details' element={<AccountDetails scheduleRecords={scheduleRecords} />} />
         <Route path='/account-details/add-schedule-record' element={<AddScheduleRecord scheduleRecords={scheduleRecords} />} />
+        <Route path='/feedback' element={<Feedback />} />
       </Routes>
     </div>
   )

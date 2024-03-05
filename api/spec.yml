@@ -34,12 +34,8 @@ paths:
                   description:
                     type: string
                     example: "Help us clean up the local park."
-                  startTime:
-                    type: number
-                    example: 9.5
-                  endTime:
-                    type: number
-                    example: 12.5
+                  time:
+                    $ref: "#/components/schemas/TimeRange"
                   organization:
                     type: object
                     properties:
@@ -50,7 +46,7 @@ paths:
                         type: integer
                         example: 123
                     required: [name, id]
-                required: [name, description, startTime, endTime, organization]
+                required: [name, description, time, organization]
 
   /activity/{id}/previewimage:
     get:
@@ -198,3 +194,14 @@ components:
           description: Base64 encoded JWT token
           pattern: ^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$
       required: [token]
+
+    TimeRange:
+      type: object
+      properties:
+        start:
+          type: number
+          example: 9.5
+        end:
+          type: number
+          example: 12.5
+      required: [start, end]

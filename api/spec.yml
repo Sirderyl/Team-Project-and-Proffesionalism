@@ -14,17 +14,50 @@ tags:
     description: Operations about user accounts
 
 paths:
+  /activity/{id}:
+    get:
+      tags: [Activity]
+      summary: Get details about an activity
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                    example: "Litter Picking"
+                  description:
+                    type: string
+                    example: "Help us clean up the local park."
+                  startTime:
+                    type: number
+                    example: 9.5
+                  endTime:
+                    type: number
+                    example: 12.5
+                  organization:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: "Local Council"
+                      id:
+                        type: integer
+                        example: 123
+                    required: [name, id]
+                required: [name, description, startTime, endTime, organization]
+
   /activity/{id}/previewimage:
     get:
       tags: [Activity]
       summary: Get a preview image for an activity
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            example: 123
+        - $ref: "#/components/parameters/id"
       responses:
         200: { $ref: "#/components/responses/Image" }
 
@@ -83,12 +116,7 @@ paths:
       tags: [User]
       summary: Get a user's profile picture
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            example: 123
+        - $ref: "#/components/parameters/id"
       responses:
         200: { $ref: "#/components/responses/Image" }
 
@@ -97,6 +125,15 @@ components:
     basic:
       type: http
       scheme: basic
+
+  parameters:
+    id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+        example: 123
 
   responses:
     Conflict:

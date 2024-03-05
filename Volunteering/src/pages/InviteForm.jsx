@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid'; // For generating unique IDs
 import { MailIcon } from '@heroicons/react/outline'; // Assuming you have MailIcon from Heroicons
 

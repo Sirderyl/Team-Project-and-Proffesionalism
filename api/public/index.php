@@ -58,6 +58,13 @@ $app->get('/managerSchedule', function (Request $request, Response $response, ar
     return $response->withHeader('Content-Type', 'application/json');
 });
 
+$app->get('/activity/{id}/previewimage', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\ActivityPicture::class, ['database' => $database]);
+    $data = $handler->execute($args['id']);
+    $response->getBody()->write($data);
+    return $response->withHeader('Content-Type', $handler->getContentType());
+});
+
 $app->post('/user/register', function (Request $request, Response $response, array $args) use ($container, $database) {
     $register = $container->make(App\Register::class, ['database' => $database]);
     $body = $register->parseBody($request->getBody()->getContents());

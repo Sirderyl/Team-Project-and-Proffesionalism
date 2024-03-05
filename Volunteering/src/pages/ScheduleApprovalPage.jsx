@@ -1,5 +1,4 @@
-// ScheduleApprovalPage.jsx
-import React from 'react';
+import PropTypes from 'prop-types';
 
 function ScheduleApprovalPage({ taskRequests }) {
 
@@ -49,5 +48,6 @@ function ScheduleApprovalPage({ taskRequests }) {
 }
 
 export default ScheduleApprovalPage;
-
-
+ScheduleApprovalPage.propTypes = {
+    taskRequests: PropTypes.array.isRequired
+};

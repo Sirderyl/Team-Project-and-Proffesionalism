@@ -20,7 +20,7 @@ function App() {
       time_range: ['10:00', '12:00']
     }
   ])
-  const [tasks, setTasks] = useState([
+  const [tasks] = useState([
     {
       id: 0,
       title: "Sample Task",

@@ -1,4 +1,4 @@
-import React from 'react';
+import PropTypes from 'prop-types';
 
 const AssignedTasks = ({ tasks }) => {
     return (
@@ -31,3 +31,7 @@ const AssignedTasks = ({ tasks }) => {
 };
 
 export default AssignedTasks;
+
+AssignedTasks.propTypes = {
+    tasks: PropTypes.array.isRequired
+};

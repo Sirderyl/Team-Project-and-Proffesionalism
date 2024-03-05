@@ -3,12 +3,12 @@ import { DemoContainer } from '@mui/x-date-pickers/internals/demo'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider'
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker'
-import TimeRangePicker from '@wojtekmaj/react-timerange-picker'
+import { TimeRangePicker } from '@wojtekmaj/react-timerange-picker'
 import '@wojtekmaj/react-timerange-picker/dist/TimeRangePicker.css'
 import 'react-clock/dist/Clock.css'
-import profilePicture from '../assets/profile_picture.jpeg'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
+import { apiRoot } from '../settings'
 
 export default function AccountDetails(props) {
 
@@ -34,7 +34,7 @@ export default function AccountDetails(props) {
             <h1 className="text-3xl font-bold mb-3 ml-5">Account Details</h1>
             <div className="flex flex-row">
                 <div className="flex flex-col ml-5">
-                    <img src={profilePicture} className="w-40 h-40 rounded-full" />
+                    <img src={`${apiRoot}/user/${props.userId}/profilepicture`} className="w-40 h-40 rounded-full" />
                 </div>
                 <div className="flex flex-col ml-5">
                     <p className="text-lg mt-6"><strong>Name: </strong>John Doe</p>
@@ -57,7 +57,7 @@ export default function AccountDetails(props) {
                         {scheduleTable}
                     </tbody>
                 </table>
-                
+
                 <Link to='/account-details/add-schedule-record'>
                     <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5">Add Record</button>
                 </Link>
@@ -78,5 +78,6 @@ export default function AccountDetails(props) {
 }
 
 AccountDetails.propTypes = {
-    scheduleRecords: PropTypes.array.isRequired
+    scheduleRecords: PropTypes.array.isRequired,
+    userId: PropTypes.number.isRequired
 }

@@ -16,6 +16,12 @@ class SqliteConnection implements ConnectionInterface
      */
     public function __construct(string $path)
     {
+        // Don't create a database file if it doesn't exist
+        // createdb.ps1 will handle that
+        if (!file_exists($path)) {
+            throw new \InvalidArgumentException("Database file does not exist: $path, please run createdb.ps1 to create it");
+        }
+
         $this->pdo = new \PDO("sqlite:$path");
         $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
     }

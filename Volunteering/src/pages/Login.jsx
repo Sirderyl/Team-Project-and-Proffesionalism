@@ -21,6 +21,7 @@ export default function Login({
 
     async function handleSubmit(e) {
         e.preventDefault()
+        setError('') // Clear any previous errors
 
         try {
             const response = await fetch(`${apiRoot}/user/login`, {
@@ -67,7 +68,7 @@ export default function Login({
                 <Button type='submit'>Log in</Button>
             </form>
 
-            {error && <p>{error}</p>}
+            {error && <p className='text-red-700'>{error}</p>}
 
             <p>New user? <Link to='/signup'>Sign up here</Link></p>
         </main>

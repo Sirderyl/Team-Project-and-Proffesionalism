@@ -14,6 +14,11 @@ function App() {
     localStorage.setItem('token', token)
   }
 
+  function handleLogout() {
+    setToken(null)
+    localStorage.removeItem('token')
+  }
+
   const [scheduleRecords] = useState([
     {
       ID: 0,
@@ -38,7 +43,11 @@ function App() {
 
   return (
     <div className='App'>
-      <NavMenu routes={routes.filter(route => route.navigable !== false)} />
+      <NavMenu
+        routes={routes.filter(route => route.navigable !== false)}
+        isLoggedIn={token !== null}
+        handleLogout={handleLogout}
+      />
 
       <Routes>
         {routes.map((route, index) => (

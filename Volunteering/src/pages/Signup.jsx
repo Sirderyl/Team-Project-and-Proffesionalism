@@ -4,13 +4,15 @@ import PropTypes from 'prop-types'
 import { apiRoot } from '../settings'
 import Button from '../components/Button'
 import FormField from '../components/FormField'
+import useConditionalRedirect from '../hooks/useConditionalRedirect'
 
 /**
  * Signup page
  * @author Kieran
  */
 export default function SignUp({
-    handleLogin
+    handleLogin,
+    isLoggedIn
 }) {
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
@@ -19,6 +21,8 @@ export default function SignUp({
     const [phoneNumber, setPhoneNumber] = useState('')
     // TODO: Use the same error handling as in Login. Probably a component to reuse
     const [error, setError] = useState()
+
+    useConditionalRedirect(isLoggedIn, '/account-details')
 
     async function handleSubmit(e) {
         e.preventDefault()
@@ -101,5 +105,6 @@ export default function SignUp({
     )
 }
 SignUp.propTypes = {
-    handleLogin: PropTypes.func.isRequired
+    handleLogin: PropTypes.func.isRequired,
+    isLoggedIn: PropTypes.bool.isRequired
 }

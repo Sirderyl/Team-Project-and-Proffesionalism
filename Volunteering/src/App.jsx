@@ -1,4 +1,4 @@
-import { Routes, Route, redirect } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import { useState } from 'react'
 import Home from './pages/Home'
 import AccountDetails from './pages/AccountDetails'
@@ -32,14 +32,16 @@ function App() {
     }
   ])
 
+  const isLoggedIn = token !== null
+
   /**
    * Routes for the app. Set navigable: false to hide a route from the NavMenu while keeping it in the app
    * @type {Array<import('react-router-dom').RouteProps & {navigable?: boolean}>}
    */
   const routes = [
     { path: '/', name: 'Home', element: <Home /> },
-    { path: '/login', name: 'Login', element: <Login handleLogin={handleLogin} />, navigable: token === null },
-    { path: '/signup', name: 'Sign up', element: <SignUp handleLogin={handleLogin} />, navigable: token === null },
+    { path: '/login', name: 'Login', element: <Login handleLogin={handleLogin} isLoggedIn />, navigable: !isLoggedIn },
+    { path: '/signup', name: 'Sign up', element: <SignUp handleLogin={handleLogin} isLoggedIn />, navigable: !isLoggedIn },
     { path: '/account-details', name: 'Account Details', element: <AccountDetails scheduleRecords={scheduleRecords} /> },
     { path: '/account-details/add-schedule-record', name: 'Add Schedule Record', element: <AddScheduleRecord scheduleRecords={scheduleRecords} /> },
   ]

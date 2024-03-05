@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 import { apiRoot } from '../settings'
 import Button from '../components/Button'
 import FormField from '../components/FormField'
+import useConditionalRedirect from '../hooks/useConditionalRedirect'
 
 /**
  * Login page
@@ -12,12 +13,15 @@ import FormField from '../components/FormField'
  */
 export default function Login({
     // Function to handle the login and set the token
-    handleLogin
+    handleLogin,
+    isLoggedIn
 }) {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     // TODO: Clear this when changing credentials, or use a pop-up
     const [error, setError] = useState()
+
+    useConditionalRedirect(isLoggedIn, '/account-details')
 
     async function handleSubmit(e) {
         e.preventDefault()
@@ -75,5 +79,6 @@ export default function Login({
     )
 }
 Login.propTypes = {
-    handleLogin: PropTypes.func.isRequired
+    handleLogin: PropTypes.func.isRequired,
+    isLoggedIn: PropTypes.bool.isRequired
 }

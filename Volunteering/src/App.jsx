@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, redirect } from 'react-router-dom'
 import { useState } from 'react'
 import Home from './pages/Home'
 import AccountDetails from './pages/AccountDetails'
@@ -32,7 +32,10 @@ function App() {
     }
   ])
 
-  // Routes for the app. Set navigable: false to hide a route from the NavMenu while keeping it in the app
+  /**
+   * Routes for the app. Set navigable: false to hide a route from the NavMenu while keeping it in the app
+   * @type {Array<import('react-router-dom').RouteProps & {navigable?: boolean}>}
+   */
   const routes = [
     { path: '/', name: 'Home', element: <Home /> },
     { path: '/login', name: 'Login', element: <Login handleLogin={handleLogin} />, navigable: token === null },

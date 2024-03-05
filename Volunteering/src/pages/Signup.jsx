@@ -54,6 +54,7 @@ export default function SignUp({
                     label='Name'
                     value={name}
                     setValue={setName}
+                    type='text'
                     reason='Your full name, as it will appear to others.'
                     required
                 />

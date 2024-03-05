@@ -32,26 +32,7 @@ class UsersDatabase implements UsersDatabaseInterface
             throw new NotFoundException();
         }
 
-        $user = new \App\User();
-        $firstRow = $result[0];
-        $user->userId = $firstRow['id'];
-        $user->userName = $firstRow['name'];
-        $user->email = $firstRow['email'];
-        $user->passwordHash = $firstRow['password_hash'];
-        $user->phoneNumber = $firstRow['phone_number'];
-
-        foreach ($result as $row) {
-            /** @var string|null $day */
-            $day = $row['day_of_week'];
-            if ($day === null) {
-                continue;
-            }
-            $user->setAvailability(\App\DayOfWeek::from($day), new TimeRange(
-                $row['start_hour'],
-                $row['end_hour']
-            ));
-        }
-        return $user;
+        return \App\User::fromRows($result)[0];
     }
 
     public function create(\App\User $user): void

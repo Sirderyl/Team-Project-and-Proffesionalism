@@ -24,6 +24,8 @@ CREATE TABLE user (
     name TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE COLLATE NOCASE,
     password_hash TEXT NOT NULL,
+    -- In E.164 format
+    phone_number TEXT NOT NULL UNIQUE,
     profile_picture BLOB
 );
 

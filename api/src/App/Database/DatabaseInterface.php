@@ -8,6 +8,7 @@ namespace App\Database;
  */
 interface DatabaseInterface
 {
+    public function activities(): ActivityDatabaseInterface;
     public function users(): UsersDatabaseInterface;
 
     /**

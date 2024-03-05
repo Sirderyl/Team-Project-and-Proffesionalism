@@ -1,0 +1,163 @@
+openapi: "3.0.2"
+info:
+  title: Team Project Volunteering API
+  version: "1.0"
+servers:
+  - url: https://w20013000.nuwebspace.co.uk/api/
+    description: Kieran's Development Server
+  # TODO: Everyone who is working should add their server here
+
+tags:
+  - name: Activity
+    description: Operations about volunteering activities
+  - name: User
+    description: Operations about user accounts
+
+paths:
+  /activity/{id}/previewimage:
+    get:
+      tags: [Activity]
+      summary: Get a preview image for an activity
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 123
+      responses:
+        200: { $ref: "#/components/responses/Image" }
+
+  /user/register:
+    post:
+      tags: [User]
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  example: "John Doe"
+                email:
+                  type: string
+                  format: email
+                  example: "john.doe@example.com"
+                password:
+                  type: string
+                  example: "Pa55wOrd!"
+                phone:
+                  type: string
+                  example: "01234567890"
+              required: [name, email, password, phone]
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Token"
+        409: { $ref: "#/components/responses/Conflict" }
+
+  /user/login:
+    post:
+      tags: [User]
+      summary: Log in as an existing user
+      security:
+        - basic: []
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Token"
+        401: { $ref: "#/components/responses/Unauthorized" }
+        403: { $ref: "#/components/responses/Forbidden" }
+
+  /user/{id}/profilepicture:
+    get:
+      tags: [User]
+      summary: Get a user's profile picture
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            example: 123
+      responses:
+        200: { $ref: "#/components/responses/Image" }
+
+components:
+  securitySchemes:
+    basic:
+      type: http
+      scheme: basic
+
+  responses:
+    Conflict:
+      description: The request conflicts with the current state of the server
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    Unauthorized:
+      description: The resource requires authentication
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    Forbidden:
+      description: The given credentials are not allowed to access the resource
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+    Image:
+      description: An image file
+      content:
+        image/jpeg:
+          schema:
+            type: string
+            format: binary
+
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          example: "Something went wrong."
+        # TODO: We may not want to include this in production
+        trace:
+          type: array
+          items: { $ref: "#/components/schemas/TraceItem" }
+      required: [message, trace]
+
+    TraceItem:
+      type: object
+      properties:
+        file:
+          type: string
+          example: "/path/to/file.php"
+        line: { type: integer, example: 123 }
+        function: { type: string, example: "functionName" }
+        class: { type: string, example: "ClassName" }
+        type: { type: string, example: "->" }
+      required: [file, line, function]
+
+    Token:
+      type: object
+      properties:
+        token:
+          type: string
+          description: Base64 encoded JWT token
+          pattern: ^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$
+      required: [token]

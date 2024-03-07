@@ -10,8 +10,8 @@ class Activity {
     /**
      * Factory method to create an Activity object from a database query result
      * @param array{
-     *  id: string,
-     *  organization_id: string,
+     *  id: int,
+     *  organization_id: int,
      *  name: string,
      *  short_description: string,
      *  long_description: string,
@@ -32,8 +32,8 @@ class Activity {
         return $activity;
     }
 
-    public string $id;
-    public string $organizationId;
+    public int $id;
+    public int $organizationId;
 
     public string $name;
     public string $shortDescription;

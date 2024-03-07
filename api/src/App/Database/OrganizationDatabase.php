@@ -12,7 +12,7 @@ class OrganizationDatabase implements OrganizationDatabaseInterface {
         $this->connection = $connection;
     }
 
-    public function get(string $id): \App\Organization {
+    public function get(int $id): \App\Organization {
         $result = $this->connection->query('
             SELECT id, name, admin_id
             FROM organization

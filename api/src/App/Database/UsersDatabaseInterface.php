@@ -24,11 +24,11 @@ interface UsersDatabaseInterface
      * Get a user's profile picture
      * @return string The raw JPEG data, represents a byte array
      */
-    public function getProfilePicture(string $userId): string;
+    public function getProfilePicture(int $userId): string;
 
     /**
      * Set a user's profile picture
      * @param string|null $data The raw JPEG data, represents a byte array
      */
-    public function setProfilePicture(string $userId, string|null $data): void;
+    public function setProfilePicture(int $userId, string|null $data): void;
 }

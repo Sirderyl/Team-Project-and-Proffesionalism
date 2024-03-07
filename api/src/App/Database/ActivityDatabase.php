@@ -12,7 +12,7 @@ class ActivityDatabase implements ActivityDatabaseInterface {
         $this->connection = $connection;
     }
 
-    public function get(string $id): \App\Activity {
+    public function get(int $id): \App\Activity {
         $result = $this->connection->query(
             "SELECT
                 id,
@@ -65,7 +65,7 @@ class ActivityDatabase implements ActivityDatabaseInterface {
         $activity->id = $this->connection->lastInsertId();
     }
 
-    public function setPreviewPicture(string $activityId, string $image): void {
+    public function setPreviewPicture(int $activityId, string $image): void {
         $this->connection->execute(
             "UPDATE activity SET preview_picture = :image WHERE id = :id",
             [
@@ -75,7 +75,7 @@ class ActivityDatabase implements ActivityDatabaseInterface {
         );
     }
 
-    public function getPreviewPicture(string $activityId): string {
+    public function getPreviewPicture(int $activityId): string {
         $result = $this->connection->query(
             "SELECT preview_picture FROM activity WHERE id = :id",
             [':id' => $activityId]

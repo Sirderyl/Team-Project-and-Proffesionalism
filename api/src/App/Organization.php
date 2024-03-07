@@ -8,9 +8,9 @@ namespace App;
 class Organization {
     /**
      * @param array{
-     *  id: string,
+     *  id: int,
      *  name: string,
-     *  admin_id: string
+     *  admin_id: int
      * } $row
      */
     public static function fromRow(array $row): Organization {
@@ -21,7 +21,7 @@ class Organization {
         return $org;
     }
 
-    public string $id;
+    public int $id;
     public string $name;
-    public string $admin_id;
+    public int $admin_id;
 }

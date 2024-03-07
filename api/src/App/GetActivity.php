@@ -24,11 +24,11 @@ class GetActivity
      *   neededVolunteers: int,
      *   organization: array{
      *      name: string,
-     *      id: string
+     *      id: int
      *   },
      * }
      */
-    public function execute(string $id): array
+    public function execute(int $id): array
     {
         $activity = $this->database->activities()->get($id);
         $organization = $this->database->organizations()->get($activity->organizationId);

@@ -20,9 +20,8 @@ class Token
 
     /**
      * Issue a token
-     * @param string $userId
      */
-    public static function issue(string $userId): string
+    public static function issue(int $userId): string
     {
         $payload = [
             "iat" => time(),
@@ -38,9 +37,9 @@ class Token
 
     /**
      * Verify a token and get the user it was issued for
-     * @param string $token
+     * @return int The user ID the token is for
      */
-    public static function verify(string $token): string
+    public static function verify(string $token): int
     {
         $payload = JWT::decode($token, new Key(self::JWT_SECRET, 'HS256'));
 

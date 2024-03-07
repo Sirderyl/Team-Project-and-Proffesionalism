@@ -42,12 +42,12 @@ class SqliteConnection implements ConnectionInterface
         return $stmt->rowCount();
     }
 
-    public function lastInsertId(): string
+    public function lastInsertId(): int
     {
         $id = $this->pdo->lastInsertId();
         if ($id === false) {
             throw new \LogicException('Could not get last insert ID, was anything inserted?');
         }
-        return $id;
+        return intval($id);
     }
 }

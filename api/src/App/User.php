@@ -11,7 +11,7 @@ class User {
      * Construct one or more User objects from a database query result
      * NOTE: Assumes that rows are grouped by user id or all refer to the same user
      * @param array{
-     *   id: string,
+     *   id: int,
      *   name: string,
      *   email: string,
      *   phone_number: string,
@@ -27,7 +27,7 @@ class User {
 
         $current = new User();
         foreach ($rows as $row) {
-            if ($current->userId !== $row['id']) {
+            if (isset($current->userId) && $current->userId !== $row['id']) {
                 $users[] = $current;
                 $current = new User();
             }
@@ -52,7 +52,7 @@ class User {
         return $users;
     }
 
-    public string $userId;
+    public int $userId;
     public string $userName;
 
     /**

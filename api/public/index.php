@@ -60,14 +60,14 @@ $app->get('/managerSchedule', function (Request $request, Response $response, ar
 
 $app->get('/activity/{id}', function (Request $request, Response $response, array $args) use ($container, $database) {
     $handler = $container->make(App\GetActivity::class, ['database' => $database]);
-    $data = $handler->execute($args['id']);
+    $data = $handler->execute(intval($args['id']));
     $response->getBody()->write(json_encode($data));
     return $response->withHeader('Content-Type', 'application/json');
 });
 
 $app->get('/activity/{id}/previewimage', function (Request $request, Response $response, array $args) use ($container, $database) {
     $handler = $container->make(App\ActivityPicture::class, ['database' => $database]);
-    $data = $handler->execute($args['id']);
+    $data = $handler->execute(intval($args['id']));
     $response->getBody()->write($data);
     return $response->withHeader('Content-Type', $handler->getContentType());
 });
@@ -87,7 +87,7 @@ $app->post('/user/login', function (Request $request, Response $response, array 
 });
 $app->get('/user/{id}/profilepicture', function (Request $request, Response $response, array $args) use ($container, $database) {
     $handler = $container->make(App\ProfilePicture::class, ['database' => $database]);
-    $data = $handler->execute($args['id']);
+    $data = $handler->execute(intval($args['id']));
     $response->getBody()->write($data);
     return $response->withHeader('Content-Type', $handler->getContentType());
 });

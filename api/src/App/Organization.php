@@ -11,7 +11,7 @@ class Organization {
      *  id: string,
      *  name: string,
      *  admin_id: string
-     * }
+     * } $row
      */
     public static function fromRow(array $row): Organization {
         $org = new Organization();

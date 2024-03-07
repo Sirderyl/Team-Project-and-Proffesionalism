@@ -13,12 +13,24 @@ class OrganizationDatabase implements OrganizationDatabaseInterface {
     }
 
     public function get(string $id): \App\Organization {
-        $result = $this->connection->execute('
+        $result = $this->connection->query('
             SELECT id, name, admin_id
-            FROM organizations
+            FROM organization
             WHERE id = :id
         ', [':id' => $id]);
 
-        return \App\Organization::fromRow($result);
+        return \App\Organization::fromRow($result[0]);
+    }
+
+    public function create(\App\Organization $organization): void {
+        $this->connection->execute('
+            INSERT INTO organization (name, admin_id)
+            VALUES (:name, :admin_id)
+        ', [
+            ':name' => $organization->name,
+            ':admin_id' => $organization->admin_id
+        ]);
+
+        $organization->id = $this->connection->lastInsertId();
     }
 }

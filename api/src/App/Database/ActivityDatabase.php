@@ -13,7 +13,7 @@ class ActivityDatabase implements ActivityDatabaseInterface {
     }
 
     public function get(string $id): \App\Activity {
-        $row = $this->connection->query(
+        $result = $this->connection->query(
             "SELECT
                 id,
                 organization_id,
@@ -26,14 +26,15 @@ class ActivityDatabase implements ActivityDatabaseInterface {
             FROM activity
             WHERE id = :id",
             [':id' => $id]
-        )[0];
+        );
 
-        return \App\Activity::fromRow($row);
+        return \App\Activity::fromRow($result[0]);
     }
 
     public function create(\App\Activity $activity): void {
         $this->connection->execute(
             "INSERT INTO activity (
+                organization_id,
                 name,
                 short_description,
                 long_description,
@@ -41,6 +42,7 @@ class ActivityDatabase implements ActivityDatabaseInterface {
                 end_time,
                 needed_volunteers
             ) VALUES (
+                :organizationId,
                 :name,
                 :shortDescription,
                 :longDescription,
@@ -49,6 +51,7 @@ class ActivityDatabase implements ActivityDatabaseInterface {
                 :neededVolunteers
             )",
             [
+                ':organizationId' => $activity->organizationId,
                 ':name' => $activity->name,
                 ':shortDescription' => $activity->shortDescription,
                 ':longDescription' => $activity->longDescription,

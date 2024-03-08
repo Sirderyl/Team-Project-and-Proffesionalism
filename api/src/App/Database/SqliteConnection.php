@@ -18,12 +18,27 @@ class SqliteConnection implements ConnectionInterface
     {
         // Don't create a database file if it doesn't exist
         // createdb.ps1 will handle that
-        if (!file_exists($path)) {
+        if (!file_exists($path) && $path !== ':memory:') {
             throw new \InvalidArgumentException("Database file does not exist: $path, please run createdb.ps1 to create it");
         }
 
         $this->pdo = new \PDO("sqlite:$path");
         $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+
+        // Run the schema script if we're working in memory
+        // FIXME: This is a bit of a hack, this should be handled by the test setup
+        if ($path === ':memory:') {
+            $schema = file_get_contents(__DIR__ . '/../../../schema.sql');
+            if ($schema === false) {
+                throw new \RuntimeException('Could not read schema file');
+            }
+            foreach (explode(';', $schema) as $stmt) {
+                $stmt = trim($stmt);
+                if ($stmt !== '') {
+                    $this->pdo->exec($stmt);
+                }
+            }
+        }
     }
 
 

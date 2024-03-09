@@ -7,7 +7,7 @@ namespace App;
 use DateTime;
 
 class User {
-    public string $userId;
+    public int $userId;
     public string $userName;
 
     /**

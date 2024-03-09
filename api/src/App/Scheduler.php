@@ -66,12 +66,14 @@ class Scheduler {
 
         foreach($this->users as $user)
         {
-            if($user->availability[$taskDayOfWeek]["startTime"] !== null)
-            {
-                $userAvailableStart = new \DateTime($user->availability[$taskDayOfWeek]["startTime"]->format('H:i:s'));
-                $userAvailableEnd= new \DateTime($user->availability[$taskDayOfWeek]["endTime"]->format('H:i:s'));
-                $taskStart = new \DateTime($task->startTime->format('H:i:s'));
-                $taskEnd = new \DateTime($task->endTime->format('H:i:s'));
+            if (isset($user->availability[$taskDayOfWeek]) && $user->availability[$taskDayOfWeek] !== null)
+                {
+                    $userAvailableStart = $user->availability[$taskDayOfWeek]->start;
+                    $userAvailableEnd = $user->availability[$taskDayOfWeek]->end;
+
+                    $taskStart = $task->startTime->format('H') + $task->startTime->format('i') / 60;
+                    $taskEnd = $task->endTime->format('H') + $task->endTime->format('i') / 60;
+
                if(($taskStart < $userAvailableEnd) && ($taskEnd > $userAvailableStart))
                  {
                     $schedule[$task->taskName][] =

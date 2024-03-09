@@ -4,7 +4,8 @@ declare(strict_types=1);
 
 namespace App;
 
-class Scheduler {
+class Scheduler
+{
 
     public $userOne;
     public $userTwo;
@@ -13,7 +14,10 @@ class Scheduler {
     public $activityOne;
     public $activityTwo;
     public $activityThree;
+
+    public $activityFour;
     public array $activities = [];
+    public array $activityRatings = [];
 
     public function __construct()
     {
@@ -44,6 +48,7 @@ class Scheduler {
         $this->activityOne = new Task();
         $this->activityTwo = new Task();
         $this->activityThree = new Task();
+        $this->activityFour = new Task();
 
         $this->activityOne->activityId = 1;
         $this->activityOne->activityName = "Serving Food";
@@ -63,7 +68,24 @@ class Scheduler {
         $this->activityThree->startTime = new \DateTime('2024-02-26 12:00:00');
         $this->activityThree->endTime = new \DateTime('2024-02-26 13:00:00');
 
-        $this->activities = [$this->activityOne, $this->activityTwo, $this->activityThree];
+        $this->activityFour->activityId = 4;
+        $this->activityFour->activityName = "Cleaning";
+        $this->activityFour->volunteerSlots = 3;
+        $this->activityFour->startTime = new \DateTime('2024-02-26 12:00:00');
+        $this->activityFour->endTime = new \DateTime('2024-02-26 13:00:00');
+
+        $this->activities = [$this->activityOne, $this->activityTwo, $this->activityThree, $this->activityFour];
+        $this->activityRatings = array(
+            new Rating(1, 1, 5),
+            new Rating(1, 2, 2),
+            new Rating(1, 3, 4),
+            new Rating(2, 1, 2),
+            new Rating(2, 2, 5),
+            new Rating(2, 3, 1),
+            new Rating(3, 1, 1),
+            new Rating(3, 2, 1),
+            new Rating(3, 3, 5)
+        );
     }
 
     public function getManagerSchedule()

@@ -13,4 +13,6 @@ class Task {
     public DateTime $startTime;
     public DateTime $endTime;
 
+    public int $volunteerSlots;
+
 }

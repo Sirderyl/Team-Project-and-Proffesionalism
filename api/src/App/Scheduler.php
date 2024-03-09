@@ -22,13 +22,19 @@ class Scheduler {
         $this->userThree = new User();
 
         $this->userOne->setAvailability(DayOfWeek::Monday, new TimeRange(12.00, 13.00));
+        $this->userOne->setAvailability(DayOfWeek::Tuesday, new TimeRange(12.00, 13.00));
+        $this->userOne->setAvailability(DayOfWeek::Wednesday, new TimeRange(12.00, 13.00));
         $this->userOne->userName = "Andy";
         $this->userOne->userId = 1;
 
+        $this->userTwo->setAvailability(DayOfWeek::Monday, new TimeRange(12.00, 13.00));
         $this->userTwo->setAvailability(DayOfWeek::Tuesday, new TimeRange(12.00, 13.00));
+        $this->userTwo->setAvailability(DayOfWeek::Wednesday, new TimeRange(12.00, 13.00));
         $this->userTwo->userName = "Roy";
         $this->userTwo->userId = 2;
 
+        $this->userThree->setAvailability(DayOfWeek::Monday, new TimeRange(12.00, 13.00));
+        $this->userThree->setAvailability(DayOfWeek::Tuesday, new TimeRange(12.00, 13.00));
         $this->userThree->setAvailability(DayOfWeek::Wednesday, new TimeRange(12.00, 13.00));
         $this->userThree->userName = "Filip";
         $this->userThree->userId = 3;
@@ -41,17 +47,20 @@ class Scheduler {
 
         $this->activityOne->activityId = 1;
         $this->activityOne->activityName = "Serving Food";
-        $this->activityOne->startTime = new \DateTime('2024-02-28 12:30:00');
+        $this->activityOne->volunteerSlots = 2;
+        $this->activityOne->startTime = new \DateTime('2024-02-28 12:00:00');
         $this->activityOne->endTime = new \DateTime('2024-02-28 13:00:00');
 
         $this->activityTwo->activityId = 2;
         $this->activityTwo->activityName = "Walking Dogs";
-        $this->activityTwo->startTime = new \DateTime('2024-02-27 12:30:00');
+        $this->activityTwo->volunteerSlots = 1;
+        $this->activityTwo->startTime = new \DateTime('2024-02-27 12:00:00');
         $this->activityTwo->endTime = new \DateTime('2024-02-27 13:00:00');
 
         $this->activityThree->activityId = 3;
         $this->activityThree->activityName = "Answering Calls";
-        $this->activityThree->startTime = new \DateTime('2024-02-26 12:30:00');
+        $this->activityThree->volunteerSlots = 3;
+        $this->activityThree->startTime = new \DateTime('2024-02-26 12:00:00');
         $this->activityThree->endTime = new \DateTime('2024-02-26 13:00:00');
 
         $this->activities = [$this->activityOne, $this->activityTwo, $this->activityThree];
@@ -63,6 +72,7 @@ class Scheduler {
     foreach ($this->activities as $activity)
     {
         $activityDayOfWeek = $activity->startTime->format('l');
+        $volunteerSlotsFilled = 0;
 
         foreach($this->users as $user)
         {
@@ -74,13 +84,14 @@ class Scheduler {
                     $activityStart = $activity->startTime->format('H') + $activity->startTime->format('i') / 60;
                     $activityEnd = $activity->endTime->format('H') + $activity->endTime->format('i') / 60;
 
-               if(($activityStart < $userAvailableEnd) && ($activityEnd > $userAvailableStart))
+               if(($activityStart < $userAvailableEnd) && ($activityEnd > $userAvailableStart) && ($volunteerSlotsFilled < $activity->volunteerSlots))
                  {
                     $schedule[$activity->activityName][] =
                     ['user' => $user->userName,
                     'startTime' => $activity->startTime->format('Y-m-d H:i:s'),
                     'endTime' => $activity->endTime->format('Y-m-d H:i:s')
                 ];
+                $volunteerSlotsFilled += 1;
                  }
             }
         }

@@ -1,11 +1,11 @@
 # Volunteering Web Application
 
 ## React modules installed and configured
-React Router DOM
-Tailwind CSS
-React Hot Toast
-MUI - mui/material, emotion/react, emotion/styled, mui/x-date-pickers
-dayjs
+React Router DOM  
+Tailwind CSS  
+React Hot Toast  
+MUI - mui/material, emotion/react, emotion/styled, mui/x-date-pickers  
+dayjs  
 @wojtekmaj/react-timerange-picker
 
 ## How to use

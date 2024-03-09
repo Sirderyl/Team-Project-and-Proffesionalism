@@ -11,12 +11,14 @@ class Database implements DatabaseInterface
     private readonly ConnectionInterface $connection;
     private readonly ActivityDatabaseInterface $activities;
     private readonly UsersDatabaseInterface $users;
+    private readonly AvailabilityDatabaseInterface $availability;
 
     public function __construct(ConnectionInterface $connection)
     {
         $this->connection = $connection;
         $this->activities = new ActivityDatabase($connection);
         $this->users = new UsersDatabase($connection);
+        $this->availability = new AvailabilityDatabase($connection);
     }
 
     public function activities(): ActivityDatabaseInterface
@@ -27,6 +29,11 @@ class Database implements DatabaseInterface
     public function users(): UsersDatabaseInterface
     {
         return $this->users;
+    }
+
+    public function availability(): AvailabilityDatabaseInterface
+    {
+        return $this->availability;
     }
 
     public function beginTransaction(): void

@@ -85,6 +85,13 @@ $app->get('/user/{id}/profilepicture', function (Request $request, Response $res
     return $response->withHeader('Content-Type', $handler->getContentType());
 });
 
+$app->get('/user/{id}/availability', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\AvailabilityEndpoint::class, ['database' => $database]);
+    $data = $handler->execute($args['id']);
+    $response->getBody()->write(json_encode($data));
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
 function getErrorCode(Throwable $exception): int
 {
     if ($exception instanceof NotFoundException) {

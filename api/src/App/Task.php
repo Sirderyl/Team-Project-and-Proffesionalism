@@ -8,8 +8,8 @@ use DateTime;
 
 class Task {
     
-    public int $taskId;
-    public string $taskName;
+    public int $activityId;
+    public string $activityName;
     public DateTime $startTime;
     public DateTime $endTime;
 

@@ -10,10 +10,10 @@ class Scheduler {
     public $userTwo;
     public $userThree;
     public array $users = [];
-    public $taskOne;
-    public $taskTwo;
-    public $taskThree;
-    public array $tasks = [];
+    public $activityOne;
+    public $activityTwo;
+    public $activityThree;
+    public array $activities = [];
 
     public function __construct()
     {
@@ -35,51 +35,51 @@ class Scheduler {
 
         $this->users = [$this->userOne, $this->userTwo, $this->userThree];
 
-        $this->taskOne = new Task();
-        $this->taskTwo = new Task();
-        $this->taskThree = new Task();
+        $this->activityOne = new Task();
+        $this->activityTwo = new Task();
+        $this->activityThree = new Task();
 
-        $this->taskOne->taskId = 1;
-        $this->taskOne->taskName = "Serving Food";
-        $this->taskOne->startTime = new \DateTime('2024-02-28 12:30:00');
-        $this->taskOne->endTime = new \DateTime('2024-02-28 13:00:00');
+        $this->activityOne->activityId = 1;
+        $this->activityOne->activityName = "Serving Food";
+        $this->activityOne->startTime = new \DateTime('2024-02-28 12:30:00');
+        $this->activityOne->endTime = new \DateTime('2024-02-28 13:00:00');
 
-        $this->taskTwo->taskId = 2;
-        $this->taskTwo->taskName = "Walking Dogs";
-        $this->taskTwo->startTime = new \DateTime('2024-02-27 12:30:00');
-        $this->taskTwo->endTime = new \DateTime('2024-02-27 13:00:00');
+        $this->activityTwo->activityId = 2;
+        $this->activityTwo->activityName = "Walking Dogs";
+        $this->activityTwo->startTime = new \DateTime('2024-02-27 12:30:00');
+        $this->activityTwo->endTime = new \DateTime('2024-02-27 13:00:00');
 
-        $this->taskThree->taskId = 3;
-        $this->taskThree->taskName = "Answering Calls";
-        $this->taskThree->startTime = new \DateTime('2024-02-26 12:30:00');
-        $this->taskThree->endTime = new \DateTime('2024-02-26 13:00:00');
+        $this->activityThree->activityId = 3;
+        $this->activityThree->activityName = "Answering Calls";
+        $this->activityThree->startTime = new \DateTime('2024-02-26 12:30:00');
+        $this->activityThree->endTime = new \DateTime('2024-02-26 13:00:00');
 
-        $this->tasks = [$this->taskOne, $this->taskTwo, $this->taskThree];
+        $this->activities = [$this->activityOne, $this->activityTwo, $this->activityThree];
     }
 
     public function getManagerSchedule()
 {
     $schedule = [];
-    foreach ($this->tasks as $task)
+    foreach ($this->activities as $activity)
     {
-        $taskDayOfWeek = $task->startTime->format('l');
+        $activityDayOfWeek = $activity->startTime->format('l');
 
         foreach($this->users as $user)
         {
-            if (isset($user->availability[$taskDayOfWeek]) && $user->availability[$taskDayOfWeek] !== null)
+            if (isset($user->availability[$activityDayOfWeek]) && $user->availability[$activityDayOfWeek] !== null)
                 {
-                    $userAvailableStart = $user->availability[$taskDayOfWeek]->start;
-                    $userAvailableEnd = $user->availability[$taskDayOfWeek]->end;
+                    $userAvailableStart = $user->availability[$activityDayOfWeek]->start;
+                    $userAvailableEnd = $user->availability[$activityDayOfWeek]->end;
 
-                    $taskStart = $task->startTime->format('H') + $task->startTime->format('i') / 60;
-                    $taskEnd = $task->endTime->format('H') + $task->endTime->format('i') / 60;
+                    $activityStart = $activity->startTime->format('H') + $activity->startTime->format('i') / 60;
+                    $activityEnd = $activity->endTime->format('H') + $activity->endTime->format('i') / 60;
 
-               if(($taskStart < $userAvailableEnd) && ($taskEnd > $userAvailableStart))
+               if(($activityStart < $userAvailableEnd) && ($activityEnd > $userAvailableStart))
                  {
-                    $schedule[$task->taskName][] =
+                    $schedule[$activity->activityName][] =
                     ['user' => $user->userName,
-                    'startTime' => $task->startTime->format('Y-m-d H:i:s'),
-                    'endTime' => $task->endTime->format('Y-m-d H:i:s')
+                    'startTime' => $activity->startTime->format('Y-m-d H:i:s'),
+                    'endTime' => $activity->endTime->format('Y-m-d H:i:s')
                 ];
                  }
             }

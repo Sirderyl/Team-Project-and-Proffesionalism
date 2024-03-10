@@ -108,11 +108,9 @@ class Scheduler
 
                     if (($activityStart < $userAvailableEnd) && ($activityEnd > $userAvailableStart) && ($volunteerSlotsFilled < $activity->volunteerSlots)) {
 
-                        $schedule[$activity->activityName][] =
+                        $schedule[$activity->activityName][$activity->startTime->format('Y-m-d H:i')][$activity->endTime->format('Y-m-d H:i')][] =
                             [
-                                'user' => $user->userName,
-                                'startTime' => $activity->startTime->format('Y-m-d H:i:s'),
-                                'endTime' => $activity->endTime->format('Y-m-d H:i:s')
+                                'user' => $user->userName
                             ];
                         $volunteerSlotsFilled += 1;
                         $this->scheduledTimeSlots[$user->userName][] = [

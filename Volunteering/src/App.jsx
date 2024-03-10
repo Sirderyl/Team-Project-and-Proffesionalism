@@ -54,7 +54,7 @@ function App() {
     }
   }
 
-  useEffect(fetchAvailability, [])
+  useEffect(fetchAvailability, [userId])
 
   const [tasks] = useState([
     {

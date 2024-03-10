@@ -106,7 +106,17 @@ class Scheduler
                     $activityStart = $activity->startTime->format('H') + $activity->startTime->format('i') / 60;
                     $activityEnd = $activity->endTime->format('H') + $activity->endTime->format('i') / 60;
 
-                    if (($activityStart < $userAvailableEnd) && ($activityEnd > $userAvailableStart) && ($volunteerSlotsFilled < $activity->volunteerSlots)) {
+                    $isUserAvailable = true;
+                    if (isset($this->scheduledTimeSlots[$user->userName])) {
+                        foreach ($this->scheduledTimeSlots[$user->userName] as $timeSlot) {
+                            if (($timeSlot["start"] < $activity->endTime) && ($timeSlot["end"] > $activity->startTime)) {
+                                $isUserAvailable = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    if ($isUserAvailable && ($activityStart < $userAvailableEnd) && ($activityEnd > $userAvailableStart) && ($volunteerSlotsFilled < $activity->volunteerSlots)) {
 
                         $schedule[$activity->activityName][$activity->startTime->format('Y-m-d H:i')][$activity->endTime->format('Y-m-d H:i')][] =
                             [

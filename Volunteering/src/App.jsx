@@ -33,7 +33,6 @@ function App() {
       .then(response => handleResponse(response))
       .then(data => handleJSON(data))
       .catch(err => {
-        setIsError(true)
         console.error(err)
       })
   }

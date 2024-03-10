@@ -18,6 +18,7 @@ class Scheduler
     public $activityFour;
     public array $activities = [];
     public array $activityRatings = [];
+    public array $scheduledTimeSlots = [];
 
     public function __construct()
     {
@@ -88,8 +89,13 @@ class Scheduler
         );
     }
 
+    public function addScheduledTime(\DateTime $start, \DateTime $end)
+    {
+        $this->scheduledTimeSlots[] = array("start" => $start, "end" => $end);
+    }
+
     public function getManagerSchedule()
-{
+    {
     $schedule = [];
     foreach ($this->activities as $activity)
     {
@@ -98,6 +104,7 @@ class Scheduler
 
         foreach($this->users as $user)
         {
+            $this->scheduledTimeSlots = [];
             if (isset($user->availability[$activityDayOfWeek]) && $user->availability[$activityDayOfWeek] !== null)
                 {
                     $userAvailableStart = $user->availability[$activityDayOfWeek]->start;
@@ -114,6 +121,7 @@ class Scheduler
                     'endTime' => $activity->endTime->format('Y-m-d H:i:s')
                 ];
                 $volunteerSlotsFilled += 1;
+                $this->addScheduledTime($activity->startTime, $activity->endTime);
                  }
             }
         }

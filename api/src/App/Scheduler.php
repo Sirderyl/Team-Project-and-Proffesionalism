@@ -19,6 +19,7 @@ class Scheduler
     public array $activities = [];
     public array $activityRatings = [];
     public array $scheduledTimeSlots = [];
+    public bool $overlap;
 
     public function __construct()
     {
@@ -89,43 +90,40 @@ class Scheduler
         );
     }
 
-    public function addScheduledTime(\DateTime $start, \DateTime $end)
-    {
-        $this->scheduledTimeSlots[] = array("start" => $start, "end" => $end);
-    }
-
     public function getManagerSchedule()
     {
-    $schedule = [];
-    foreach ($this->activities as $activity)
-    {
-        $activityDayOfWeek = $activity->startTime->format('l');
-        $volunteerSlotsFilled = 0;
+        $schedule = [];
+        foreach ($this->activities as $activity) {
+            $activityDayOfWeek = $activity->startTime->format('l');
+            $volunteerSlotsFilled = 0;
 
-        foreach($this->users as $user)
-        {
-            $this->scheduledTimeSlots = [];
-            if (isset($user->availability[$activityDayOfWeek]) && $user->availability[$activityDayOfWeek] !== null)
-                {
+            foreach ($this->users as $user) {
+
+                if (isset($user->availability[$activityDayOfWeek]) && $user->availability[$activityDayOfWeek] !== null) {
                     $userAvailableStart = $user->availability[$activityDayOfWeek]->start;
                     $userAvailableEnd = $user->availability[$activityDayOfWeek]->end;
 
                     $activityStart = $activity->startTime->format('H') + $activity->startTime->format('i') / 60;
                     $activityEnd = $activity->endTime->format('H') + $activity->endTime->format('i') / 60;
 
-               if(($activityStart < $userAvailableEnd) && ($activityEnd > $userAvailableStart) && ($volunteerSlotsFilled < $activity->volunteerSlots))
-                 {
-                    $schedule[$activity->activityName][] =
-                    ['user' => $user->userName,
-                    'startTime' => $activity->startTime->format('Y-m-d H:i:s'),
-                    'endTime' => $activity->endTime->format('Y-m-d H:i:s')
-                ];
-                $volunteerSlotsFilled += 1;
-                $this->addScheduledTime($activity->startTime, $activity->endTime);
-                 }
+                    if (($activityStart < $userAvailableEnd) && ($activityEnd > $userAvailableStart) && ($volunteerSlotsFilled < $activity->volunteerSlots)) {
+
+                        $schedule[$activity->activityName][] =
+                            [
+                                'user' => $user->userName,
+                                'startTime' => $activity->startTime->format('Y-m-d H:i:s'),
+                                'endTime' => $activity->endTime->format('Y-m-d H:i:s')
+                            ];
+                        $volunteerSlotsFilled += 1;
+                        $this->scheduledTimeSlots[$user->userName][] = [
+                            "start" => $activity->startTime,
+                            "end" => $activity->endTime
+                        ];
+
+                    }
+                }
             }
         }
+        return $schedule;
     }
-    return  $schedule;
-}
 }

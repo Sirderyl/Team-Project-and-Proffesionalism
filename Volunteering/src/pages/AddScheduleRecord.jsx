@@ -7,6 +7,7 @@ export default function AddScheduleRecord(props) {
     const [date, setDate] = useState('')
     const [timeStart, setTimeStart] = useState('')
     const [timeEnd, setTimeEnd] = useState('')
+    const [selectListValue, setSelectListValue] = useState('')
 
     const handleDateChange = date => {
         setDate(date)
@@ -45,9 +46,17 @@ export default function AddScheduleRecord(props) {
         <div>
             <h1 className="text-3xl font-bold mb-3 ml-5">Add Schedule Record</h1>
             <div className="flex flex-row">
-                <div className="flex flex-col ml-5">
-                    <label htmlFor='dateInput' className="text-lg mt-6">Date</label>
-                    <input id='dateInput' type="date" className="border rounded-md p-2 mt-1" value={date} onChange={e => handleDateChange(e.target.value)} />
+                <div className='flex flex-col ml-5'>
+                    <label htmlFor='daySelect' className="text-lg mt-6">Week Day</label>
+                    <select className='border rounded-md p-2 mt-1' value={selectListValue} onChange={e => setSelectListValue(e.target.value)}>
+                        <option value='Monday'>Monday</option>
+                        <option value='Tuesday'>Tuesday</option>
+                        <option value='Wednesday'>Wednesday</option>
+                        <option value='Thursday'>Thursday</option>
+                        <option value='Friday'>Friday</option>
+                        <option value='Saturday'>Saturday</option>
+                        <option value='Sunday'>Sunday</option>
+                    </select>
                 </div>
                 <div className="flex flex-col ml-5">
                     <label htmlFor='timeStartInput' className="text-lg mt-6">Time Start</label>

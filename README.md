@@ -4,9 +4,8 @@
 React Router DOM  
 Tailwind CSS  
 React Hot Toast  
-MUI - mui/material, emotion/react, emotion/styled, mui/x-date-pickers  
-dayjs  
-@wojtekmaj/react-timerange-picker
+uuid  
+@heroicons/react/outline
 
 ## How to use
 Pull from the main branch

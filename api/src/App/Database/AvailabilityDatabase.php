@@ -14,25 +14,26 @@ class AvailabilityDatabase implements AvailabilityDatabaseInterface {
         $this->connection = $connection;
     }
 
-    public function create(\App\Availability $availability): void {
+    public function add(\App\Availability $availability, string $userId): void {
         $this->connection->execute(
-            "INSERT INTO availability (
-                day,
-                start_time,
-                end_time
+            "INSERT INTO user_availability (
+                user_id,
+                day_of_week,
+                start_hour,
+                end_hour
             ) VALUES (
+                :userId,
                 :day,
                 :startTime,
                 :endTime
             )",
             [
-                ':day' => $availability->day,
+                ':userId' => $userId,
+                ':day' => $availability->day->value,
                 ":startTime" => $availability->time->start,
                 ":endTime" => $availability->time->end
             ]
         );
-
-        $availability->userId = $this->connection->lastInsertId();
     }
 
     public function read(string $userId): array {

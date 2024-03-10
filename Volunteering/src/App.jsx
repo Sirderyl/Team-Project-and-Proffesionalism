@@ -28,7 +28,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(true)
 
   const fetchAvailability = () => {
-    // Change to `${apiRoot}/user/${props.userId}/availability` in production
+    // Change to `${apiRoot}/user/${userId}/availability` in production
     fetch(`https://w20010297.nuwebspace.co.uk/api/user/${userId}/availability`)
       .then(response => handleResponse(response))
       .then(data => handleJSON(data))

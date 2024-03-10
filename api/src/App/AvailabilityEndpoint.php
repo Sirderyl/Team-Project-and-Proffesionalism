@@ -14,7 +14,14 @@ class AvailabilityEndpoint {
         $this->database = $database;
     }
 
-    public function execute(string $userId): array {
+    public function getAvailability(string $userId): array {
         return $this->database->availability()->read($userId);
+    }
+
+    public function addAvailability(string $userId, array $data): void {
+        $availability = new Availability();
+        $availability->day = DayOfWeek::from($data['day']);
+        $availability->time = new TimeRange($data['start'], $data['end']);
+        $this->database->availability()->add($availability, $userId);
     }
 }

@@ -87,9 +87,15 @@ $app->get('/user/{id}/profilepicture', function (Request $request, Response $res
 
 $app->get('/user/{id}/availability', function (Request $request, Response $response, array $args) use ($container, $database) {
     $handler = $container->make(App\AvailabilityEndpoint::class, ['database' => $database]);
-    $data = $handler->execute($args['id']);
+    $data = $handler->getAvailability($args['id']);
     $response->getBody()->write(json_encode($data));
     return $response->withHeader('Content-Type', 'application/json');
+});
+
+$app->post('/user/{id}/availability', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\AvailabilityEndpoint::class, ['database' => $database]);
+    $handler->addAvailability($args['id'], $request->getParsedBody());
+    return $response->withStatus(201);
 });
 
 function getErrorCode(Throwable $exception): int

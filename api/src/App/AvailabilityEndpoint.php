@@ -24,4 +24,8 @@ class AvailabilityEndpoint {
         $availability->time = new TimeRange($data['start'], $data['end']);
         $this->database->availability()->add($availability, $userId);
     }
+
+    public function deleteAvailability(string $userId, string $day): void {
+        $this->database->availability()->delete($userId, $day);
+    }
 }

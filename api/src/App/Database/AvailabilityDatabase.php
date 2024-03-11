@@ -66,10 +66,13 @@ class AvailabilityDatabase implements AvailabilityDatabaseInterface {
         );
     }
 
-    public function delete(string $userId): void {
+    public function delete(string $userId, string $day): void {
         $this->connection->execute(
-            "DELETE FROM availability WHERE user_id = :user_id",
-            [':user_id' => $userId]
+            "DELETE FROM user_availability WHERE user_id = :user_id AND day_of_week = :day",
+            [
+                ':user_id' => $userId,
+                ':day' => $day
+            ]
         );
     }
 }

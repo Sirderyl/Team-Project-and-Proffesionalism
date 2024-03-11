@@ -1,49 +1,78 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import toast, { Toaster } from 'react-hot-toast'
 import PropTypes from 'prop-types'
 
-export default function AddScheduleRecord(props) {
+export default function AddScheduleRecord({ userId, availability, setAvailability }) {
 
     const [date, setDate] = useState('')
+    // *** For the time inputs, use the following state variables:
     const [timeStart, setTimeStart] = useState('')
     const [timeEnd, setTimeEnd] = useState('')
-    const [selectListValue, setSelectListValue] = useState('')
+    // ***
 
-    const handleDateChange = date => {
-        setDate(date)
-        console.log(date)
-    }
+    // *** For time insertion into the database, use the following state variables:
+    const [timeStartDB, setTimeStartDB] = useState('')
+    const [timeEndDB, setTimeEndDB] = useState('')
+    // ***
+
+    const [selectListValue, setSelectListValue] = useState('Monday')
 
     const handleTimeStartChange = time => {
+        let timeArray = time.split(':')
+        let hours = parseInt(timeArray[0])
+        let minutes = parseInt(timeArray[1])
+        let timeInMinutes = hours * 60 + minutes
         setTimeStart(time)
-        console.log(time)
+        setTimeStartDB(hours)
+        console.log(timeInMinutes)
     }
 
     const handleTimeEndChange = time => {
+        let timeArray = time.split(':')
+        let hours = parseInt(timeArray[0])
+        let minutes = parseInt(timeArray[1])
+        let timeInMinutes = hours * 60 + minutes
         setTimeEnd(time)
-        console.log(time)
+        setTimeEndDB(hours)
+        console.log(timeInMinutes)
     }
 
     const handleAddRecord = () => {
+        /*
         props.scheduleRecords.push({
             ID: props.scheduleRecords.length,
             date: new Date(date),
             time_range: [timeStart, timeEnd]
         })
-
-        /*
-        let newRecord = {
-            ID: props.scheduleRecords.length,
-            date: new Date(date),
-            time_range: [timeStart, timeEnd]
-        }
-        let newScheduleRecords = [...props.scheduleRecords, newRecord]
-        props.setScheduleRecords(newScheduleRecords)
         */
+
+        let formData = new FormData()
+        formData.append('userId', userId)
+        formData.append('day', selectListValue)
+        formData.append('start', timeStartDB)
+        formData.append('end', timeEndDB)
+
+        fetch(`https://w20010297.nuwebspace.co.uk/api/user/${userId}/availability`,
+            {
+                method: 'POST',
+                body: formData
+            }
+        )
+        .then(response => {
+            if(!(response.status === 200 || response.status === 201 || response.status === 204)) {
+                toast.error('Error adding record')
+                throw new Error('Error adding record: ' + response.status)
+            } else {
+                toast.success('Record added successfully')
+            }
+        })
+        .catch(err => console.error(err))
     }
 
     return (
         <div>
+            <Toaster />
             <h1 className="text-3xl font-bold mb-3 ml-5">Add Schedule Record</h1>
             <div className="flex flex-row">
                 <div className='flex flex-col ml-5'>
@@ -78,5 +107,14 @@ export default function AddScheduleRecord(props) {
 }
 
 AddScheduleRecord.propTypes = {
-    scheduleRecords: PropTypes.array.isRequired
+    userId: PropTypes.number.isRequired,
+    availability: PropTypes.arrayOf(PropTypes.shape({
+        userId: PropTypes.string.isRequired,
+        day: PropTypes.string.isRequired,
+        time: PropTypes.shape({
+            start: PropTypes.number.isRequired,
+            end: PropTypes.number.isRequired
+        })
+    })),
+    setAvailability: PropTypes.func.isRequired
 }

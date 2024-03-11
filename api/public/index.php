@@ -98,6 +98,12 @@ $app->post('/user/{id}/availability', function (Request $request, Response $resp
     return $response->withStatus(201);
 });
 
+$app->delete('/user/{id}/availability/{day}', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\AvailabilityEndpoint::class, ['database' => $database]);
+    $handler->deleteAvailability($args['id'], $args['day']);
+    return $response->withStatus(200);
+});
+
 function getErrorCode(Throwable $exception): int
 {
     if ($exception instanceof NotFoundException) {

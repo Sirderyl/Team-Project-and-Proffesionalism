@@ -27,6 +27,8 @@ function App() {
   const [availability, setAvailability] = useState([])
   const [isLoading, setIsLoading] = useState(true)
 
+  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
   const fetchAvailability = () => {
     // Change to `${apiRoot}/user/${userId}/availability` in production
     fetch(`https://w20010297.nuwebspace.co.uk/api/user/${userId}/availability`)
@@ -47,6 +49,7 @@ function App() {
 
   const handleJSON = json => {
     if (json.constructor === Array) {
+      json.sort((a, b) => daysOfWeek.indexOf(a.day) - daysOfWeek.indexOf(b.day))
       setAvailability(json)
       setIsLoading(false)
     } else {
@@ -98,8 +101,8 @@ function App() {
     { path: '/', name: 'Home', element: <Home /> },
     { path: '/login', name: 'Login', element: <Login handleLogin={handleLogin} isLoggedIn={isLoggedIn} />, navigable: !isLoggedIn },
     { path: '/signup', name: 'Sign up', element: <SignUp handleLogin={handleLogin} isLoggedIn={isLoggedIn} />, navigable: !isLoggedIn },
-    { path: '/account-details', name: 'Account Details', element: <AccountDetails userId={userId} availability={availability} isLoading={isLoading} /> },
-    { path: '/account-details/add-schedule-record', name: 'Add Schedule Record', element: <AddScheduleRecord userId={userId} availability={availability} setAvailability={setAvailability} /> },
+    { path: '/account-details', name: 'Account Details', element: <AccountDetails userId={userId} availability={availability} setAvailability={setAvailability} isLoading={isLoading} /> },
+    { path: '/account-details/add-schedule-record', name: 'Add Schedule Record', element: <AddScheduleRecord userId={userId} availability={availability} /> },
   ]
   return (
     <div className='App'>
@@ -111,8 +114,8 @@ function App() {
 
       <Routes>
         <Route path='/' element={<Home />} />
-        <Route path='/account-details' element={<AccountDetails userId={userId} availability={availability} isLoading={isLoading} />} />
-        <Route path='/account-details/add-schedule-record' element={<AddScheduleRecord userId={userId} availability={availability} setAvailability={setAvailability} />} />
+        <Route path='/account-details' element={<AccountDetails userId={userId} availability={availability} setAvailability={setAvailability} isLoading={isLoading} />} />
+        <Route path='/account-details/add-schedule-record' element={<AddScheduleRecord userId={userId} availability={availability} />} />
         <Route path='/feedback' element={<Feedback />} />
         <Route path='/InviteForm' element={<InviteForm />} />
         <Route path='/AssignedTasks' element={<AssignedTasks tasks={tasks} />} />

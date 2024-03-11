@@ -1,20 +1,43 @@
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { apiRoot } from '../settings'
+import toast, { Toaster } from 'react-hot-toast'
 
-export default function AccountDetails({ userId, availability, isLoading }) {
+export default function AccountDetails({ userId, availability, setAvailability, isLoading }) {
+
+
+    const handleDeleteRecord = day => {
+        fetch(`https://w20010297.nuwebspace.co.uk/api/user/${userId}/availability/${day}`,
+            {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if ((response.status === 200 || response.status === 204)) {
+                    setAvailability(availability.filter(item => item.day !== day))
+                    toast.success('Record deleted successfully')
+                } else {
+                    toast.error('Error deleting record')
+                    throw new Error('Error deleting record: ' + response.status)
+                }
+            })
+            .catch(err => console.error(err))
+    }
 
     let scheduleTable = availability.map(item => {
         return (
             <tr key={item.userId + item.day}>
                 <td className='border px-4 py-2'>{item.day}</td>
                 <td className='border px-4 py-2'>{item.time.start} - {item.time.end}</td>
+                <td className='border px-4 py-2'>
+                    <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={() => handleDeleteRecord(item.day)}>Delete</button>
+                </td>
             </tr>
         )
     })
 
     return (
         <div>
+            <Toaster />
             <h1 className="text-3xl font-bold mb-3 ml-5">Account Details</h1>
             <div className="flex flex-row">
                 <div className="flex flex-col ml-5">
@@ -61,5 +84,6 @@ AccountDetails.propTypes = {
             end: PropTypes.number.isRequired
         })
     })),
+    setAvailability: PropTypes.func.isRequired,
     isLoading: PropTypes.bool.isRequired
 }

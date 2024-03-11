@@ -31,7 +31,8 @@ $app->add(function (Request $request, RequestHandler $handler) {
     $response = $handler->handle($request);
     return $response
         ->withHeader('Access-Control-Allow-Origin', '*')
-        ->withHeader('Access-Control-Allow-Headers', 'Authorization');
+        ->withHeader('Access-Control-Allow-Headers', 'Authorization')
+        ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
 });
 
 
@@ -127,6 +128,7 @@ $errorMiddleware->setDefaultErrorHandler(function (Request $request, Throwable $
         ->withStatus(getErrorCode($exception))
         // Need to duplicate this line because the CORS middleware is not called for errors
         ->withHeader('Access-Control-Allow-Origin', '*')
+        ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
         ->withHeader('Content-Type', 'application/json');
 });
 

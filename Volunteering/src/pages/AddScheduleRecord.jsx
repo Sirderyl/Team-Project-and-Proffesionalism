@@ -3,9 +3,8 @@ import { Link } from 'react-router-dom'
 import toast, { Toaster } from 'react-hot-toast'
 import PropTypes from 'prop-types'
 
-export default function AddScheduleRecord({ userId, availability, setAvailability }) {
+export default function AddScheduleRecord({ userId, availability }) {
 
-    const [date, setDate] = useState('')
     // *** For the time inputs, use the following state variables:
     const [timeStart, setTimeStart] = useState('')
     const [timeEnd, setTimeEnd] = useState('')
@@ -57,17 +56,24 @@ export default function AddScheduleRecord({ userId, availability, setAvailabilit
             {
                 method: 'POST',
                 body: formData
-            }
-        )
-        .then(response => {
-            if(!(response.status === 200 || response.status === 201 || response.status === 204)) {
-                toast.error('Error adding record')
-                throw new Error('Error adding record: ' + response.status)
-            } else {
-                toast.success('Record added successfully')
-            }
-        })
-        .catch(err => console.error(err))
+            })
+            .then(response => {
+                if (!(response.status === 200 || response.status === 201 || response.status === 204)) {
+                    toast.error('Error adding record')
+                    throw new Error('Error adding record: ' + response.status)
+                } else {
+                    availability.push({
+                        userId: userId,
+                        day: selectListValue,
+                        time: {
+                            start: timeStartDB,
+                            end: timeEndDB
+                        }
+                    })
+                    toast.success('Record added successfully')
+                }
+            })
+            .catch(err => console.error(err))
     }
 
     return (
@@ -115,6 +121,5 @@ AddScheduleRecord.propTypes = {
             start: PropTypes.number.isRequired,
             end: PropTypes.number.isRequired
         })
-    })),
-    setAvailability: PropTypes.func.isRequired
+    }))
 }

@@ -51,7 +51,7 @@ CREATE TABLE user_organization (
     status TEXT NOT NULL,
 
     PRIMARY KEY (user_id, organization_id),
-    CHECK (status IN ('Invited', 'Applied', 'Member', 'Manager'))
+    CHECK (status IN ('Invited', 'Applied', 'Member'))
 );
 
 CREATE TABLE user_activity (

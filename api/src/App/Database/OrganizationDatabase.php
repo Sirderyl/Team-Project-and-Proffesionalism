@@ -33,4 +33,19 @@ class OrganizationDatabase implements OrganizationDatabaseInterface {
 
         $organization->id = $this->connection->lastInsertId();
     }
+
+    public function setUserStatus(int $organizationId, int $userId, \App\UserOrganizationStatus $status): void {
+        // No affiliation is represented as the lack of a row
+        if ($status == \App\UserOrganizationStatus::None) {
+            $this->connection->execute(
+                'DELETE FROM user_organization WHERE user_id = :userId AND organization_id = :organizationId',
+                ['userId' => $userId, 'organizationId' => $organizationId]
+            );
+        } else {
+            $this->connection->execute(
+                'INSERT OR REPLACE INTO user_organization (user_id, organization_id, status) VALUES (:userId, :organizationId, :status)',
+                ['userId' => $userId, 'organizationId' => $organizationId, 'status' => $status->value]
+            );
+        }
+    }
 }

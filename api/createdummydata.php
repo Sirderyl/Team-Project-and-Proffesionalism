@@ -74,6 +74,7 @@ if ($dummyActivityImg === false) {
 
 for ($i = 0; $i < NUM_ORGANIZATIONS; $i++) {
     $organization = App\Debug\DebugOrganization::createDummyOrganization($faker, $users[rand(0, NUM_USERS - 1)]->userId);
+    $database->organizations()->create($organization);
 
     // Make sure we have a wide range of activity counts, including 0
     $numActivities = min($i, 10);
@@ -82,6 +83,13 @@ for ($i = 0; $i < NUM_ORGANIZATIONS; $i++) {
 
         $database->activities()->create($activity);
         $database->activities()->setPreviewPicture($activity->id, $dummyActivityImg);
+    }
+
+    // Add some users
+    $numUsers = min($i, 10);
+    for ($user = 0; $user < $numUsers; $user++) {
+        $selected = $users[rand(0, NUM_USERS - 1)]->userId;
+        $database->organizations()->setUserStatus($organization->id, $selected, App\UserOrganizationStatus::Member);
     }
 }
 

@@ -31,7 +31,8 @@ $app->add(function (Request $request, RequestHandler $handler) {
     $response = $handler->handle($request);
     return $response
         ->withHeader('Access-Control-Allow-Origin', '*')
-        ->withHeader('Access-Control-Allow-Headers', 'Authorization');
+        ->withHeader('Access-Control-Allow-Headers', 'Authorization')
+        ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
 });
 
 
@@ -96,6 +97,25 @@ $app->get('/user/{id}/profilepicture', function (Request $request, Response $res
     return $response->withHeader('Content-Type', $handler->getContentType());
 });
 
+$app->get('/user/{id}/availability', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\AvailabilityEndpoint::class, ['database' => $database]);
+    $data = $handler->getAvailability($args['id']);
+    $response->getBody()->write(json_encode($data));
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
+$app->post('/user/{id}/availability', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\AvailabilityEndpoint::class, ['database' => $database]);
+    $handler->addAvailability($args['id'], $request->getParsedBody());
+    return $response->withStatus(201);
+});
+
+$app->delete('/user/{id}/availability/{day}', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\AvailabilityEndpoint::class, ['database' => $database]);
+    $handler->deleteAvailability($args['id'], $args['day']);
+    return $response->withStatus(200);
+});
+
 function getErrorCode(Throwable $exception): int
 {
     if ($exception instanceof NotFoundException) {
@@ -119,6 +139,7 @@ $errorMiddleware->setDefaultErrorHandler(function (Request $request, Throwable $
         ->withStatus(getErrorCode($exception))
         // Need to duplicate this line because the CORS middleware is not called for errors
         ->withHeader('Access-Control-Allow-Origin', '*')
+        ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
         ->withHeader('Content-Type', 'application/json');
 });
 

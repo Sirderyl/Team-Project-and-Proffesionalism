@@ -5,6 +5,8 @@ info:
 servers:
   - url: https://w20013000.nuwebspace.co.uk/api/
     description: Kieran's Development Server
+  - url: https://w20010297.nuwebspace.co.uk/api/
+    description: Filip's Development Server
   # TODO: Everyone who is working should add their server here
 
 tags:

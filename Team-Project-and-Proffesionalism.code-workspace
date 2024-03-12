@@ -5,7 +5,8 @@
 		}
 	],
 	"settings": {
-		"phpstan.configFile": "api/phpstan.neon",
+		"phpstan.configFile": "phpstan.neon",
+		"phpstan.rootDir": "api",
 	},
 	"extensions": {
 		"recommendations": [

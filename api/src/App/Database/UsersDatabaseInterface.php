@@ -31,4 +31,10 @@ interface UsersDatabaseInterface
      * @param string|null $data The raw JPEG data, represents a byte array
      */
     public function setProfilePicture(int $userId, string|null $data): void;
+
+    /**
+     * Get the organizations the user has been invited to
+     * @return array<\App\Organization>
+     */
+    public function getInvites(int $userId): array;
 }

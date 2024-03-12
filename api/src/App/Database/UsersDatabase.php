@@ -93,4 +93,16 @@ class UsersDatabase implements UsersDatabaseInterface
             ['data' => $data, 'id' => $userId]
         );
     }
+
+    public function getInvites(int $userId): array
+    {
+        $result = $this->connection->query("
+            SELECT organization.id, organization.name, organization.admin_id
+            FROM user_organization
+            JOIN organization ON user_organization.organization_id = organization.id
+            WHERE user_organization.user_id = :userId AND user_organization.status = 'Invited'
+        ", ['userId' => $userId]);
+
+        return array_map(fn ($row) => \App\Organization::fromRow($row), $result);
+    }
 }

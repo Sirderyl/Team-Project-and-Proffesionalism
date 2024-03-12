@@ -112,7 +112,7 @@ $app->post('/user/{id}/availability', function (Request $request, Response $resp
 
 $app->delete('/user/{id}/availability/{day}', function (Request $request, Response $response, array $args) use ($container, $database) {
     $handler = $container->make(App\AvailabilityEndpoint::class, ['database' => $database]);
-    $handler->deleteAvailability($args['id'], $args['day']);
+    $handler->deleteAvailability($args['id'], App\DayOfWeek::from($args['day']));
     return $response->withStatus(200);
 });
 

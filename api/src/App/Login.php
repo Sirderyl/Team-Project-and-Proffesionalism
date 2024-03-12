@@ -28,12 +28,9 @@ class Login
      *   'token': string
      * }
      */
-    public function execute(): array
+    public function execute(?string $email, ?string $password): array
     {
-        $email = $_SERVER['PHP_AUTH_USER'] ?? null;
-        $pass = $_SERVER['PHP_AUTH_PW'] ?? null;
-
-        if ($email === null || $pass === null) {
+        if ($email === null || $password === null) {
             throw new \InvalidArgumentException('Missing username or password');
         }
 
@@ -44,7 +41,7 @@ class Login
             $this->throwInvalidCredentials();
         }
 
-        if (!password_verify($pass, $user->passwordHash)) {
+        if (!password_verify($password, $user->passwordHash)) {
             $this->throwInvalidCredentials();
         }
 

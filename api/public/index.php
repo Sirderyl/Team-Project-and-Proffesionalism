@@ -82,7 +82,11 @@ $app->post('/user/register', function (Request $request, Response $response, arr
 $app->post('/user/login', function (Request $request, Response $response, array $args) use ($container, $database) {
     $login = $container->make(App\Login::class, ['database' => $database]);
 
-    $response->getBody()->write(json_encode($login->execute()));
+
+    $email = $_SERVER['PHP_AUTH_USER'] ?? null;
+    $password = $_SERVER['PHP_AUTH_PW'] ?? null;
+
+    $response->getBody()->write(json_encode($login->execute($email, $password)));
     return $response->withHeader('Content-Type', 'application/json');
 });
 $app->get('/user/{id}/profilepicture', function (Request $request, Response $response, array $args) use ($container, $database) {

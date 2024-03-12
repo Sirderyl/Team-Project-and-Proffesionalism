@@ -46,6 +46,7 @@
 					"-w", "/app",
 					"php-xdebug",
 					"./api/vendor/bin/phpunit", "api/tests",
+					"--bootstrap", "api/tests/bootstrap.php",
 					"--coverage-html", "/coverage",
 					"--coverage-filter", "api/src",
 				],

@@ -24,8 +24,7 @@ class Token
             "nbf" => time(),
             // TODO: Settings class
             "exp" => time() + 3600,
-            // HTTP_HOST is unset during testing
-            "iss" => $_SERVER['HTTP_HOST'] ?? 'unknown',
+            "iss" => $_SERVER['HTTP_HOST'],
             "sub" => $userId,
         ];
 

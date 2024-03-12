@@ -4,6 +4,11 @@ use PHPUnit\Framework\TestCase;
 use App\Token;
 
 class TokenTest extends TestCase {
+    protected function setUp(): void {
+        // Needed during token issue
+        $_SERVER['HTTP_HOST'] = 'example.com';
+    }
+
     public function testIssueIsValid(): void {
         $token = Token::issue(1);
         $this->assertEquals(Token::verify($token), 1);

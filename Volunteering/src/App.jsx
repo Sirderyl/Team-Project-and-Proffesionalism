@@ -1,5 +1,5 @@
 import { Routes, Route } from 'react-router-dom'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Home from './pages/Home'
 import AccountDetails from './pages/AccountDetails'
 import AddScheduleRecord from './pages/AddScheduleRecord'
@@ -12,6 +12,7 @@ import SignUp from './pages/SignUp'
 import NavMenu from './components/NavMenu'
 
 function App() {
+  const [userId] = useState(1)
   const [token, setToken] = useState(localStorage.getItem('token'))
   function handleLogin(token) {
     setToken(token)
@@ -23,18 +24,41 @@ function App() {
     localStorage.removeItem('token')
   }
 
-  const [scheduleRecords] = useState([
-    {
-      ID: 0,
-      date: new Date('2024-02-26'),
-      time_range: ['13:00', '15:00']
-    },
-    {
-      ID: 1,
-      date: new Date('2024-02-27'),
-      time_range: ['10:00', '12:00']
+  const [availability, setAvailability] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+  const fetchAvailability = () => {
+    // Change to `${apiRoot}/user/${userId}/availability` in production
+    fetch(`https://w20010297.nuwebspace.co.uk/api/user/${userId}/availability`)
+      .then(response => handleResponse(response))
+      .then(data => handleJSON(data))
+      .catch(err => {
+        console.error(err)
+      })
+  }
+
+  const handleResponse = response => {
+    if (response.ok) {
+      return response.json()
+    } else {
+      throw new Error('Error fetching availability: ' + response.status)
     }
-  ])
+  }
+
+  const handleJSON = json => {
+    if (json.constructor === Array) {
+      json.sort((a, b) => daysOfWeek.indexOf(a.day) - daysOfWeek.indexOf(b.day))
+      setAvailability(json)
+      setIsLoading(false)
+    } else {
+      throw new Error('Invalid JSON: ' + json);
+    }
+  }
+
+  useEffect(fetchAvailability, [userId])
+
   const [tasks] = useState([
     {
       id: 0,
@@ -77,8 +101,8 @@ function App() {
     { path: '/', name: 'Home', element: <Home /> },
     { path: '/login', name: 'Login', element: <Login handleLogin={handleLogin} isLoggedIn={isLoggedIn} />, navigable: !isLoggedIn },
     { path: '/signup', name: 'Sign up', element: <SignUp handleLogin={handleLogin} isLoggedIn={isLoggedIn} />, navigable: !isLoggedIn },
-    { path: '/account-details', name: 'Account Details', element: <AccountDetails scheduleRecords={scheduleRecords} userId={1} /> },
-    { path: '/account-details/add-schedule-record', name: 'Add Schedule Record', element: <AddScheduleRecord scheduleRecords={scheduleRecords} /> },
+    { path: '/account-details', name: 'Account Details', element: <AccountDetails userId={userId} availability={availability} setAvailability={setAvailability} isLoading={isLoading} /> },
+    { path: '/account-details/add-schedule-record', name: 'Add Schedule Record', element: <AddScheduleRecord userId={userId} availability={availability} /> },
   ]
   return (
     <div className='App'>
@@ -90,16 +114,16 @@ function App() {
 
       <Routes>
         <Route path='/' element={<Home />} />
-        <Route path='/account-details' element={<AccountDetails scheduleRecords={scheduleRecords} />} />
-        <Route path='/account-details/add-schedule-record' element={<AddScheduleRecord scheduleRecords={scheduleRecords} />} />
+        <Route path='/account-details' element={<AccountDetails userId={userId} availability={availability} setAvailability={setAvailability} isLoading={isLoading} />} />
+        <Route path='/account-details/add-schedule-record' element={<AddScheduleRecord userId={userId} availability={availability} />} />
         <Route path='/feedback' element={<Feedback />} />
-        <Route path='/InviteForm' element={<InviteForm />} /> 
+        <Route path='/InviteForm' element={<InviteForm />} />
         <Route path='/AssignedTasks' element={<AssignedTasks tasks={tasks} />} />
         <Route path='/scheduleApproval' element={<ScheduleApprovalPage taskRequests={taskRequests} />} />
         {routes.map((route, index) => (
           <Route key={index} path={route.path} element={route.element} />
         ))}
-       </Routes>
+      </Routes>
     </div>
   )
 }

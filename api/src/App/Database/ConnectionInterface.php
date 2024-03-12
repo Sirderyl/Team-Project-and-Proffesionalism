@@ -33,5 +33,5 @@ interface ConnectionInterface
      *
      * @throws \LogicException If there is no last ID
      */
-    public function lastInsertId(): string;
+    public function lastInsertId(): int;
 }

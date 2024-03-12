@@ -24,11 +24,30 @@ interface UsersDatabaseInterface
      * Get a user's profile picture
      * @return string The raw JPEG data, represents a byte array
      */
-    public function getProfilePicture(string $userId): string;
+    public function getProfilePicture(int $userId): string;
 
     /**
      * Set a user's profile picture
      * @param string|null $data The raw JPEG data, represents a byte array
      */
-    public function setProfilePicture(string $userId, string|null $data): void;
+    public function setProfilePicture(int $userId, string|null $data): void;
+
+    /**
+     * Get the organizations the user has been invited to
+     * @return array<\App\Organization>
+     */
+    public function getInvites(int $userId): array;
+
+    /**
+     * Get activities the user is assigned to do
+     * @return array<array{
+     *   activity: array{
+     *     name: string,
+     *     id: int,
+     *     shortDescription: string
+     *   },
+     *   start: \DateTime,
+     * }>
+     */
+    public function getAssignedActivities(int $userId): array;
 }

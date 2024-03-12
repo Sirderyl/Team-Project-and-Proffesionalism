@@ -9,6 +9,8 @@ CREATE TABLE organization (
 
 CREATE TABLE activity (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    organization_id INTEGER NOT NULL REFERENCES organization(id),
+
     name TEXT NOT NULL,
     short_description TEXT NOT NULL,
     long_description TEXT NOT NULL,
@@ -49,13 +51,13 @@ CREATE TABLE user_organization (
     status TEXT NOT NULL,
 
     PRIMARY KEY (user_id, organization_id),
-    CHECK (status IN ('Invited', 'Applied', 'Member', 'Manager'))
+    CHECK (status IN ('Invited', 'Applied', 'Member'))
 );
 
 CREATE TABLE user_activity (
     user_id INTEGER NOT NULL REFERENCES user(id),
     activity_id INTEGER NOT NULL REFERENCES activity(id),
+    start_time DATETIME NOT NULL, -- ISO 8601 format
     rating INTEGER,
-    -- TODO: Once recurring events are supported, we need to add a date field and add it to the primary key
-    PRIMARY KEY (user_id, activity_id)
+    PRIMARY KEY (user_id, activity_id, start_time)
 );

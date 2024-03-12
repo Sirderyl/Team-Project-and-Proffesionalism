@@ -9,7 +9,7 @@
 require_once './vendor/autoload.php';
 
 const NUM_USERS = 50;
-const NUM_ACTIVITIES = 20;
+const NUM_ORGANIZATIONS = 20;
 
 $connection = new App\Database\SqliteConnection("database.db");
 $database = new App\Database\Database($connection);
@@ -17,25 +17,6 @@ $database = new App\Database\Database($connection);
 $faker = Faker\Factory::create('en_GB');
 
 $database->beginTransaction();
-
-$dummyActivityImg = file_get_contents('https://picsum.photos/200/200');
-if ($dummyActivityImg === false) {
-    throw new Exception('Failed to get dummy activity pictures');
-}
-
-for ($i = 0; $i < NUM_ACTIVITIES; $i++) {
-    $activity = new App\Activity();
-    $activity->name = $faker->unique()->realText(20);
-    $activity->shortDescription = $faker->realText(100);
-    $activity->longDescription = $faker->realText(400);
-    $activity->neededVolunteers = rand(1, 5);
-    $start = $faker->numberBetween(9, 14);
-    $end = $faker->numberBetween($start + 1, 17);
-    $activity->time = new App\TimeRange($start, $end);
-
-    $database->activities()->create($activity);
-    $database->activities()->setPreviewPicture($activity->id, $dummyActivityImg);
-}
 
 function getProfilePicture(): string {
     // All these checks for false, if only PHP had a way to handle exceptional cases
@@ -74,28 +55,42 @@ function getProfilePicture(): string {
 
 $profilePicture = getProfilePicture();
 
+$users = [];
 
 for ($i = 0; $i < NUM_USERS; $i++) {
-    $user = new App\User();
-    // Normally a username would never include the password, but this is just dummy data
-    // and we want to be able to log in as a dummy user
-    $password = $faker->password();
-    $user->userName = $faker->unique()->name() . ' password: ' . $password;
-    $user->phoneNumber = $faker->unique()->e164PhoneNumber();
-    $user->email = $faker->unique()->email();
-    $user->passwordHash = password_hash($password, PASSWORD_DEFAULT);
-
-    foreach (App\DayOfWeek::cases() as $day) {
-        if (rand(0, 100) > 50) {
-            $start = $faker->numberBetween(9, 14);
-            $end = $faker->numberBetween($start + 1, 17);
-
-            $user->setAvailability($day, new App\TimeRange($start, $end));
-        }
-    }
+    [$user] = App\Debug\DebugUser::createDummyUser($faker);
+    $users[] = $user;
 
     $database->users()->create($user);
     $database->users()->setProfilePicture($user->userId, $profilePicture);
+}
+
+
+$dummyActivityImg = file_get_contents('https://picsum.photos/200/200');
+if ($dummyActivityImg === false) {
+    throw new Exception('Failed to get dummy activity pictures');
+}
+
+
+for ($i = 0; $i < NUM_ORGANIZATIONS; $i++) {
+    $organization = App\Debug\DebugOrganization::createDummyOrganization($faker, $users[rand(0, NUM_USERS - 1)]->userId);
+    $database->organizations()->create($organization);
+
+    // Make sure we have a wide range of activity counts, including 0
+    $numActivities = min($i, 10);
+    for ($act = 0; $act < $numActivities; $act++) {
+        $activity = App\Debug\DebugActivity::createDummyActivity($faker, $organization->id);
+
+        $database->activities()->create($activity);
+        $database->activities()->setPreviewPicture($activity->id, $dummyActivityImg);
+    }
+
+    // Add some users
+    $numUsers = min($i, 10);
+    for ($user = 0; $user < $numUsers; $user++) {
+        $selected = $users[rand(0, NUM_USERS - 1)]->userId;
+        $database->organizations()->setUserStatus($organization->id, $selected, App\UserOrganizationStatus::Member);
+    }
 }
 
 $database->commit();

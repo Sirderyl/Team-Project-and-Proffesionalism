@@ -7,8 +7,11 @@ namespace App\Database;
  * @author Kieran
  */
 interface ActivityDatabaseInterface {
+    public function get(int $id): \App\Activity;
     public function create(\App\Activity $activity): void;
 
-    public function setPreviewPicture(string $activityId, string $image): void;
-    public function getPreviewPicture(string $activityId): string;
+    public function setPreviewPicture(int $activityId, string $image): void;
+    public function getPreviewPicture(int $activityId): string;
+
+    public function assignToUser(int $activityId, int $userId, \DateTime $start): void;
 }

@@ -5,8 +5,8 @@
 		}
 	],
 	"settings": {
-		"phpstan.configFile": "api/phpstan.neon",
-		"phpstan.binPath": "api/vendor/bin/phpstan"
+		"phpstan.configFile": "phpstan.neon",
+		"phpstan.rootDir": "api",
 	},
 	"extensions": {
 		"recommendations": [
@@ -16,6 +16,45 @@
 			"devsense.phptools-vscode",
 			"junstyle.php-cs-fixer",
 			"sanderronde.phpstan-vscode",
+		]
+	},
+	"tasks": {
+		"version": "2.0.0",
+		"tasks": [
+			{
+				"label": "Build Xdebug Container",
+				"type": "shell",
+				"command": "docker",
+				"args": [
+					"build",
+					"-t",
+					"php-xdebug",
+					"-f",
+					"Dockerfile.xdebug",
+					"."
+				],
+				"problemMatcher": []
+			},
+			{
+				"label": "PHPUnit",
+				"type": "shell",
+				"command": "docker",
+				"args": [
+					"run", "--rm",
+					"-v", "${workspaceFolder}:/app",
+					"-v", "${workspaceFolder}/coverage:/coverage",
+					"-w", "/app",
+					"php-xdebug",
+					"./api/vendor/bin/phpunit", "api/tests",
+					"--bootstrap", "api/tests/bootstrap.php",
+					"--coverage-html", "/coverage",
+					"--coverage-filter", "api/src",
+				],
+				"group": {
+					"kind": "test",
+					"isDefault": true
+				}
+			}
 		]
 	}
 }

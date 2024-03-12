@@ -15,7 +15,7 @@ class ActivityPicture {
     /**
      * Get the raw JPEG data for an activity's preview picture
      */
-    public function execute(string $id): string {
+    public function execute(int $id): string {
         return $this->database->activities()->getPreviewPicture($id);
     }
 

@@ -17,11 +17,11 @@ class Organization {
         $org = new Organization();
         $org->id = $row['id'];
         $org->name = $row['name'];
-        $org->admin_id = $row['admin_id'];
+        $org->adminId = $row['admin_id'];
         return $org;
     }
 
     public int $id;
     public string $name;
-    public int $admin_id;
+    public int $adminId;
 }

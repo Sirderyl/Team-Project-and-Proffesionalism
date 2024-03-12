@@ -28,7 +28,7 @@ class OrganizationDatabase implements OrganizationDatabaseInterface {
             VALUES (:name, :admin_id)
         ', [
             ':name' => $organization->name,
-            ':admin_id' => $organization->admin_id
+            ':admin_id' => $organization->adminId
         ]);
 
         $organization->id = $this->connection->lastInsertId();

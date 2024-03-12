@@ -73,10 +73,7 @@ if ($dummyActivityImg === false) {
 
 
 for ($i = 0; $i < NUM_ORGANIZATIONS; $i++) {
-    $organization = new App\Organization();
-    $organization->name = $faker->unique()->company();
-    $organization->admin_id = $users[rand(0, NUM_USERS - 1)]->userId;
-    $database->organizations()->create($organization);
+    $organization = App\Debug\DebugOrganization::createDummyOrganization($faker, $users[rand(0, NUM_USERS - 1)]->userId);
 
     // Make sure we have a wide range of activity counts, including 0
     $numActivities = min($i, 10);

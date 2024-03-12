@@ -7,14 +7,12 @@ use App\Debug;
 final class OrganizationDatabaseTest extends TestCase
 {
     private Faker\Generator $faker;
-    private Database\SqliteConnection $conn;
-    private Database\Database $database;
+    private Database\DatabaseInterface $database;
 
     protected function setUp(): void
     {
         $this->faker = Faker\Factory::create();
-        $this->conn = new Database\SqliteConnection(":memory:");
-        $this->database = new Database\Database($this->conn);
+        $this->database = Debug\DebugDatabase::createTestDatabase();
     }
 
     public function testRoundTrip(): void

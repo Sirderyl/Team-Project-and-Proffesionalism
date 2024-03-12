@@ -1,10 +1,9 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use App\Debug;
 use App\Database;
 use App\Register;
-use function PHPUnit\Framework\assertEquals;
-use function PHPUnit\Framework\assertNotEquals;
 
 class RegisterTest extends TestCase {
     private const BODY = [
@@ -18,8 +17,7 @@ class RegisterTest extends TestCase {
     private Register $register;
 
     protected function setUp(): void {
-        $connection = new App\Database\SqliteConnection(':memory:');
-        $this->database = new App\Database\Database($connection);
+        $this->database = Debug\DebugDatabase::createTestDatabase();
         $this->register = new App\Register($this->database);
     }
 
@@ -29,7 +27,7 @@ class RegisterTest extends TestCase {
         if ($encoded === false) throw new Exception('Failed to encode JSON');
         $parsed = $this->register->parseBody($encoded);
 
-        assertEquals(self::BODY, $parsed);
+        $this->assertEquals(self::BODY, $parsed);
     }
 
     public function testExecute(): void {

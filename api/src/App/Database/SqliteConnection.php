@@ -24,21 +24,6 @@ class SqliteConnection implements ConnectionInterface
 
         $this->pdo = new \PDO("sqlite:$path");
         $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-
-        // Run the schema script if we're working in memory
-        // FIXME: This is a bit of a hack, this should be handled by the test setup
-        if ($path === ':memory:') {
-            $schema = file_get_contents(__DIR__ . '/../../../schema.sql');
-            if ($schema === false) {
-                throw new \RuntimeException('Could not read schema file');
-            }
-            foreach (explode(';', $schema) as $stmt) {
-                $stmt = trim($stmt);
-                if ($stmt !== '') {
-                    $this->pdo->exec($stmt);
-                }
-            }
-        }
     }
 
 

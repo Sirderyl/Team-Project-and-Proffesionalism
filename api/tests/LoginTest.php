@@ -13,8 +13,7 @@ class LoginTest extends TestCase {
 
     protected function setUp(): void {
         $this->faker = Faker\Factory::create();
-        $connection = new App\Database\SqliteConnection(':memory:');
-        $this->database = new App\Database\Database($connection);
+        $this->database = Debug\DebugDatabase::createTestDatabase();
         $this->login = new App\Login($this->database);
 
         [$this->user, $this->password] = Debug\DebugUser::createDummyUser($this->faker);

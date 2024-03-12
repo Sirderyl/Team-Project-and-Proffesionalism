@@ -7,23 +7,20 @@ use App\Debug;
 final class UserDatabaseTest extends TestCase
 {
     private Faker\Generator $faker;
-    private Database\SqliteConnection $conn;
-    private Database\UsersDatabase $usersDatabase;
+    private Database\DatabaseInterface $database;
 
     protected function setUp(): void
     {
         $this->faker = Faker\Factory::create();
-        // TODO: Need to run the schema script
-        $this->conn = new Database\SqliteConnection(":memory:");
-        $this->usersDatabase = new Database\UsersDatabase($this->conn);
+        $this->database = Debug\DebugDatabase::createTestDatabase();
     }
 
     public function testRoundTrip(): void
     {
         [$user] = Debug\DebugUser::createDummyUser($this->faker);
 
-        $this->usersDatabase->create($user);
-        $output = $this->usersDatabase->get($user->email);
+        $this->database->users()->create($user);
+        $output = $this->database->users()->get($user->email);
 
         $this->assertEquals($user, $output);
     }

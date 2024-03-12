@@ -9,7 +9,7 @@ class TokenTest extends TestCase {
         $this->assertEquals(Token::verify($token), 1);
     }
 
-    public function testVerifyFailsIfInvalid(): void {
+    public function testVerifyFailsIfNotSignedBySameKey(): void {
         $this->expectException(\Firebase\JWT\SignatureInvalidException::class);
 
         // Source: https://jwt.io/

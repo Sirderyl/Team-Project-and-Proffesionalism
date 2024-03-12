@@ -6,12 +6,8 @@ namespace App;
  * Utility class for argument parsing
  * @author Kieran
  */
-class Arguments
+abstract class Arguments
 {
-    private function __construct()
-    {
-    }
-
     /**
      * Parse a string as a JSON object or array
      * @param string $json

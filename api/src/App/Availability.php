@@ -7,8 +7,8 @@ namespace App;
  * @author Filip
  */
 class Availability {
-    
-    public string $userId;
+
+    public int $userId;
     public DayOfWeek $day;
     public TimeRange $time;
 }

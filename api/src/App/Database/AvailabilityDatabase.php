@@ -14,7 +14,7 @@ class AvailabilityDatabase implements AvailabilityDatabaseInterface {
         $this->connection = $connection;
     }
 
-    public function add(\App\Availability $availability, string $userId): void {
+    public function add(\App\Availability $availability, int $userId): void {
         $this->connection->execute(
             "INSERT INTO user_availability (
                 user_id,
@@ -36,7 +36,7 @@ class AvailabilityDatabase implements AvailabilityDatabaseInterface {
         );
     }
 
-    public function read(string $userId): array {
+    public function read(int $userId): array {
         $result = $this->connection->query(
             "SELECT day_of_week, start_hour, end_hour FROM user_availability WHERE user_id = :user_id",
             [':user_id' => $userId]
@@ -59,19 +59,19 @@ class AvailabilityDatabase implements AvailabilityDatabaseInterface {
             "UPDATE availability SET day_of_week = :day, start_hour = :startTime, end_hour = :endTime WHERE user_id = :user_id",
             [
                 ':user_id' => $availability->userId,
-                ':day' => $availability->day,
+                ':day' => $availability->day->value,
                 ":startTime" => $availability->time->start,
                 ":endTime" => $availability->time->end
             ]
         );
     }
 
-    public function delete(string $userId, string $day): void {
+    public function delete(int $userId, \App\DayOfWeek $day): void {
         $this->connection->execute(
             "DELETE FROM user_availability WHERE user_id = :user_id AND day_of_week = :day",
             [
                 ':user_id' => $userId,
-                ':day' => $day
+                ':day' => $day->value
             ]
         );
     }

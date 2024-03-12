@@ -32,26 +32,7 @@ class UsersDatabase implements UsersDatabaseInterface
             throw new NotFoundException();
         }
 
-        $user = new \App\User();
-        $firstRow = $result[0];
-        $user->userId = $firstRow['id'];
-        $user->userName = $firstRow['name'];
-        $user->email = $firstRow['email'];
-        $user->passwordHash = $firstRow['password_hash'];
-        $user->phoneNumber = $firstRow['phone_number'];
-
-        foreach ($result as $row) {
-            /** @var string|null $day */
-            $day = $row['day_of_week'];
-            if ($day === null) {
-                continue;
-            }
-            $user->setAvailability(\App\DayOfWeek::from($day), new TimeRange(
-                $row['start_hour'],
-                $row['end_hour']
-            ));
-        }
-        return $user;
+        return \App\User::fromRows($result)[0];
     }
 
     public function create(\App\User $user): void
@@ -91,7 +72,7 @@ class UsersDatabase implements UsersDatabaseInterface
         }
     }
 
-    public function getProfilePicture(string $userId): string
+    public function getProfilePicture(int $userId): string
     {
         $result = $this->connection->query(
             'SELECT profile_picture FROM user WHERE id = :id',
@@ -105,11 +86,44 @@ class UsersDatabase implements UsersDatabaseInterface
         return $result[0]['profile_picture'];
     }
 
-    public function setProfilePicture(string $userId, string|null $data): void
+    public function setProfilePicture(int $userId, string|null $data): void
     {
         $this->connection->execute(
             'UPDATE user SET profile_picture = :data WHERE id = :id',
             ['data' => $data, 'id' => $userId]
         );
+    }
+
+    public function getInvites(int $userId): array
+    {
+        $result = $this->connection->query("
+            SELECT organization.id, organization.name, organization.admin_id
+            FROM user_organization
+            JOIN organization ON user_organization.organization_id = organization.id
+            WHERE user_organization.user_id = :userId AND user_organization.status = 'Invited'
+        ", ['userId' => $userId]);
+
+        return array_map(fn ($row) => \App\Organization::fromRow($row), $result);
+    }
+
+    public function getAssignedActivities(int $userId): array
+    {
+        $result = $this->connection->query("
+            SELECT
+                activity.name, activity.id, activity.short_description,
+                user_activity.start_time
+            FROM user_activity
+            JOIN activity ON user_activity.activity_id = activity.id
+            WHERE user_activity.user_id = :userId
+        ", ['userId' => $userId]);
+
+        return array_map(fn ($row) => [
+            'activity' => [
+                'name' => $row['name'],
+                'id' => $row['id'],
+                'shortDescription' => $row['short_description']
+            ],
+            'start' => new \DateTime($row['start_time'])
+        ], $result);
     }
 }

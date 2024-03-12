@@ -78,15 +78,7 @@ for ($i = 0; $i < NUM_ORGANIZATIONS; $i++) {
     // Make sure we have a wide range of activity counts, including 0
     $numActivities = min($i, 10);
     for ($act = 0; $act < $numActivities; $act++) {
-        $activity = new App\Activity();
-        $activity->organizationId = $organization->id;
-        $activity->name = $faker->unique()->jobTitle();
-        $activity->shortDescription = $faker->realText(100);
-        $activity->longDescription = $faker->realText(400);
-        $activity->neededVolunteers = rand(1, 5);
-        $start = $faker->numberBetween(9, 14);
-        $end = $faker->numberBetween($start + 1, 17);
-        $activity->time = new App\TimeRange($start, $end);
+        $activity = App\Debug\DebugActivity::createDummyActivity($faker, $organization->id);
 
         $database->activities()->create($activity);
         $database->activities()->setPreviewPicture($activity->id, $dummyActivityImg);

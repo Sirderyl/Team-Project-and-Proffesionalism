@@ -37,4 +37,17 @@ interface UsersDatabaseInterface
      * @return array<\App\Organization>
      */
     public function getInvites(int $userId): array;
+
+    /**
+     * Get activities the user is assigned to do
+     * @return array<array{
+     *   activity: array{
+     *     name: string,
+     *     id: int,
+     *     shortDescription: string
+     *   },
+     *   start: \DateTime,
+     * }>
+     */
+    public function getAssignedActivities(int $userId): array;
 }

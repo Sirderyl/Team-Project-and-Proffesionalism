@@ -57,7 +57,7 @@ CREATE TABLE user_organization (
 CREATE TABLE user_activity (
     user_id INTEGER NOT NULL REFERENCES user(id),
     activity_id INTEGER NOT NULL REFERENCES activity(id),
+    start_time DATETIME NOT NULL, -- ISO 8601 format
     rating INTEGER,
-    -- TODO: Once recurring events are supported, we need to add a date field and add it to the primary key
-    PRIMARY KEY (user_id, activity_id)
+    PRIMARY KEY (user_id, activity_id, start_time)
 );

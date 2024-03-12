@@ -83,4 +83,15 @@ class ActivityDatabase implements ActivityDatabaseInterface {
 
         return $result[0]['preview_picture'];
     }
+
+    public function assignToUser(int $activityId, int $userId, \DateTime $start): void {
+        $this->connection->execute(
+            "INSERT INTO user_activity (user_id, activity_id, start_time) VALUES (:userId, :activityId, :start)",
+            [
+                ':userId' => $userId,
+                ':activityId' => $activityId,
+                ':start' => $start->format(\DATE_ISO8601),
+            ]
+        );
+    }
 }

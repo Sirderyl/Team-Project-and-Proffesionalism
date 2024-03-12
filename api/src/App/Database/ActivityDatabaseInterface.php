@@ -12,4 +12,6 @@ interface ActivityDatabaseInterface {
 
     public function setPreviewPicture(int $activityId, string $image): void;
     public function getPreviewPicture(int $activityId): string;
+
+    public function assignToUser(int $activityId, int $userId, \DateTime $start): void;
 }

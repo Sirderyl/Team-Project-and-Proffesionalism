@@ -99,20 +99,20 @@ $app->get('/user/{id}/profilepicture', function (Request $request, Response $res
 
 $app->get('/user/{id}/availability', function (Request $request, Response $response, array $args) use ($container, $database) {
     $handler = $container->make(App\AvailabilityEndpoint::class, ['database' => $database]);
-    $data = $handler->getAvailability($args['id']);
+    $data = $handler->getAvailability(intval($args['id']));
     $response->getBody()->write(json_encode($data));
     return $response->withHeader('Content-Type', 'application/json');
 });
 
 $app->post('/user/{id}/availability', function (Request $request, Response $response, array $args) use ($container, $database) {
     $handler = $container->make(App\AvailabilityEndpoint::class, ['database' => $database]);
-    $handler->addAvailability($args['id'], $request->getParsedBody());
+    $handler->addAvailability(intval($args['id']), $request->getParsedBody());
     return $response->withStatus(201);
 });
 
 $app->delete('/user/{id}/availability/{day}', function (Request $request, Response $response, array $args) use ($container, $database) {
     $handler = $container->make(App\AvailabilityEndpoint::class, ['database' => $database]);
-    $handler->deleteAvailability($args['id'], App\DayOfWeek::from($args['day']));
+    $handler->deleteAvailability(intval($args['id']), App\DayOfWeek::from($args['day']));
     return $response->withStatus(200);
 });
 

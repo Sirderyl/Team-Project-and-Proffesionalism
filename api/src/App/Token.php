@@ -14,10 +14,6 @@ class Token
     // TODO: Settings class
     private const JWT_SECRET = 'T&=JIz;3sN<g@&4z?E[;"32[etAsCh';
 
-    private function __construct()
-    {
-    }
-
     /**
      * Issue a token
      */
@@ -28,7 +24,8 @@ class Token
             "nbf" => time(),
             // TODO: Settings class
             "exp" => time() + 3600,
-            "iss" => $_SERVER['HTTP_HOST'],
+            // HTTP_HOST is unset during testing
+            "iss" => $_SERVER['HTTP_HOST'] ?? 'unknown',
             "sub" => $userId,
         ];
 

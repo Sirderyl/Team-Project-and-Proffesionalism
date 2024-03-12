@@ -3,6 +3,7 @@ import { useState } from 'react'
 import Home from './pages/Home'
 import AccountDetails from './pages/AccountDetails'
 import AddScheduleRecord from './pages/AddScheduleRecord'
+import Feedback from './pages/Feedback'
 import InviteForm from './pages/InviteForm'
 import AssignedTasks from './pages/AssignedTasks'
 import ScheduleApprovalPage from './pages/ScheduleApprovalPage'
@@ -91,6 +92,7 @@ function App() {
         <Route path='/' element={<Home />} />
         <Route path='/account-details' element={<AccountDetails scheduleRecords={scheduleRecords} />} />
         <Route path='/account-details/add-schedule-record' element={<AddScheduleRecord scheduleRecords={scheduleRecords} />} />
+        <Route path='/feedback' element={<Feedback />} />
         <Route path='/InviteForm' element={<InviteForm />} /> 
         <Route path='/AssignedTasks' element={<AssignedTasks tasks={tasks} />} />
         <Route path='/scheduleApproval' element={<ScheduleApprovalPage taskRequests={taskRequests} />} />

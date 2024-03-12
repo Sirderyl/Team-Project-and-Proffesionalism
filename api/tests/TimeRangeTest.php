@@ -20,27 +20,27 @@ class TimeRangeTest extends TestCase {
         ]);
     }
 
-    public function testStartBelowZero(): void {
+    public function testFailIfStartBelowZero(): void {
         $this->expectException(InvalidArgumentException::class);
         new TimeRange(-1, 17);
     }
 
-    public function testStartAbove24(): void {
+    public function testFailIfStartAbove24(): void {
         $this->expectException(InvalidArgumentException::class);
         new TimeRange(25, 17);
     }
 
-    public function testEndBelowZero(): void {
+    public function testFailIfEndBelowZero(): void {
         $this->expectException(InvalidArgumentException::class);
         new TimeRange(9, -1);
     }
 
-    public function testEndAbove24(): void {
+    public function testFailIfEndAbove24(): void {
         $this->expectException(InvalidArgumentException::class);
         new TimeRange(9, 25);
     }
 
-    public function testEndBeforeStart(): void {
+    public function testFailIfEndBeforeStart(): void {
         $this->expectException(InvalidArgumentException::class);
         new TimeRange(17, 9);
     }

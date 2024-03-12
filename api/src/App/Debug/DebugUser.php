@@ -6,7 +6,10 @@ use Faker\Generator;
 
 class DebugUser
 {
-    public static function createDummyUser(Generator $faker): \App\User
+    /**
+     * @return array{0: \App\User, 1: string}
+     */
+    public static function createDummyUser(Generator $faker): array
     {
         $user = new \App\User();
         // Normally a username would never include the password, but this is just dummy data
@@ -26,6 +29,6 @@ class DebugUser
             }
         }
 
-        return $user;
+        return [$user, $password];
     }
 }

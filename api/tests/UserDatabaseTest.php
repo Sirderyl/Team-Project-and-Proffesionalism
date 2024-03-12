@@ -20,7 +20,7 @@ final class UserDatabaseTest extends TestCase
 
     public function testRoundTrip(): void
     {
-        $user = Debug\DebugUser::createDummyUser($this->faker);
+        [$user] = Debug\DebugUser::createDummyUser($this->faker);
 
         $this->usersDatabase->create($user);
         $output = $this->usersDatabase->get($user->email);

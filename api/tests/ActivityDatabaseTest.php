@@ -18,7 +18,7 @@ class ActivityDatabaseTest extends TestCase {
 
     public function testRoundTrip(): void
     {
-        $admin = Debug\DebugUser::createDummyUser($this->faker);
+        [$admin] = Debug\DebugUser::createDummyUser($this->faker);
         $this->database->users()->create($admin);
         $organization = Debug\DebugOrganization::createDummyOrganization($this->faker, $admin->userId);
         $this->database->organizations()->create($organization);

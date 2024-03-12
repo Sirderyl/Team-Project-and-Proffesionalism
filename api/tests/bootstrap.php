@@ -8,3 +8,7 @@
 set_error_handler(function ($errno, $errstr, $errfile, $errline) {
     throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
 });
+
+
+// Prepare an environment similar to what the app will run in
+$_SERVER['HTTP_HOST'] = 'example.com';

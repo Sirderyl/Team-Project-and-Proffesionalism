@@ -10,6 +10,7 @@ interface DatabaseInterface
 {
     public function activities(): ActivityDatabaseInterface;
     public function users(): UsersDatabaseInterface;
+    public function availability(): AvailabilityDatabaseInterface;
 
     /**
      * Begin a transaction. Should be called before any setters are called

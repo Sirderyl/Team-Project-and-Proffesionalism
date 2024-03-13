@@ -58,7 +58,8 @@ class Register
         $this->database->users()->create($user);
 
         return [
-            'token' => Token::issue($user->userId)
+            'token' => Token::issue($user->userId),
+            'userId' => $user->userId,
         ];
     }
 }

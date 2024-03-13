@@ -46,7 +46,8 @@ class Login
         }
 
         return [
-            'token' => Token::issue($user->userId)
+            'token' => Token::issue($user->userId),
+            'userId' => $user->userId,
         ];
     }
 }

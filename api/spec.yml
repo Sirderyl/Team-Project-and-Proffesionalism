@@ -199,7 +199,10 @@ components:
           type: string
           description: Base64 encoded JWT token
           pattern: ^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$
-      required: [token]
+        userId:
+          type: integer
+          example: 123
+      required: [token, userId]
 
     TimeRange:
       type: object

@@ -59,6 +59,14 @@ $app->get('/managerSchedule', function (Request $request, Response $response, ar
     return $response->withHeader('Content-Type', 'application/json');
 });
 
+$app->get('/userSchedule/{userName}', function (Request $request, Response $response, array $args) use ($container) {
+    $schedule = $container->get(App\Scheduler::class);
+    $data = $schedule->getUserSchedule($args['userName']);
+    $body = json_encode($data, JSON_PRETTY_PRINT);
+    $response->getBody()->write($body);
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
 $app->get('/activity/{id}', function (Request $request, Response $response, array $args) use ($container, $database) {
     $handler = $container->make(App\GetActivity::class, ['database' => $database]);
     $data = $handler->execute(intval($args['id']));

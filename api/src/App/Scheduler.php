@@ -90,6 +90,51 @@ class Scheduler
         );
     }
 
+    public function getUserSchedule(string $userName)
+    {
+        $schedule = [];
+        foreach ($this->activities as $activity) {
+            $activityDayOfWeek = $activity->startTime->format('l');
+            $volunteerSlotsFilled = 0;
+
+            foreach ($this->users as $user) {
+
+                if (isset($user->availability[$activityDayOfWeek]) && $user->availability[$activityDayOfWeek] !== null) {
+                    $userAvailableStart = $user->availability[$activityDayOfWeek]->start;
+                    $userAvailableEnd = $user->availability[$activityDayOfWeek]->end;
+
+                    $activityStart = $activity->startTime->format('H') + $activity->startTime->format('i') / 60;
+                    $activityEnd = $activity->endTime->format('H') + $activity->endTime->format('i') / 60;
+
+                    $isUserAvailable = true;
+                    if (isset($this->scheduledTimeSlots[$user->userName])) {
+                        foreach ($this->scheduledTimeSlots[$user->userName] as $timeSlot) {
+                            if (($timeSlot["start"] < $activity->endTime) && ($timeSlot["end"] > $activity->startTime)) {
+                                $isUserAvailable = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    if ($isUserAvailable && ($activityStart < $userAvailableEnd) && ($activityEnd > $userAvailableStart) && ($volunteerSlotsFilled < $activity->volunteerSlots)) {
+
+                        $volunteerSlotsFilled += 1;
+                        $this->scheduledTimeSlots[$user->userName][] = [
+                            "activity" => $activity->activityName,
+                            "start" => $activity->startTime,
+                            "end" => $activity->endTime
+                        ];
+
+                    }
+                }
+            }
+        }
+        return [
+            "userName" => $userName,
+            "scheduledTimeSlots" => $this->scheduledTimeSlots[$userName]
+        ];
+    }
+
     public function getManagerSchedule()
     {
         $schedule = [];

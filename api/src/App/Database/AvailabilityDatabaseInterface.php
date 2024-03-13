@@ -9,6 +9,7 @@ namespace App\Database;
 interface AvailabilityDatabaseInterface {
 
     public function add(\App\Availability $availability, int $userId): void;
+    /** @return \App\Availability[] */
     public function read(int $userId): array;
     public function update(\App\Availability $availability): void;
     public function delete(int $userId, \App\DayOfWeek $day): void;

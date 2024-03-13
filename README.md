@@ -33,3 +33,9 @@ as shown in the table below:
 | `1@example.com` | `password1` |
 | `2@example.com` | `password2` |
 | ...             | ...         |
+
+## Unit Testing
+A test task is configured to run the unit tests via `Tasks: Run Test Task` in VSCode. This requires the XDebug container to be built via
+`Tasks: Run Task` -> `Build XDebug Container` before running the tests.
+
+Tests are written with the PHPUnit framework and are located in the `./api/tests` directory. Coverage reports are generated in the `./coverage` directory.

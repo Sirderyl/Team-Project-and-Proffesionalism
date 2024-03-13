@@ -13,7 +13,8 @@ namespace App;
  * }
  *
  * @phpstan-type RegisterResponse array{
- *  token: string
+ *  token: string,
+ *  userId: int
  * }
  */
 class Register

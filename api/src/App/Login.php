@@ -26,6 +26,7 @@ class Login
      * Execute the endpoint
      * @return array{
      *   'token': string
+     *   'userId': int
      * }
      */
     public function execute(?string $email, ?string $password): array

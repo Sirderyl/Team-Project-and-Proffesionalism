@@ -15,20 +15,22 @@ class ActivityDatabase implements ActivityDatabaseInterface {
     public function get(int $id): \App\Activity {
         $result = $this->connection->query(
             "SELECT
-                id,
-                organization_id,
-                name,
-                short_description,
-                long_description,
-                start_time,
-                end_time,
-                needed_volunteers
+                activity.id,
+                activity.organization_id,
+                activity.name,
+                activity.short_description,
+                activity.long_description,
+                activity.needed_volunteers,
+                activity_time.day_of_week,
+                activity_time.start_hour,
+                activity_time.end_hour
             FROM activity
-            WHERE id = :id",
+            LEFT JOIN activity_time ON activity.id = activity_time.activity_id
+            WHERE activity.id = :id",
             [':id' => $id]
         );
 
-        return \App\Activity::fromRow($result[0]);
+        return \App\Activity::fromRows($result)[0];
     }
 
     public function create(\App\Activity $activity): void {
@@ -38,16 +40,12 @@ class ActivityDatabase implements ActivityDatabaseInterface {
                 name,
                 short_description,
                 long_description,
-                start_time,
-                end_time,
                 needed_volunteers
             ) VALUES (
                 :organizationId,
                 :name,
                 :shortDescription,
                 :longDescription,
-                :startTime,
-                :endTime,
                 :neededVolunteers
             )",
             [
@@ -55,14 +53,23 @@ class ActivityDatabase implements ActivityDatabaseInterface {
                 ':name' => $activity->name,
                 ':shortDescription' => $activity->shortDescription,
                 ':longDescription' => $activity->longDescription,
-                ":startTime" => $activity->time->start,
-                ":endTime" => $activity->time->end,
-
                 ":neededVolunteers" => $activity->neededVolunteers
             ]
         );
 
         $activity->id = $this->connection->lastInsertId();
+
+        foreach ($activity->times as $day => $time) {
+            $this->connection->execute(
+                "INSERT INTO activity_time (activity_id, day_of_week, start_hour, end_hour) VALUES (:activityId, :day, :start, :end)",
+                [
+                    ':activityId' => $activity->id,
+                    ':day' => $day,
+                    ':start' => $time->start,
+                    ':end' => $time->end
+                ]
+            );
+        }
     }
 
     public function setPreviewPicture(int $activityId, string $image): void {

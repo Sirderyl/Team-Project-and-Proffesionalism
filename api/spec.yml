@@ -36,8 +36,10 @@ paths:
                   description:
                     type: string
                     example: "Help us clean up the local park."
-                  time:
-                    $ref: "#/components/schemas/TimeRange"
+                  times:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/TimeRangeWithDay"
                   neededVolunteers:
                     type: integer
                     description: The ideal number of volunteers for this activity
@@ -214,3 +216,14 @@ components:
           type: number
           example: 12.5
       required: [start, end]
+
+    TimeRangeWithDay:
+      allOf:
+        - $ref: "#/components/schemas/TimeRange"
+        - type: object
+          properties:
+            day:
+              type: string
+              enum: [Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday]
+              example: "Monday"
+          required: [day]

@@ -11,17 +11,22 @@ import Login from './pages/Login'
 import SignUp from './pages/SignUp'
 import NavMenu from './components/NavMenu'
 
+/** @typedef {import('./types/UserData')} UserData */
+
 function App() {
   const [userId] = useState(1)
-  const [token, setToken] = useState(localStorage.getItem('token'))
-  function handleLogin(token) {
-    setToken(token)
-    localStorage.setItem('token', token)
+  /**
+   * @type {[UserData | null, function(UserData | null): void]}
+   */
+  const [userData, setUserData] = useState(localStorage.getItem('user'))
+  function handleLogin(data) {
+    setUserData(data)
+    localStorage.setItem('user', data)
   }
 
   function handleLogout() {
-    setToken(null)
-    localStorage.removeItem('token')
+    setUserData(null)
+    localStorage.removeItem('user')
   }
 
   const [availability, setAvailability] = useState([])
@@ -91,7 +96,7 @@ function App() {
       requester: "Alice Johnson"
     },
   ]);
-  const isLoggedIn = token !== null
+  const isLoggedIn = userData !== null
 
   /**
    * Routes for the app. Set navigable: false to hide a route from the NavMenu while keeping it in the app
@@ -108,7 +113,7 @@ function App() {
     <div className='App'>
       <NavMenu
         routes={routes.filter(route => route.navigable !== false)}
-        isLoggedIn={token !== null}
+        isLoggedIn={userData !== null}
         handleLogout={handleLogout}
       />
 

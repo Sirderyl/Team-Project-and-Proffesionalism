@@ -1,10 +1,10 @@
 # Volunteering Web Application
 
 ## React modules installed and configured
-React Router DOM  
-Tailwind CSS  
-React Hot Toast  
-uuid  
+React Router DOM
+Tailwind CSS
+React Hot Toast
+uuid
 @heroicons/react/outline
 
 ## How to use
@@ -24,3 +24,12 @@ with:
 extension=gd
 extension=pdo_sqlite
 ```
+
+### Credentials For Dummy Users
+Dummy email addresses and passwords are generated in a deterministic manner with email `$id@example.com` and password `password$id`
+as shown in the table below:
+| Email           | Password    |
+| --------------- | ----------- |
+| `1@example.com` | `password1` |
+| `2@example.com` | `password2` |
+| ...             | ...         |

@@ -5,6 +5,7 @@ namespace App;
 /**
  * A time range in a single day
  * @phpstan-type TimeRangeArray array{start: float, end: float}
+ * @phpstan-type TimeRangeArrayWithDay array{day: string, start: float, end: float}
  * @author Kieran
  */
 class TimeRange {

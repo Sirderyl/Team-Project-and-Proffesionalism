@@ -1,5 +1,6 @@
 -- Schema for the database
 -- Expected to be run on an empty database
+-- NOTE: Test cases run this file through a very primitive parser. It will break if you put a semicolon in a string or a comment.
 
 CREATE TABLE organization (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
@@ -15,10 +16,20 @@ CREATE TABLE activity (
     short_description TEXT NOT NULL,
     long_description TEXT NOT NULL,
     preview_picture BLOB,
-    -- TODO: We need a way to support recurring events
-    start_time DATETIME NOT NULL,
-    end_time DATETIME NOT NULL,
     needed_volunteers INTEGER NOT NULL
+);
+
+CREATE TABLE activity_time (
+    activity_id INTEGER NOT NULL REFERENCES activity(id),
+    day_of_week TEXT NOT NULL,
+    start_hour INTEGER NOT NULL,
+    end_hour INTEGER NOT NULL,
+
+    CHECK (day_of_week IN ('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday')),
+    CHECK (start_hour >= 0 AND start_hour < 24),
+    CHECK (end_hour > 0 AND end_hour <= 24),
+    CHECK (start_hour < end_hour),
+    PRIMARY KEY (activity_id, day_of_week)
 );
 
 CREATE TABLE user (

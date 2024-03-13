@@ -13,7 +13,8 @@ namespace App;
  * }
  *
  * @phpstan-type RegisterResponse array{
- *  token: string
+ *  token: string,
+ *  userId: int
  * }
  */
 class Register
@@ -58,7 +59,8 @@ class Register
         $this->database->users()->create($user);
 
         return [
-            'token' => Token::issue($user->userId)
+            'token' => Token::issue($user->userId),
+            'userId' => $user->userId,
         ];
     }
 }

@@ -36,8 +36,10 @@ paths:
                   description:
                     type: string
                     example: "Help us clean up the local park."
-                  time:
-                    $ref: "#/components/schemas/TimeRange"
+                  times:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/TimeRangeWithDay"
                   neededVolunteers:
                     type: integer
                     description: The ideal number of volunteers for this activity
@@ -199,7 +201,10 @@ components:
           type: string
           description: Base64 encoded JWT token
           pattern: ^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$
-      required: [token]
+        userId:
+          type: integer
+          example: 123
+      required: [token, userId]
 
     TimeRange:
       type: object
@@ -211,3 +216,14 @@ components:
           type: number
           example: 12.5
       required: [start, end]
+
+    TimeRangeWithDay:
+      allOf:
+        - $ref: "#/components/schemas/TimeRange"
+        - type: object
+          properties:
+            day:
+              type: string
+              enum: [Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday]
+              example: "Monday"
+          required: [day]

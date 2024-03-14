@@ -142,23 +142,24 @@ class Scheduler
     public function getManagerSchedule()
     {
         $schedule = [];
+        $scheduledTimeSlots = [];
         foreach ($this->activities as $activity) {
-            $activityDayOfWeek = $activity->startTime->format('l');
+            $activityDayOfWeek = array_keys($activity->times)[0];
             $volunteerSlotsFilled = 0;
 
             foreach ($this->users as $user) {
-
+            
                 if (isset($user->availability[$activityDayOfWeek]) && $user->availability[$activityDayOfWeek] !== null) {
                     $userAvailableStart = $user->availability[$activityDayOfWeek]->start;
                     $userAvailableEnd = $user->availability[$activityDayOfWeek]->end;
 
-                    $activityStart = $activity->startTime->format('H') + $activity->startTime->format('i') / 60;
-                    $activityEnd = $activity->endTime->format('H') + $activity->endTime->format('i') / 60;
+                    $activityStart = $activity->getTime(DayOfWeek::fromString($activityDayOfWeek))->start;
+                    $activityEnd = $activity->getTime(DayOfWeek::fromString($activityDayOfWeek))->end;
 
                     $isUserAvailable = true;
-                    if (isset($this->scheduledTimeSlots[$user->userName])) {
-                        foreach ($this->scheduledTimeSlots[$user->userName] as $timeSlot) {
-                            if (($timeSlot["start"] < $activity->endTime) && ($timeSlot["end"] > $activity->startTime)) {
+                    if (isset($scheduledTimeSlots[$user->userId])) {
+                        foreach ($scheduledTimeSlots[$user->userId] as $timeSlot) {
+                            if (($timeSlot["start"] < $activityEnd) && ($timeSlot["end"] > $activityStart) && ($activityDayOfWeek == $timeSlot["day"])) {
                                 $isUserAvailable = false;
                                 break;
                             }
@@ -166,15 +167,31 @@ class Scheduler
                     }
 
                     if ($isUserAvailable && ($activityStart < $userAvailableEnd) && ($activityEnd > $userAvailableStart) && ($volunteerSlotsFilled < $activity->neededVolunteers)) {
-
-                        $schedule[$activity->name][$activity->startTime->format('Y-m-d H:i')][$activity->endTime->format('Y-m-d H:i')][] =
+                        if(!isset($schedule[$activity->id]))
+                        {
+                            $schedule[$activity->id]["details"] =
                             [
-                                'user' => $user->userName
+                                'activityName' => $activity->name,
+                                'start' => $activityStart,
+                                'end' => $activityEnd,
+                                'day' => $activityDayOfWeek
                             ];
+                            
+                        }
+
+                        $schedule[$activity->id]["users"][] =
+                            [
+                                'userId' => $user->userId,
+                                'userName' => $user->userName
+                            ];
+
+                           
                         $volunteerSlotsFilled += 1;
-                        $this->scheduledTimeSlots[$user->userName][] = [
-                            "start" => $activity->startTime,
-                            "end" => $activity->endTime
+                        $scheduledTimeSlots[$user->userId][] = [
+                            "activity" => $activity->name,
+                            "start" => $activityStart,
+                            "end" => $activityEnd,
+                            "day" => $activityDayOfWeek
                         ];
 
                     }

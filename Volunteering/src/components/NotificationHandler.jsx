@@ -7,7 +7,7 @@ export default function NotificationHandler() {
     const [notifications, setNotifications] = useState([
         { id: v4(), message: "Low Priority Notification", priority: "low" },
         { id: v4(), message: "Medium Priority Notification", priority: "medium" },
-        { id: v4(), message: "High Priority Notification", priority: "high" },
+        { id: v4(), message: "High Priority Notification", priority: "high", link:"/account-details" },
     ]);
     const [showNotifications, setShowNotifications] = useState(false);
     const numberOfNotifications = notifications.length
@@ -15,11 +15,12 @@ export default function NotificationHandler() {
     /*
     Currently unused
 
-    const addNotification = (message, priority) => {
+    const addNotification = (message, priority, link) => {
         const newNotification = {
             id: v4(),
             message,
-            priority
+            priority,
+            link
         }
         setNotifications([...notifications, newNotification])
     }
@@ -44,6 +45,7 @@ export default function NotificationHandler() {
                             key={notification.id}
                             message={notification.message}
                             priority={notification.priority}
+                            link ={notification.link}
                             close={() => removeNotification(notification.id)}
                         />
                     ))}

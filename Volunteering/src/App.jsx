@@ -10,7 +10,7 @@ import ScheduleApprovalPage from './pages/ScheduleApprovalPage'
 import Login from './pages/Login'
 import SignUp from './pages/SignUp'
 import NavMenu from './components/NavMenu'
-
+//
 function App() {
   const [token, setToken] = useState(localStorage.getItem('token'))
   function handleLogin(token) {

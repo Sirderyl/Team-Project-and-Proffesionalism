@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom'
+import PropTypes from 'prop-types'
 
 export default function Notification({ message, close, priority, link }) {
     const notificationPriority = {
@@ -19,4 +20,11 @@ export default function Notification({ message, close, priority, link }) {
             )}
         </div>
     );
+}
+
+Notification.propTypes = {
+    message: PropTypes.string.isRequired,
+    close: PropTypes.func.isRequired,
+    priority: PropTypes.string.isRequired,
+    link: PropTypes.string
 }

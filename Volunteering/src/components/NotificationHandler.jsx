@@ -36,14 +36,14 @@ export default function NotificationHandler() {
         <div className="relative flex items-center">
             <img src={bellIcon} alt="Notification Bell" className="h-10 w-10 cursor-pointer" onClick={toggleShowNotifications} />
             {showNotifications && (
-                <div className="absolute top-full right-0 mt-2 w-64 bg-white shadow-md rounded-md p-2 max-h-64 overflow-y-scroll">
+                <div className="border absolute top-full right-0 mt-2 w-64 bg-white shadow-md rounded-md p-2 max-h-64 overflow-y-scroll">
                     <div>Notifications</div>
                     {notifications.map(notification => (
                         <Notification
                             key={notification.id}
                             message={notification.message}
                             priority={notification.priority}
-                            link ={notification.link}
+                            link={notification.link}
                             close={() => removeNotification(notification.id)}
                         />
                     ))}

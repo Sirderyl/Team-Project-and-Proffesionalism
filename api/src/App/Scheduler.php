@@ -53,22 +53,22 @@ class Scheduler
         $this->activityOne->id = 1;
         $this->activityOne->name = "Serving Food";
         $this->activityOne->neededVolunteers = 2;
-        $this->activityOne->setTime(DayOfWeek::Wednesday, new TimeRange(12.00,13.00));
+        $this->activityOne->setTime(DayOfWeek::Wednesday, new TimeRange(12.00, 13.00));
 
         $this->activityTwo->id = 2;
         $this->activityTwo->name = "Walking Dogs";
         $this->activityTwo->neededVolunteers = 1;
-        $this->activityTwo->setTime(DayOfWeek::Tuesday, new TimeRange(12.00,13.00));
+        $this->activityTwo->setTime(DayOfWeek::Tuesday, new TimeRange(12.00, 13.00));
 
         $this->activityThree->id = 3;
         $this->activityThree->name = "Answering Calls";
         $this->activityThree->neededVolunteers = 3;
-        $this->activityThree->setTime(DayOfWeek::Monday, new TimeRange(12.00,13.00));
+        $this->activityThree->setTime(DayOfWeek::Monday, new TimeRange(12.00, 13.00));
 
         $this->activityFour->id = 4;
         $this->activityFour->name = "Cleaning";
         $this->activityFour->neededVolunteers = 3;
-        $this->activityFour->setTime(DayOfWeek::Monday, new TimeRange(12.00,13.00));
+        $this->activityFour->setTime(DayOfWeek::Monday, new TimeRange(12.00, 13.00));
 
         $this->activities = [$this->activityOne, $this->activityTwo, $this->activityThree, $this->activityFour];
         $this->activityRatings = array(
@@ -94,8 +94,7 @@ class Scheduler
 
             foreach ($this->users as $user) {
 
-                if($user->userId == $userId)
-                {
+                if ($user->userId == $userId) {
                     $userName = $user->userName;
                 }
 
@@ -107,8 +106,8 @@ class Scheduler
                     $activityEnd = $activity->getTime(DayOfWeek::fromString($activityDayOfWeek))->end;
 
                     $isUserAvailable = true;
-                    
-                   if (isset($schedule[$user->userId])) {
+
+                    if (isset($schedule[$user->userId])) {
                         foreach ($schedule[$user->userId] as $timeSlot) {
                             if (($timeSlot["start"] <= $activityEnd) && ($timeSlot["end"] >= $activityStart) && ($activityDayOfWeek == $timeSlot["day"])) {
                                 $isUserAvailable = false;
@@ -131,11 +130,11 @@ class Scheduler
                 }
             }
         }
-       return [
+        return [
             "userId" => $userId,
             "userName" => $userName,
             "schedule" => $schedule[$userId]
-       ];
+        ];
 
     }
 
@@ -148,7 +147,7 @@ class Scheduler
             $volunteerSlotsFilled = 0;
 
             foreach ($this->users as $user) {
-            
+
                 if (isset($user->availability[$activityDayOfWeek]) && $user->availability[$activityDayOfWeek] !== null) {
                     $userAvailableStart = $user->availability[$activityDayOfWeek]->start;
                     $userAvailableEnd = $user->availability[$activityDayOfWeek]->end;
@@ -167,16 +166,15 @@ class Scheduler
                     }
 
                     if ($isUserAvailable && ($activityStart < $userAvailableEnd) && ($activityEnd > $userAvailableStart) && ($volunteerSlotsFilled < $activity->neededVolunteers)) {
-                        if(!isset($schedule[$activity->id]))
-                        {
+                        if (!isset($schedule[$activity->id])) {
                             $schedule[$activity->id]["details"] =
-                            [
-                                'activityName' => $activity->name,
-                                'start' => $activityStart,
-                                'end' => $activityEnd,
-                                'day' => $activityDayOfWeek
-                            ];
-                            
+                                [
+                                    'activityName' => $activity->name,
+                                    'start' => $activityStart,
+                                    'end' => $activityEnd,
+                                    'day' => $activityDayOfWeek
+                                ];
+
                         }
 
                         $schedule[$activity->id]["users"][] =
@@ -185,7 +183,7 @@ class Scheduler
                                 'userName' => $user->userName
                             ];
 
-                           
+
                         $volunteerSlotsFilled += 1;
                         $scheduledTimeSlots[$user->userId][] = [
                             "activity" => $activity->name,

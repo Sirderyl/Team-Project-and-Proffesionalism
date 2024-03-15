@@ -233,7 +233,37 @@ class Scheduler
             }
             $ratingsByUser[$userId][] = $rating;
         }
-        
-        return $ratingsByUser;
+
+        //Calculate rating sum and count of each organization for each user
+        $organizationSumCount = [];
+        foreach($ratingsByUser as $user)
+        {
+            foreach($user as $rating)
+            {
+                $userId = $rating->userId;
+                if (!isset($organizationSumCount[$userId][$rating->organizationId])) {
+                    $organizationSumCount[$userId][$rating->organizationId]['sum'] = 0;
+                    $organizationSumCount[$userId][$rating->organizationId]['count'] = 0;
+                }
+                $organizationSumCount[$userId][$rating->organizationId]['sum'] += $rating->rating;
+                $organizationSumCount[$userId][$rating->organizationId]['count']++;
+            }
+        }
+
+        //Calculate rating average for each organization for each user
+        $averageRatings = [];
+
+        foreach ($organizationSumCount as $userId => $organizations) {
+            foreach ($organizations as $organizationId => $data) {
+                $sum = $data['sum'];
+                $count = $data['count'];
+            
+                $averageRating = $count > 0 ? $sum / $count : 0;
+
+                $averageRatings[$userId][$organizationId] = $averageRating;
+            }
+        }
+
+        return $averageRatings;
     }
 }

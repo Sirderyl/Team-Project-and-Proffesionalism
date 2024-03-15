@@ -18,12 +18,17 @@ class UsersDatabase implements UsersDatabaseInterface
 
     public function get(string $email): \App\User
     {
+        // NOTE: Using organization.id IS NOT NULL instead of COUNT(organization.id) > 0
+        // to avoid having to use a GROUP BY clause. This would discard all but one user_availability
+        // row and require greater refactoring of the fromRows method (return JSON from query instead of multiple rows)
         $result = $this->connection->query(
             'SELECT
                 user.id, user.name, user.email, user.password_hash, user.phone_number,
-                user_availability.day_of_week, user_availability.start_hour, user_availability.end_hour
+                user_availability.day_of_week, user_availability.start_hour, user_availability.end_hour,
+                organization.id IS NOT NULL AS is_manager
             FROM user
             LEFT JOIN user_availability ON user.id = user_availability.user_id
+            LEFT JOIN organization ON user.id = organization.admin_id
             WHERE email = :email COLLATE NOCASE',
             ['email' => $email]
         );

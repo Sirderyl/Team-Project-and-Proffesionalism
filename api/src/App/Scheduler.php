@@ -17,7 +17,7 @@ class Scheduler
 
     public $activityFour;
     public array $activities = [];
-    public array $activityRatings = [];
+    public array $ratings = [];
 
     public function __construct()
     {
@@ -53,25 +53,29 @@ class Scheduler
         $this->activityOne->id = 1;
         $this->activityOne->name = "Serving Food";
         $this->activityOne->neededVolunteers = 2;
+        $this->activityOne->organizationId = 4;
         $this->activityOne->setTime(DayOfWeek::Wednesday, new TimeRange(12.00, 13.00));
 
         $this->activityTwo->id = 2;
         $this->activityTwo->name = "Walking Dogs";
         $this->activityTwo->neededVolunteers = 1;
+        $this->activityTwo->organizationId = 4;
         $this->activityTwo->setTime(DayOfWeek::Tuesday, new TimeRange(12.00, 13.00));
 
         $this->activityThree->id = 3;
         $this->activityThree->name = "Answering Calls";
         $this->activityThree->neededVolunteers = 3;
+        $this->activityThree->organizationId = 2;
         $this->activityThree->setTime(DayOfWeek::Monday, new TimeRange(12.00, 13.00));
 
         $this->activityFour->id = 4;
         $this->activityFour->name = "Cleaning";
         $this->activityFour->neededVolunteers = 3;
+        $this->activityFour->organizationId = 7;
         $this->activityFour->setTime(DayOfWeek::Monday, new TimeRange(12.00, 13.00));
 
         $this->activities = [$this->activityOne, $this->activityTwo, $this->activityThree, $this->activityFour];
-        $this->activityRatings = array(
+        $this->ratings = array(
             new Rating(1, 1, 5),
             new Rating(1, 2, 2),
             new Rating(1, 3, 4),
@@ -87,7 +91,7 @@ class Scheduler
     public function getUserSchedule(int $userId)
     {
         $schedule = [];
-        $username = "";
+        $userName = "";
         foreach ($this->activities as $activity) {
             $activityDayOfWeek = array_keys($activity->times)[0];
             $volunteerSlotsFilled = 0;
@@ -197,5 +201,28 @@ class Scheduler
             }
         }
         return $schedule;
+    }
+
+    public function getOrganizationRatings(/*array $ratings, array $activities*/): array {
+        $ratings = $this->ratings;
+        $activities = $this->activities;
+        foreach($ratings as $rating)
+        {
+            $organizationId = 0;
+            $activityId = $rating->activityId;
+
+            foreach($activities as $activity)
+            {
+                if($activity->id == $rating->activityId)
+                {
+                    $organizationId = $activity->organizationId;
+                    $rating->organizationId = $organizationId;
+                    break;
+                }
+            }
+
+
+        }
+        return $ratings;
     }
 }

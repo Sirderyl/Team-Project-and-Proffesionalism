@@ -22,9 +22,9 @@ interface UsersDatabaseInterface
 
     /**
      * Get a user's profile picture
-     * @return string The raw JPEG data, represents a byte array
+     * @return ?string The raw JPEG data, represents a byte array, or null if no picture
      */
-    public function getProfilePicture(int $userId): string;
+    public function getProfilePicture(int $userId): ?string;
 
     /**
      * Set a user's profile picture

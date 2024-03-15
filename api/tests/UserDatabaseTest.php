@@ -44,4 +44,14 @@ final class UserDatabaseTest extends TestCase
         $this->expectException(\App\Database\NotFoundException::class);
         $this->database->users()->getProfilePicture(1234);
     }
+
+    public function testPictureNullIfNoPicture(): void
+    {
+        [$user] = Debug\DebugUser::createDummyUser($this->faker);
+        $this->database->users()->create($user);
+
+        $output = $this->database->users()->getProfilePicture($user->userId);
+
+        $this->assertNull($output);
+    }
 }

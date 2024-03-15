@@ -72,7 +72,7 @@ class UsersDatabase implements UsersDatabaseInterface
         }
     }
 
-    public function getProfilePicture(int $userId): string
+    public function getProfilePicture(int $userId): ?string
     {
         $result = $this->connection->query(
             'SELECT profile_picture FROM user WHERE id = :id',

@@ -206,10 +206,11 @@ class Scheduler
     public function getOrganizationRatings(/*array $ratings, array $activities*/): array {
         $ratings = $this->ratings;
         $activities = $this->activities;
+
+        // Add OrganizationId to Ratings
         foreach($ratings as $rating)
         {
             $organizationId = 0;
-            $activityId = $rating->activityId;
 
             foreach($activities as $activity)
             {
@@ -220,9 +221,19 @@ class Scheduler
                     break;
                 }
             }
-
-
         }
-        return $ratings;
+
+        // Split Ratings into Separate Arrays for each user
+        $ratingsByUser = [];
+        foreach($ratings as $rating)
+        {
+            $userId = $rating->userId;
+            if (!isset($ratingsByUser[$userId])) {
+                $ratingsByUser[$userId] = [];
+            }
+            $ratingsByUser[$userId][] = $rating;
+        }
+        
+        return $ratingsByUser;
     }
 }

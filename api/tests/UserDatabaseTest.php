@@ -24,4 +24,15 @@ final class UserDatabaseTest extends TestCase
 
         $this->assertEquals($user, $output);
     }
+
+    public function testGettersReturnSameResult(): void
+    {
+        [$user] = Debug\DebugUser::createDummyUser($this->faker);
+
+        $this->database->users()->create($user);
+        $output1 = $this->database->users()->getByEmail($user->email);
+        $output2 = $this->database->users()->getById($output1->userId);
+
+        $this->assertEquals($output1, $output2);
+    }
 }

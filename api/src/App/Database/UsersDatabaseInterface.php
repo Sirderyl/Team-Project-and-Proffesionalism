@@ -16,6 +16,13 @@ interface UsersDatabaseInterface
     public function getByEmail(string $email): \App\User;
 
     /**
+     * Get a user by their ID
+     * @param int $id
+     * @throws NotFoundException If the user is not found
+     */
+    public function getById(int $id): \App\User;
+
+    /**
      * Create a new user. Sets the user's ID on the User object.
      */
     public function create(\App\User $user): void;

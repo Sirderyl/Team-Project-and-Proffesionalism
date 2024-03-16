@@ -28,14 +28,14 @@ class UsersDatabase implements UsersDatabaseInterface
         // to avoid having to use a GROUP BY clause. This would discard all but one user_availability
         // row and require greater refactoring of the fromRows method (return JSON from query instead of multiple rows)
         $result = $this->connection->query(
-            `SELECT
+            "SELECT
                 user.id, user.name, user.email, user.password_hash, user.phone_number,
                 user_availability.day_of_week, user_availability.start_hour, user_availability.end_hour,
                 organization.id IS NOT NULL AS is_manager
             FROM user
             LEFT JOIN user_availability ON user.id = user_availability.user_id
             LEFT JOIN organization ON user.id = organization.admin_id
-            WHERE $filter`,
+            WHERE $filter",
             $params
         );
 
@@ -49,6 +49,11 @@ class UsersDatabase implements UsersDatabaseInterface
     public function getByEmail(string $email): \App\User
     {
         return $this->runGet("email = :email", ['email' => $email]);
+    }
+
+    public function getById(int $id): \App\User
+    {
+        return $this->runGet("user.id = :id", ['id' => $id]);
     }
 
     public function create(\App\User $user): void

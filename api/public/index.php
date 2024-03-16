@@ -90,6 +90,14 @@ $app->post('/user/login', function (Request $request, Response $response, array 
     $response->getBody()->write(json_encode($login->execute($email, $password)));
     return $response->withHeader('Content-Type', 'application/json');
 });
+
+$app->get('/user/{email}', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\UserEndpoint::class, ['database' => $database]);
+    $data = $handler->getUser($args['email']);
+    $response->getBody()->write(json_encode($data));
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
 $app->get('/user/{id}/profilepicture', function (Request $request, Response $response, array $args) use ($container, $database) {
     $handler = $container->make(App\ProfilePicture::class, ['database' => $database]);
     $data = $handler->execute(intval($args['id']));

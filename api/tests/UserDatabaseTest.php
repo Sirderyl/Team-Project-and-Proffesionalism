@@ -20,7 +20,7 @@ final class UserDatabaseTest extends TestCase
         [$user] = Debug\DebugUser::createDummyUser($this->faker);
 
         $this->database->users()->create($user);
-        $output = $this->database->users()->get($user->email);
+        $output = $this->database->users()->getByEmail($user->email);
 
         $this->assertEquals($user, $output);
     }

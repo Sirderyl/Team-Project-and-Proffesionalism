@@ -33,7 +33,7 @@ class RegisterTest extends TestCase {
     public function testExecute(): void {
         $result = $this->register->execute(self::BODY);
 
-        $user = $this->database->users()->get(self::BODY['email']);
+        $user = $this->database->users()->getByEmail(self::BODY['email']);
         $this->assertEquals(App\Token::verify($result['token']), $user->userId);
         $this->assertEquals(self::BODY['name'], $user->userName);
         $this->assertEquals(self::BODY['phone'], $user->phoneNumber);

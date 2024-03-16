@@ -18,6 +18,18 @@ tags:
     description: Operations about user accounts
 
 paths:
+  /managerSchedule:
+    get:
+      description: Get all the scheduled activities and the user's assigned to each activity.
+      responses:
+        '200':
+          description: OK
+  /userSchedule/{id}:
+    get:
+      description: Get an individual user's assigned activities
+      responses:
+        '200':
+          description: OK
   /activity/{id}:
     get:
       tags: [Activity]

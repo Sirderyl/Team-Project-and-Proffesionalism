@@ -15,7 +15,7 @@ namespace App;
         $this->database = $database;
     }
 
-    public function getUser(string $email): User {
-        return $this->database->users()->get($email);
+    public function getUser(int $userId): User {
+        return $this->database->users()->getById($userId);
     }
  }

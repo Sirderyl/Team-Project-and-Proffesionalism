@@ -1,5 +1,5 @@
 import { Routes, Route } from 'react-router-dom'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import Home from './pages/Home'
 import AccountDetails from './pages/AccountDetails'
 import AddScheduleRecord from './pages/AddScheduleRecord'
@@ -30,7 +30,7 @@ function App() {
   const [availabilityLoading, setAvailabilityLoading] = useState(true)
   const [userLoading, setUserLoading] = useState(true)
 
-  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+  const daysOfWeek = useMemo(() => ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], [])
 
   const handleResponse = response => {
     if (response.ok) {
@@ -72,11 +72,8 @@ function App() {
 
   useEffect(() => {
     fetchUser()
-  }, [fetchUser])
-
-  useEffect(() => {
     fetchAvailability()
-  }, [user.userId, fetchAvailability])
+  }, [fetchUser, fetchAvailability])
 
   const [tasks] = useState([
     {

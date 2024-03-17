@@ -99,6 +99,23 @@ class Scheduler
 
             foreach ($this->users as $user) {
 
+                $userOrganizationRatings = $organizationRatings[$user->userId]["organizations"];
+                $associatedOrgRating = NULL;
+                $activityRating = NULL;
+
+                foreach ($this->ratings as $rating) {
+                    if (($rating->userId === $user->userId) && ($rating->activityId === $activity->id)) {
+                        $activityRating = $rating->rating;
+                        break; 
+                    }
+                }
+
+                foreach ($userOrganizationRatings as $userOrganizationRating) {
+                    if ($userOrganizationRating["organizationId"] == $activity->organizationId)
+                        $associatedOrgRating = $userOrganizationRating["rating"];
+                    break;
+                }
+
                 if (isset ($user->availability[$activityDayOfWeek]) && $user->availability[$activityDayOfWeek] !== null) {
                     $userAvailableStart = $user->availability[$activityDayOfWeek]->start;
                     $userAvailableEnd = $user->availability[$activityDayOfWeek]->end;
@@ -117,6 +134,8 @@ class Scheduler
                     }
 
                     if ($isUserAvailable && ($activityStart < $userAvailableEnd) && ($activityEnd > $userAvailableStart) && ($volunteerSlotsFilled < $activity->neededVolunteers)) {
+                        if(($associatedOrgRating > 2.5) || ($activityRating >= 4))
+                        {
                         if (!isset ($schedule[$activity->id])) {
                             $schedule[$activity->id]["details"] =
                                 [
@@ -142,7 +161,7 @@ class Scheduler
                             "end" => $activityEnd,
                             "day" => $activityDayOfWeek
                         ];
-
+                        }
                     }
                 }
             }
@@ -202,7 +221,7 @@ class Scheduler
                     "rating" => $data['sum'] / $data['count']
                 ];
             }
-            $result[] = [
+            $result[$userId] = [
                 "userId" => $userId,
                 "organizations" => $userRatings
             ];

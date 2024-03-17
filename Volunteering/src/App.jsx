@@ -132,7 +132,7 @@ function App() {
       <Routes>
         <Route path='/' element={<Home />} />
         {!availabilityLoading && !userLoading && <Route path='/account-details' element={<AccountDetails user={user} availability={availability} setAvailability={setAvailability} isLoading={availabilityLoading} />} />}
-        <Route path='/account-details/add-schedule-record' element={<AddScheduleRecord userId={user.userId} availability={availability} />} />
+        {!userLoading && <Route path='/account-details/add-schedule-record' element={<AddScheduleRecord userId={user.userId} availability={availability} />} />}
         <Route path='/feedback' element={<Feedback />} />
         <Route path='/InviteForm' element={<InviteForm />} />
         <Route path='/AssignedTasks' element={<AssignedTasks tasks={tasks} />} />

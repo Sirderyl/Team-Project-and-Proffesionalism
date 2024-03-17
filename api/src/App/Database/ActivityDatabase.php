@@ -112,4 +112,18 @@ class ActivityDatabase implements ActivityDatabaseInterface {
             ]
         );
     }
+
+    public function getAllUserRatings(): array
+    {
+        $result = $this->connection->query(
+            "SELECT user_id, activity_id, rating FROM user_activity WHERE rating IS NOT NULL",
+            []
+        );
+
+        return array_map(fn ($row) => new \App\Rating(
+            $row['user_id'],
+            $row['activity_id'],
+            $row['rating']
+        ), $result);
+    }
 }

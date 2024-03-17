@@ -19,4 +19,11 @@ interface ActivityDatabaseInterface {
     public function getPreviewPicture(int $activityId): string;
 
     public function assignToUser(int $activityId, int $userId, \DateTime $start): void;
+
+    /**
+     * Get all ratings for all activities and users.
+     * Does not include assigned activities without ratings.
+     * @return \App\Rating[]
+     */
+    public function getAllUserRatings(): array;
 }

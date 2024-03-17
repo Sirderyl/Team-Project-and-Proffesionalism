@@ -87,65 +87,11 @@ class Scheduler
             new Rating(3, 3, 5)
         );
     }
-
-    public function getUserSchedule(int $userId)
-    {
-        $schedule = [];
-        $userName = "";
-        foreach ($this->activities as $activity) {
-            $activityDayOfWeek = array_keys($activity->times)[0];
-            $volunteerSlotsFilled = 0;
-
-            foreach ($this->users as $user) {
-
-                if ($user->userId == $userId) {
-                    $userName = $user->userName;
-                }
-
-                if (isset($user->availability[$activityDayOfWeek]) && $user->availability[$activityDayOfWeek] !== null) {
-                    $userAvailableStart = $user->availability[$activityDayOfWeek]->start;
-                    $userAvailableEnd = $user->availability[$activityDayOfWeek]->end;
-
-                    $activityStart = $activity->getTime(DayOfWeek::fromString($activityDayOfWeek))->start;
-                    $activityEnd = $activity->getTime(DayOfWeek::fromString($activityDayOfWeek))->end;
-
-                    $isUserAvailable = true;
-
-                    if (isset($schedule[$user->userId])) {
-                        foreach ($schedule[$user->userId] as $timeSlot) {
-                            if (($timeSlot["start"] <= $activityEnd) && ($timeSlot["end"] >= $activityStart) && ($activityDayOfWeek == $timeSlot["day"])) {
-                                $isUserAvailable = false;
-                                break;
-                            }
-                        }
-                    }
-
-                    if ($isUserAvailable && ($activityStart <= $userAvailableEnd) && ($activityEnd >= $userAvailableStart) && ($volunteerSlotsFilled < $activity->neededVolunteers)) {
-
-                        $volunteerSlotsFilled += 1;
-                        $schedule[$user->userId][] = [
-                            "activity" => $activity->name,
-                            "start" => $activityStart,
-                            "end" => $activityEnd,
-                            "day" => $activityDayOfWeek
-                        ];
-
-                    }
-                }
-            }
-        }
-        return [
-            "userId" => $userId,
-            "userName" => $userName,
-            "schedule" => $schedule[$userId]
-        ];
-
-    }
-
-    public function getManagerSchedule()
+    public function assignActivities()
     {
         $schedule = [];
         $scheduledTimeSlots = [];
+        $organizationRatings = $this->getOrganizationRatings();
         foreach ($this->activities as $activity) {
             $activityDayOfWeek = array_keys($activity->times)[0];
             $volunteerSlotsFilled = 0;

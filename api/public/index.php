@@ -51,9 +51,9 @@ $app->get('/greetings[/{language}]', function (Request $request, Response $respo
     return $response->withHeader('Content-Type', 'application/json');
 });
 
-$app->post('/managerSchedule', function (Request $request, Response $response, array $args) use ($container) {
+$app->post('/assignActivities', function (Request $request, Response $response, array $args) use ($container) {
     $schedule = $container->get(App\Scheduler::class);
-    $data = $schedule->getManagerSchedule();
+    $data = $schedule->assignActivities();
     $body = json_encode($data, JSON_PRETTY_PRINT);
     $response->getBody()->write($body);
     return $response->withHeader('Content-Type', 'application/json');

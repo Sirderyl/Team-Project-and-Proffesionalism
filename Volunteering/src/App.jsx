@@ -12,8 +12,12 @@ import SignUp from './pages/SignUp'
 import NavMenu from './components/NavMenu'
 
 function App() {
-  const [email] = useState('scott65@hotmail.com')
+  const [user, setUser] = useState({})
+  const [userId] = useState(1)
   const [token, setToken] = useState(localStorage.getItem('token'))
+  const [availability, setAvailability] = useState([])
+  const [availabilityLoading, setAvailabilityLoading] = useState(true)
+  const [userLoading, setUserLoading] = useState(true)
 
   function handleLogin(token) {
     setToken(token)
@@ -24,11 +28,6 @@ function App() {
     setToken(null)
     localStorage.removeItem('token')
   }
-
-  const [availability, setAvailability] = useState([])
-  const [user, setUser] = useState({})
-  const [availabilityLoading, setAvailabilityLoading] = useState(true)
-  const [userLoading, setUserLoading] = useState(true)
 
   const daysOfWeek = useMemo(() => ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], [])
 
@@ -52,13 +51,13 @@ function App() {
 
   const fetchUser = useCallback(() => {
     // Change to `${apiRoot}/user/${userId} in production
-    fetch(`https://w20010297.nuwebspace.co.uk/api/user/${email}`)
+    fetch(`https://w20010297.nuwebspace.co.uk/api/user/${userId}`)
       .then(response => handleResponse(response))
       .then(data => {
         setUser(data)
         setUserLoading(false)
       })
-  }, [email])
+  }, [userId])
 
   const fetchAvailability = useCallback(() => {
     if(user.userId) {

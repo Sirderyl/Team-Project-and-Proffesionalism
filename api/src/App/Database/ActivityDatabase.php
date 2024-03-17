@@ -12,7 +12,13 @@ class ActivityDatabase implements ActivityDatabaseInterface {
         $this->connection = $connection;
     }
 
-    public function get(int $id): \App\Activity {
+    /**
+     * Backing method for all `get` methods
+     * @param string $filter The WHERE clause of the SQL query. MUST NOT contain user-provided data
+     * @param array<string, string|int> $params The parameters to bind to the query.
+     * @return \App\Activity[] The activity that was found
+     */
+    private function runGet(string $filter, array $params): array {
         $result = $this->connection->query(
             "SELECT
                 id,
@@ -24,11 +30,23 @@ class ActivityDatabase implements ActivityDatabaseInterface {
                 end_time,
                 needed_volunteers
             FROM activity
-            WHERE id = :id",
-            [':id' => $id]
+            $filter",
+            $params
         );
 
-        return \App\Activity::fromRow($result[0]);
+        if (empty($result)) {
+            throw new NotFoundException();
+        }
+
+        return array_map(fn ($row) => \App\Activity::fromRow($row), $result);
+    }
+
+    public function get(int $id): \App\Activity {
+        return $this->runGet("WHERE id = :id", ['id' => $id])[0];
+    }
+
+    public function getAll(): array {
+        return $this->runGet("", []);
     }
 
     public function create(\App\Activity $activity): void {

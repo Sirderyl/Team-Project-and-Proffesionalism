@@ -8,6 +8,11 @@ namespace App\Database;
  */
 interface ActivityDatabaseInterface {
     public function get(int $id): \App\Activity;
+    /**
+     * Get all activities
+     * @return \App\Activity[]
+     */
+    public function getAll(): array;
     public function create(\App\Activity $activity): void;
 
     public function setPreviewPicture(int $activityId, string $image): void;

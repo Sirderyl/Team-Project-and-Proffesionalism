@@ -12,7 +12,17 @@ import SignUp from './pages/SignUp'
 import NavMenu from './components/NavMenu'
 
 function App() {
-  const [user, setUser] = useState({})
+  const [user, setUser] = useState({
+    userId: 1,
+    isManager: false,
+    userName: "John Doe",
+    availability: [
+      { day: "Monday", time: { start: "09:00", end: "17:00" } },
+      { day: "Tuesday", time: { start: "09:00", end: "17:00" } }
+    ],
+    phoneNumber: "+441234567890",
+    email: "email@example.com"
+  })
   const [userId] = useState(1)
   const [token, setToken] = useState(localStorage.getItem('token'))
   const [availability, setAvailability] = useState([])

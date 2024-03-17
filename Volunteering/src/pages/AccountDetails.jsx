@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import { apiRoot } from '../settings'
+//import { apiRoot } from '../settings'
 import toast, { Toaster } from 'react-hot-toast'
 
 export default function AccountDetails({ user, availability, setAvailability, isLoading }) {
@@ -44,7 +44,7 @@ export default function AccountDetails({ user, availability, setAvailability, is
             <h1 className="text-3xl font-bold mb-3 ml-5">Account Details</h1>
             <div className="flex flex-row">
                 <div className="flex flex-col ml-5">
-                    {!isLoading && <img src={`${apiRoot}/user/${user.userId}/profilepicture`} className="w-40 h-40 rounded-full" />}
+                    {!isLoading && <img src={`https://w20010297.nuwebspace.co.uk/api/user/${user.userId}/profilepicture`} className="w-40 h-40 rounded-full" />}
                 </div>
                 <div className="flex flex-col ml-5">
                     <p className="text-lg mt-10"><strong>Name: </strong>{!isLoading && user.userName}</p>

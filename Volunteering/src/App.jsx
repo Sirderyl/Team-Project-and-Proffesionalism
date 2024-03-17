@@ -27,7 +27,6 @@ function App() {
   const [token, setToken] = useState(localStorage.getItem('token'))
   const [availability, setAvailability] = useState([])
   const [availabilityLoading, setAvailabilityLoading] = useState(true)
-  const [userLoading, setUserLoading] = useState(true)
 
   function handleLogin(token) {
     setToken(token)
@@ -63,10 +62,7 @@ function App() {
     // Change to `${apiRoot}/user/${userId} in production
     fetch(`https://w20010297.nuwebspace.co.uk/api/user/${userId}`)
       .then(response => handleResponse(response))
-      .then(data => {
-        setUser(data)
-        setUserLoading(false)
-      })
+      .then(data => setUser(data))
   }, [userId])
 
   const fetchAvailability = useCallback(() => {
@@ -143,15 +139,14 @@ function App() {
 
       <Routes>
         <Route path='/' element={<Home />} />
-        {!availabilityLoading && !userLoading && <Route path='/account-details' element={<AccountDetails user={user} availability={availability} setAvailability={setAvailability} isLoading={availabilityLoading} />} />}
-        {!userLoading && <Route path='/account-details/add-schedule-record' element={<AddScheduleRecord userId={user.userId} availability={availability} />} />}
+        <Route path='/login' element={<Login handleLogin={handleLogin} isLoggedIn={isLoggedIn} />} />
+        <Route path='/signup' element={<SignUp handleLogin={handleLogin} isLoggedIn={isLoggedIn} />} />
+        <Route path='/account-details' element={<AccountDetails user={user} availability={availability} setAvailability={setAvailability} isLoading={availabilityLoading} />} />
+        <Route path='/account-details/add-schedule-record' element={<AddScheduleRecord userId={user.userId} availability={availability} />} />
         <Route path='/feedback' element={<Feedback />} />
         <Route path='/InviteForm' element={<InviteForm />} />
         <Route path='/AssignedTasks' element={<AssignedTasks tasks={tasks} />} />
         <Route path='/scheduleApproval' element={<ScheduleApprovalPage taskRequests={taskRequests} />} />
-        {routes.map((route, index) => (
-          <Route key={index} path={route.path} element={route.element} />
-        ))}
       </Routes>
     </div>
   )

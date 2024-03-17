@@ -16,9 +16,10 @@ class User {
      *   email: string,
      *   phone_number: string,
      *   password_hash: string,
+     *   is_manager: int,
      *   day_of_week: ?string,
      *   start_hour: ?int,
-     *   end_hour: ?int
+     *   end_hour: ?int,
      * }[] $rows
      * @return User[]
      */
@@ -36,6 +37,7 @@ class User {
             $current->email = $row['email'];
             $current->passwordHash = $row['password_hash'];
             $current->phoneNumber = $row['phone_number'];
+            $current->isManager = $row['is_manager'] !== 0;
 
             $day = $row['day_of_week'] ?? null;
             $start = $row['start_hour'] ?? null;
@@ -53,6 +55,10 @@ class User {
     }
 
     public int $userId;
+
+    // Determined at query time based on if the user is manager of any organization
+    public bool $isManager = false;
+
     public string $userName;
 
     /**

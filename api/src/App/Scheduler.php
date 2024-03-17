@@ -92,13 +92,14 @@ class Scheduler
         $schedule = [];
         $scheduledTimeSlots = [];
         $organizationRatings = $this->getOrganizationRatings();
+
         foreach ($this->activities as $activity) {
             $activityDayOfWeek = array_keys($activity->times)[0];
             $volunteerSlotsFilled = 0;
 
             foreach ($this->users as $user) {
 
-                if (isset($user->availability[$activityDayOfWeek]) && $user->availability[$activityDayOfWeek] !== null) {
+                if (isset ($user->availability[$activityDayOfWeek]) && $user->availability[$activityDayOfWeek] !== null) {
                     $userAvailableStart = $user->availability[$activityDayOfWeek]->start;
                     $userAvailableEnd = $user->availability[$activityDayOfWeek]->end;
 
@@ -106,7 +107,7 @@ class Scheduler
                     $activityEnd = $activity->getTime(DayOfWeek::fromString($activityDayOfWeek))->end;
 
                     $isUserAvailable = true;
-                    if (isset($scheduledTimeSlots[$user->userId])) {
+                    if (isset ($scheduledTimeSlots[$user->userId])) {
                         foreach ($scheduledTimeSlots[$user->userId] as $timeSlot) {
                             if (($timeSlot["start"] < $activityEnd) && ($timeSlot["end"] > $activityStart) && ($activityDayOfWeek == $timeSlot["day"])) {
                                 $isUserAvailable = false;
@@ -116,7 +117,7 @@ class Scheduler
                     }
 
                     if ($isUserAvailable && ($activityStart < $userAvailableEnd) && ($activityEnd > $userAvailableStart) && ($volunteerSlotsFilled < $activity->neededVolunteers)) {
-                        if (!isset($schedule[$activity->id])) {
+                        if (!isset ($schedule[$activity->id])) {
                             $schedule[$activity->id]["details"] =
                                 [
                                     'activityName' => $activity->name,
@@ -149,19 +150,17 @@ class Scheduler
         return $schedule;
     }
 
-    public function getOrganizationRatings(/*array $ratings, array $activities*/): array {
+    public function getOrganizationRatings(/*array $ratings, array $activities*/): array
+    {
         $ratings = $this->ratings;
         $activities = $this->activities;
 
         // Add OrganizationId to Ratings
-        foreach($ratings as $rating)
-        {
+        foreach ($ratings as $rating) {
             $organizationId = 0;
 
-            foreach($activities as $activity)
-            {
-                if($activity->id == $rating->activityId)
-                {
+            foreach ($activities as $activity) {
+                if ($activity->id == $rating->activityId) {
                     $organizationId = $activity->organizationId;
                     $rating->organizationId = $organizationId;
                     break;
@@ -171,10 +170,9 @@ class Scheduler
 
         // Split Ratings into Separate Arrays for each user
         $ratingsByUser = [];
-        foreach($ratings as $rating)
-        {
+        foreach ($ratings as $rating) {
             $userId = $rating->userId;
-            if (!isset($ratingsByUser[$userId])) {
+            if (!isset ($ratingsByUser[$userId])) {
                 $ratingsByUser[$userId] = [];
             }
             $ratingsByUser[$userId][] = $rating;
@@ -182,12 +180,10 @@ class Scheduler
 
         //Calculate rating sum and count of each organization for each user
         $organizationSumCount = [];
-        foreach($ratingsByUser as $user)
-        {
-            foreach($user as $rating)
-            {
+        foreach ($ratingsByUser as $user) {
+            foreach ($user as $rating) {
                 $userId = $rating->userId;
-                if (!isset($organizationSumCount[$userId][$rating->organizationId])) {
+                if (!isset ($organizationSumCount[$userId][$rating->organizationId])) {
                     $organizationSumCount[$userId][$rating->organizationId]['sum'] = 0;
                     $organizationSumCount[$userId][$rating->organizationId]['count'] = 0;
                 }
@@ -197,19 +193,21 @@ class Scheduler
         }
 
         //Calculate rating average for each organization for each user
-        $averageRatings = [];
-
+        $result = [];
         foreach ($organizationSumCount as $userId => $organizations) {
+            $userRatings = [];
             foreach ($organizations as $organizationId => $data) {
-                $sum = $data['sum'];
-                $count = $data['count'];
-            
-                $averageRating = $count > 0 ? $sum / $count : 0;
-
-                $averageRatings[$userId][$organizationId] = $averageRating;
+                $userRatings[] = [
+                    "organizationId" => $organizationId,
+                    "rating" => $data['sum'] / $data['count']
+                ];
             }
+            $result[] = [
+                "userId" => $userId,
+                "organizations" => $userRatings
+            ];
         }
 
-        return $averageRatings;
+        return $result;
     }
 }

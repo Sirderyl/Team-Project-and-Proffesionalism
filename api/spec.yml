@@ -18,7 +18,7 @@ tags:
     description: Operations about user accounts
 
 paths:
-  /managerSchedule:
+  /assignActivities:
     post:
       description: Execute scheduling algorithm to get all the scheduled activities and the user's assigned to each activity.
       responses:

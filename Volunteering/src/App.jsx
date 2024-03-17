@@ -81,8 +81,11 @@ function App() {
 
   useEffect(() => {
     fetchUser()
+  }, [fetchUser])
+
+  useEffect(() => {
     fetchAvailability()
-  }, [fetchUser, fetchAvailability])
+  }, [fetchAvailability])
 
   const [tasks] = useState([
     {

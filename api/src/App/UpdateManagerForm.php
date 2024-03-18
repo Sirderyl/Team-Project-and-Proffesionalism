@@ -7,7 +7,7 @@ namespace App;
  */
 class UpdateManagerForm
 {
-
+//
     private Database\DatabaseInterface $database;
 
     public function __construct(Database\DatabaseInterface $database)

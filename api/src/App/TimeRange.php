@@ -4,6 +4,7 @@ namespace App;
 
 /**
  * A time range in a single day
+ * @phpstan-type TimeRangeArray array{start: float, end: float}
  * @author Kieran
  */
 class TimeRange {
@@ -23,5 +24,13 @@ class TimeRange {
 
         $this->start = $start;
         $this->end = $end;
+    }
+
+    /** @return TimeRangeArray */
+    public function toArray(): array {
+        return [
+            'start' => $this->start,
+            'end' => $this->end
+        ];
     }
 }

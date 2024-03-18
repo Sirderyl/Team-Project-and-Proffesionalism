@@ -18,7 +18,7 @@ class SqliteConnection implements ConnectionInterface
     {
         // Don't create a database file if it doesn't exist
         // createdb.ps1 will handle that
-        if (!file_exists($path)) {
+        if (!file_exists($path) && $path !== ':memory:') {
             throw new \InvalidArgumentException("Database file does not exist: $path, please run createdb.ps1 to create it");
         }
 
@@ -42,12 +42,12 @@ class SqliteConnection implements ConnectionInterface
         return $stmt->rowCount();
     }
 
-    public function lastInsertId(): string
+    public function lastInsertId(): int
     {
         $id = $this->pdo->lastInsertId();
         if ($id === false) {
             throw new \LogicException('Could not get last insert ID, was anything inserted?');
         }
-        return $id;
+        return intval($id);
     }
 }

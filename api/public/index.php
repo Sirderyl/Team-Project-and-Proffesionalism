@@ -31,7 +31,8 @@ $app->add(function (Request $request, RequestHandler $handler) {
     $response = $handler->handle($request);
     return $response
         ->withHeader('Access-Control-Allow-Origin', '*')
-        ->withHeader('Access-Control-Allow-Headers', 'Authorization');
+        ->withHeader('Access-Control-Allow-Headers', 'Authorization')
+        ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
 });
 
 
@@ -58,9 +59,16 @@ $app->get('/managerSchedule', function (Request $request, Response $response, ar
     return $response->withHeader('Content-Type', 'application/json');
 });
 
+$app->get('/activity/{id}', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\GetActivity::class, ['database' => $database]);
+    $data = $handler->execute(intval($args['id']));
+    $response->getBody()->write(json_encode($data));
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
 $app->get('/activity/{id}/previewimage', function (Request $request, Response $response, array $args) use ($container, $database) {
     $handler = $container->make(App\ActivityPicture::class, ['database' => $database]);
-    $data = $handler->execute($args['id']);
+    $data = $handler->execute(intval($args['id']));
     $response->getBody()->write($data);
     return $response->withHeader('Content-Type', $handler->getContentType());
 });
@@ -75,14 +83,45 @@ $app->post('/user/register', function (Request $request, Response $response, arr
 $app->post('/user/login', function (Request $request, Response $response, array $args) use ($container, $database) {
     $login = $container->make(App\Login::class, ['database' => $database]);
 
-    $response->getBody()->write(json_encode($login->execute()));
+
+    $email = $_SERVER['PHP_AUTH_USER'] ?? null;
+    $password = $_SERVER['PHP_AUTH_PW'] ?? null;
+
+    $response->getBody()->write(json_encode($login->execute($email, $password)));
     return $response->withHeader('Content-Type', 'application/json');
 });
+
+$app->get('/user/{id}', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\UserEndpoint::class, ['database' => $database]);
+    $data = $handler->getUser(intval($args['id']));
+    $response->getBody()->write(json_encode($data));
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
 $app->get('/user/{id}/profilepicture', function (Request $request, Response $response, array $args) use ($container, $database) {
     $handler = $container->make(App\ProfilePicture::class, ['database' => $database]);
-    $data = $handler->execute($args['id']);
+    $data = $handler->execute(intval($args['id']));
     $response->getBody()->write($data);
     return $response->withHeader('Content-Type', $handler->getContentType());
+});
+
+$app->get('/user/{id}/availability', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\AvailabilityEndpoint::class, ['database' => $database]);
+    $data = $handler->getAvailability(intval($args['id']));
+    $response->getBody()->write(json_encode($data));
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
+$app->post('/user/{id}/availability', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\AvailabilityEndpoint::class, ['database' => $database]);
+    $handler->addAvailability(intval($args['id']), $request->getParsedBody());
+    return $response->withStatus(201);
+});
+
+$app->delete('/user/{id}/availability/{day}', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\AvailabilityEndpoint::class, ['database' => $database]);
+    $handler->deleteAvailability(intval($args['id']), App\DayOfWeek::from($args['day']));
+    return $response->withStatus(200);
 });
 
 function getErrorCode(Throwable $exception): int
@@ -108,6 +147,7 @@ $errorMiddleware->setDefaultErrorHandler(function (Request $request, Throwable $
         ->withStatus(getErrorCode($exception))
         // Need to duplicate this line because the CORS middleware is not called for errors
         ->withHeader('Access-Control-Allow-Origin', '*')
+        ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
         ->withHeader('Content-Type', 'application/json');
 });
 

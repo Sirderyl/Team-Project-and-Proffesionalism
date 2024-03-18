@@ -23,6 +23,12 @@ interface UsersDatabaseInterface
     public function getById(int $id): \App\User;
 
     /**
+     * Get all users
+     * @return \App\User[]
+     */
+    public function getAll(): array;
+
+    /**
      * Create a new user. Sets the user's ID on the User object.
      */
     public function create(\App\User $user): void;

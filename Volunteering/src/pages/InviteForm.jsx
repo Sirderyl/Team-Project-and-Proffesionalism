@@ -1,14 +1,37 @@
 
-import { useState } from 'react';
-import { v4 as uuidv4 } from 'uuid'; 
+import { useState } from 'react'; 
 import { MailIcon } from '@heroicons/react/outline'; 
+import PropTypes from 'prop-types';
 //
 const volunteersData = [
-    { id: uuidv4(), name: 'Volunteer 1', email: 'volunteer1@example.com' },
-    { id: uuidv4(), name: 'Volunteer 2', email: 'volunteer2@example.com' },
+    { id: 1, name: 'Volunteer 1', email: 'volunteer1@example.com' },
+    { id: 2, name: 'Volunteer 2', email: 'volunteer2@example.com' },
 ];
 
-const InviteForm = () => {
+const sendInvitations = async (userId,organizationId) => {
+    try {
+     
+        // Make an HTTP POST request to your PHP API endpoint
+        const response = await fetch(`https://w21010679.nuwebspace.co.uk/api/organization/${organizationId}/user/${userId}/status?status=Invited`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        // Handle response
+        if (!response.ok) {
+            throw new Error('Failed to send invitations');
+        }
+        console.log('Invitations sent successfully');
+
+        // Reset state or perform any necessary actions after sending invitations
+    } catch (error) {
+        console.error('Error sending invitations:', error.message);
+    }
+};
+
+const InviteForm = (props) => {
     const [selectedVolunteers, setSelectedVolunteers] = useState([]);
     const [invitationMessage, setInvitationMessage] = useState('');
 
@@ -18,11 +41,6 @@ const InviteForm = () => {
                 ? prevSelected.filter((v) => v !== volunteer)
                 : [...prevSelected, volunteer]
         );
-    };
-
-    const sendInvitations = () => {
-        console.log('Sending invitations to:', selectedVolunteers);
-        console.log('Invitation Message:', invitationMessage);
     };
 
     return (
@@ -61,7 +79,11 @@ const InviteForm = () => {
             </div>
             <button
                 className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                onClick={sendInvitations}
+                onClick={() => {
+                    for (const volunteer of selectedVolunteers) {
+                        sendInvitations(volunteer.id,props.organizationId);
+                    }
+                }}
             >
                 <MailIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
                 Send Invitations
@@ -69,5 +91,8 @@ const InviteForm = () => {
         </div>
     );
 };
+InviteForm.propTypes = {
+    organizationId: PropTypes.number.isRequired,
+}
 
 export default InviteForm;

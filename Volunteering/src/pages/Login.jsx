@@ -36,7 +36,7 @@ export default function Login({
 
             if (!response.ok) throw new Error(data.message)
 
-            handleLogin(data)
+                handleLogin(data.token)
 
             // Only clear the email if the login was successful
             setEmail('')

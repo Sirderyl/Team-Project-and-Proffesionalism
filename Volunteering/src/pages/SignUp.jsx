@@ -42,7 +42,7 @@ export default function SignUp({
 
             if (!response.ok) throw new Error(data.error)
 
-            handleLogin(data)
+            handleLogin(data.token)
 
         } catch (error) {
             console.error(error)

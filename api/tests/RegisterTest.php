@@ -35,7 +35,6 @@ class RegisterTest extends TestCase {
 
         $user = $this->database->users()->getByEmail(self::BODY['email']);
         $this->assertEquals(App\Token::verify($result['token']), $user->userId);
-        $this->assertEquals($result['userId'], $user->userId);
         $this->assertEquals(self::BODY['name'], $user->userName);
         $this->assertEquals(self::BODY['phone'], $user->phoneNumber);
         $this->assertEquals(self::BODY['email'], $user->email);

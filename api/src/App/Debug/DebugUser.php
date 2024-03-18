@@ -7,19 +7,17 @@ use Faker\Generator;
 class DebugUser
 {
     /**
-     * Create a dummy user for testing purposes
-     * If email or password is null, they will be randomly generated
      * @return array{0: \App\User, 1: string}
      */
-    public static function createDummyUser(Generator $faker, ?string $email = null, ?string $password = null): array
+    public static function createDummyUser(Generator $faker): array
     {
-        $email ??= $faker->unique()->email();
-        $password ??= $faker->password();
-
         $user = new \App\User();
-        $user->userName = $faker->unique()->name();
+        // Normally a username would never include the password, but this is just dummy data
+        // and we want to be able to log in as a dummy user
+        $password = $faker->password();
+        $user->userName = $faker->unique()->name() . ' password: ' . $password;
         $user->phoneNumber = $faker->unique()->e164PhoneNumber();
-        $user->email = $email;
+        $user->email = $faker->unique()->email();
         $user->passwordHash = password_hash($password, PASSWORD_DEFAULT);
 
         foreach (\App\DayOfWeek::cases() as $day) {

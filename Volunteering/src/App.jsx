@@ -11,21 +11,17 @@ import Login from './pages/Login'
 import SignUp from './pages/SignUp'
 import NavMenu from './components/NavMenu'
 
-/** @typedef {import('./types/UserData').UserData} UserData */
-
 function App() {
-  /**
-   * @type {[UserData | null, function(UserData | null): void]}
-   */
-  const [userData, setUserData] = useState(JSON.parse(localStorage.getItem('user')))
-  function handleLogin(data) {
-    setUserData(data)
-    localStorage.setItem('user', JSON.stringify(data))
+  const [userId] = useState(1)
+  const [token, setToken] = useState(localStorage.getItem('token'))
+  function handleLogin(token) {
+    setToken(token)
+    localStorage.setItem('token', token)
   }
 
   function handleLogout() {
-    setUserData(null)
-    localStorage.removeItem('user')
+    setToken(null)
+    localStorage.removeItem('token')
   }
 
   const [availability, setAvailability] = useState([])
@@ -34,14 +30,8 @@ function App() {
   const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
   const fetchAvailability = () => {
-    if (userData === null) {
-      setAvailability([])
-      setIsLoading(false)
-      return
-    }
-
     // Change to `${apiRoot}/user/${userId}/availability` in production
-    fetch(`https://w20010297.nuwebspace.co.uk/api/user/${userData.userId}/availability`)
+    fetch(`https://w20010297.nuwebspace.co.uk/api/user/${userId}/availability`)
       .then(response => handleResponse(response))
       .then(data => handleJSON(data))
       .catch(err => {
@@ -67,7 +57,7 @@ function App() {
     }
   }
 
-  useEffect(fetchAvailability, [userData?.userId])
+  useEffect(fetchAvailability, [userId])
 
   const [tasks] = useState([
     {
@@ -101,7 +91,7 @@ function App() {
       requester: "Alice Johnson"
     },
   ]);
-  const isLoggedIn = userData !== null
+  const isLoggedIn = token !== null
 
   /**
    * Routes for the app. Set navigable: false to hide a route from the NavMenu while keeping it in the app
@@ -111,21 +101,21 @@ function App() {
     { path: '/', name: 'Home', element: <Home /> },
     { path: '/login', name: 'Login', element: <Login handleLogin={handleLogin} isLoggedIn={isLoggedIn} />, navigable: !isLoggedIn },
     { path: '/signup', name: 'Sign up', element: <SignUp handleLogin={handleLogin} isLoggedIn={isLoggedIn} />, navigable: !isLoggedIn },
-    { path: '/account-details', name: 'Account Details', element: <AccountDetails userId={userData?.userId} availability={availability} setAvailability={setAvailability} isLoading={isLoading} /> },
-    { path: '/account-details/add-schedule-record', name: 'Add Schedule Record', element: <AddScheduleRecord userId={userData} availability={availability} /> },
+    { path: '/account-details', name: 'Account Details', element: <AccountDetails userId={userId} availability={availability} setAvailability={setAvailability} isLoading={isLoading} /> },
+    { path: '/account-details/add-schedule-record', name: 'Add Schedule Record', element: <AddScheduleRecord userId={userId} availability={availability} /> },
   ]
   return (
     <div className='App'>
       <NavMenu
         routes={routes.filter(route => route.navigable !== false)}
-        isLoggedIn={userData !== null}
+        isLoggedIn={token !== null}
         handleLogout={handleLogout}
       />
 
       <Routes>
         <Route path='/' element={<Home />} />
-        <Route path='/account-details' element={<AccountDetails userId={userData?.userId} availability={availability} setAvailability={setAvailability} isLoading={isLoading} />} />
-        <Route path='/account-details/add-schedule-record' element={<AddScheduleRecord userId={userData?.userId} availability={availability} />} />
+        <Route path='/account-details' element={<AccountDetails userId={userId} availability={availability} setAvailability={setAvailability} isLoading={isLoading} />} />
+        <Route path='/account-details/add-schedule-record' element={<AddScheduleRecord userId={userId} availability={availability} />} />
         <Route path='/feedback' element={<Feedback />} />
         <Route path='/InviteForm' element={<InviteForm />} />
         <Route path='/AssignedTasks' element={<AssignedTasks tasks={tasks} />} />

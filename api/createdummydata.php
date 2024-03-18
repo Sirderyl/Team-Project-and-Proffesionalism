@@ -58,7 +58,7 @@ $profilePicture = getProfilePicture();
 $users = [];
 
 for ($i = 0; $i < NUM_USERS; $i++) {
-    [$user] = App\Debug\DebugUser::createDummyUser($faker, "$i@example.com", "password$i");
+    [$user] = App\Debug\DebugUser::createDummyUser($faker);
     $users[] = $user;
 
     $database->users()->create($user);

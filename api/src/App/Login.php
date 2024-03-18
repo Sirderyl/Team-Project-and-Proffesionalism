@@ -26,7 +26,6 @@ class Login
      * Execute the endpoint
      * @return array{
      *   'token': string
-     *   'userId': int
      * }
      */
     public function execute(?string $email, ?string $password): array
@@ -47,8 +46,7 @@ class Login
         }
 
         return [
-            'token' => Token::issue($user->userId),
-            'userId' => $user->userId,
+            'token' => Token::issue($user->userId)
         ];
     }
 }

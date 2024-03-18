@@ -14,14 +14,14 @@ class ActivityDatabaseTest extends TestCase {
         $this->database = Debug\DebugDatabase::createTestDatabase();
     }
 
-    private function runRoundTripTest(int $days): void
+    public function testRoundTrip(): void
     {
         [$admin] = Debug\DebugUser::createDummyUser($this->faker);
         $this->database->users()->create($admin);
         $organization = Debug\DebugOrganization::createDummyOrganization($this->faker, $admin->userId);
         $this->database->organizations()->create($organization);
 
-        $activity = Debug\DebugActivity::createDummyActivity($this->faker, $organization->id, $days);
+        $activity = Debug\DebugActivity::createDummyActivity($this->faker, $organization->id);
         $this->database->activities()->create($activity);
         $output = $this->database->activities()->get($activity->id);
 
@@ -49,10 +49,5 @@ class ActivityDatabaseTest extends TestCase {
             unset($activities[$activity->id]);
         }
         $this->assertEmpty($activities);
-    public function testRoundTrip(): void
-    {
-        // Make sure it works with 0 days and more than 0 days
-        $this->runRoundTripTest(0);
-        $this->runRoundTripTest(5);
     }
 }

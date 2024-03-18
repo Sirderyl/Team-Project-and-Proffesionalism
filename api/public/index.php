@@ -124,6 +124,27 @@ $app->delete('/user/{id}/availability/{day}', function (Request $request, Respon
     return $response->withStatus(200);
 });
 
+$app->get('/organization/{id}/user/{userId}/status', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\UpdateManagerForm::class, ['database' => $database]);
+    $status = $handler->getUserStatus(intval($args['id']), intval($args['userId']));
+    $response->getBody()->write(json_encode([
+        "status" => $status
+    ]));
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
+$app->post('/organization/{id}/user/{userId}/status', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $orgId = intval($args['id']);
+    $organiztion = $database->organizations()->get($orgId);
+    $status = $request->getQueryParams()['status'];
+    // TODO: Verify the manager is logged in
+
+    $handler = $container->make(App\UpdateManagerForm::class, ['database' => $database]);
+    $handler->setUserStatus($orgId, intval($args['userId']), App\UserOrganizationStatus::from($status));
+
+    return $response->withStatus(201);
+});
+
 function getErrorCode(Throwable $exception): int
 {
     if ($exception instanceof NotFoundException) {

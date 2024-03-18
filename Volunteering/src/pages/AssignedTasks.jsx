@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axio';
-//
-//
+import axios from 'axios';
+
 const AssignedTasks = () => {
     const [schedule, setSchedule] = useState([]);
     const [isLoading, setIsLoading] = useState(true);

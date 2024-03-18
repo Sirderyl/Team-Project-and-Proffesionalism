@@ -49,8 +49,6 @@ class ActivityDatabaseTest extends TestCase {
             unset($activities[$activity->id]);
         }
         $this->assertEmpty($activities);
-    }
-    
     public function testRoundTrip(): void
     {
         // Make sure it works with 0 days and more than 0 days

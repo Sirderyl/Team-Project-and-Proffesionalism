@@ -1,5 +1,5 @@
 import { Routes, Route } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import Home from './pages/Home'
 import AccountDetails from './pages/AccountDetails'
 import AddScheduleRecord from './pages/AddScheduleRecord'
@@ -10,6 +10,9 @@ import ScheduleApprovalPage from './pages/ScheduleApprovalPage'
 import Login from './pages/Login'
 import SignUp from './pages/SignUp'
 import NavMenu from './components/NavMenu'
+
+const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
 //
 function App() {
   const [userId] = useState(1)
@@ -26,8 +29,6 @@ function App() {
 
   const [availability, setAvailability] = useState([])
   const [isLoading, setIsLoading] = useState(true)
-
-  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
   const fetchAvailability = () => {
     // Change to `${apiRoot}/user/${userId}/availability` in production
@@ -47,7 +48,7 @@ function App() {
     }
   }
 
-  const handleJSON = json => {
+  const handleJSON = useCallback(json => {
     if (json.constructor === Array) {
       json.sort((a, b) => daysOfWeek.indexOf(a.day) - daysOfWeek.indexOf(b.day))
       setAvailability(json)
@@ -55,9 +56,9 @@ function App() {
     } else {
       throw new Error('Invalid JSON: ' + json);
     }
-  }
+  }, [])
 
-  useEffect(fetchAvailability, [userId])
+  useEffect(fetchAvailability, [userId, handleJSON])
 
   const [tasks] = useState([
     {

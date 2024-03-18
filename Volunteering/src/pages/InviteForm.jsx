@@ -1,6 +1,6 @@
 
-import { useState } from 'react'; 
-import { MailIcon } from '@heroicons/react/outline'; 
+import { useState } from 'react';
+import { MailIcon } from '@heroicons/react/outline';
 import PropTypes from 'prop-types';
 //
 const volunteersData = [
@@ -10,13 +10,10 @@ const volunteersData = [
 
 const sendInvitations = async (userId,organizationId) => {
     try {
-     
+
         // Make an HTTP POST request to your PHP API endpoint
         const response = await fetch(`https://w21010679.nuwebspace.co.uk/api/organization/${organizationId}/user/${userId}/status?status=Invited`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
         });
 
         // Handle response

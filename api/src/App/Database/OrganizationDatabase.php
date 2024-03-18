@@ -48,4 +48,18 @@ class OrganizationDatabase implements OrganizationDatabaseInterface {
             );
         }
     }
+
+    public function getUserStatus(int $organizationId, int $userId): \App\UserOrganizationStatus {
+        $result = $this->connection->query(
+            'SELECT status FROM user_organization WHERE user_id = :userId AND organization_id = :organizationId',
+            ['userId' => $userId, 'organizationId' => $organizationId]
+        );
+
+        // No affiliation is represented as the lack of a row
+        if (empty($result)) {
+            return \App\UserOrganizationStatus::None;
+        }
+
+        return \App\UserOrganizationStatus::from($result[0]['status']);
+    }
 }

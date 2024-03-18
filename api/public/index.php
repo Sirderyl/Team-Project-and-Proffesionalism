@@ -124,6 +124,12 @@ $app->delete('/user/{id}/availability/{day}', function (Request $request, Respon
     return $response->withStatus(200);
 });
 
+$app->post('/user/{email}/{name}', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\MailerEndpoint::class, ['mailer' => $container->get(App\Mailer::class)]);
+    $response->getBody()->write($handler->sendEmail($args['email'], $args['name']));
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
 function getErrorCode(Throwable $exception): int
 {
     if ($exception instanceof NotFoundException) {

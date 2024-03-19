@@ -51,24 +51,9 @@ $app->get('/greetings[/{language}]', function (Request $request, Response $respo
     return $response->withHeader('Content-Type', 'application/json');
 });
 
-$app->post('/assignActivities', function (Request $request, Response $response, array $args) use ($container) {
+$app->get('/managerSchedule', function (Request $request, Response $response, array $args) use ($container) {
     $schedule = $container->get(App\Scheduler::class);
-    $data = $schedule->assignActivities();
-    $body = json_encode($data, JSON_PRETTY_PRINT);
-    $response->getBody()->write($body);
-    return $response->withHeader('Content-Type', 'application/json');
-});
-
-$app->get('/userSchedule/{userId}', function (Request $request, Response $response, array $args) use ($container, $database) {
-    $data = $database->users()->getAssignedActivities(intval($args['userId']));
-    $body = json_encode($data, JSON_PRETTY_PRINT);
-    $response->getBody()->write($body);
-    return $response->withHeader('Content-Type', 'application/json');
-});
-
-$app->get('/devOrganizationRatings', function (Request $request, Response $response, array $args) use ($container) {
-    $schedule = $container->get(App\Scheduler::class);
-    $data = $schedule->getOrganizationRatings();
+    $data = $schedule->getManagerSchedule();
     $body = json_encode($data, JSON_PRETTY_PRINT);
     $response->getBody()->write($body);
     return $response->withHeader('Content-Type', 'application/json');
@@ -103,6 +88,13 @@ $app->post('/user/login', function (Request $request, Response $response, array 
     $password = $_SERVER['PHP_AUTH_PW'] ?? null;
 
     $response->getBody()->write(json_encode($login->execute($email, $password)));
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
+$app->get('/user/all', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\GetAllUsers::class, ['database' => $database]);
+    $data = $handler->getAllUsers();
+    $response->getBody()->write(json_encode($data));
     return $response->withHeader('Content-Type', 'application/json');
 });
 
@@ -152,6 +144,27 @@ $app->delete('/user/{id}/availability/{day}', function (Request $request, Respon
     $handler = $container->make(App\AvailabilityEndpoint::class, ['database' => $database]);
     $handler->deleteAvailability(intval($args['id']), App\DayOfWeek::from($args['day']));
     return $response->withStatus(200);
+});
+
+$app->get('/organization/{id}/user/{userId}/status', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\UpdateManagerForm::class, ['database' => $database]);
+    $status = $handler->getUserStatus(intval($args['id']), intval($args['userId']));
+    $response->getBody()->write(json_encode([
+        "status" => $status
+    ]));
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
+$app->post('/organization/{id}/user/{userId}/status', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $orgId = intval($args['id']);
+    $organiztion = $database->organizations()->get($orgId);
+    $status = $request->getQueryParams()['status'];
+    // TODO: Verify the manager is logged in
+
+    $handler = $container->make(App\UpdateManagerForm::class, ['database' => $database]);
+    $handler->setUserStatus($orgId, intval($args['userId']), App\UserOrganizationStatus::from($status));
+
+    return $response->withStatus(201);
 });
 
 function getErrorCode(Throwable $exception): int

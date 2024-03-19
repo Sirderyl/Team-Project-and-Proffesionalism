@@ -3,8 +3,6 @@ info:
   title: Team Project Volunteering API
   version: "1.0"
 servers:
-  - url: 'https://w21017158.nuwebspace.co.uk/api/'
-    description: Andreas' Development Server
   - url: https://w20013000.nuwebspace.co.uk/api/
     description: Kieran's Development Server
   - url: https://w20010297.nuwebspace.co.uk/api/
@@ -18,18 +16,6 @@ tags:
     description: Operations about user accounts
 
 paths:
-  /assignActivities:
-    post:
-      description: Execute scheduling algorithm to get all the scheduled activities and the user's assigned to each activity.
-      responses:
-        '200':
-          description: OK
-  /userSchedule/{id}:
-    get:
-      description: Query an individual user's assigned activities from database
-      responses:
-        '200':
-          description: OK
   /activity/{id}:
     get:
       tags: [Activity]
@@ -50,10 +36,8 @@ paths:
                   description:
                     type: string
                     example: "Help us clean up the local park."
-                  times:
-                    type: array
-                    items:
-                      $ref: "#/components/schemas/TimeRangeWithDay"
+                  time:
+                    $ref: "#/components/schemas/TimeRange"
                   neededVolunteers:
                     type: integer
                     description: The ideal number of volunteers for this activity
@@ -266,14 +250,3 @@ components:
           type: number
           example: 12.5
       required: [start, end]
-
-    TimeRangeWithDay:
-      allOf:
-        - $ref: "#/components/schemas/TimeRange"
-        - type: object
-          properties:
-            day:
-              type: string
-              enum: [Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday]
-              example: "Monday"
-          required: [day]

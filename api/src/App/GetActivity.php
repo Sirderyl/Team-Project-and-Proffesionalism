@@ -4,7 +4,7 @@ namespace App;
 
 /**
  * Implementation of GET /activity/{id}
- * @phpstan-import-type TimeRangeArrayWithDay from TimeRange
+ * @phpstan-import-type TimeRangeArray from TimeRange
  */
 class GetActivity
 {
@@ -20,7 +20,7 @@ class GetActivity
      * @return array{
      *   name: string,
      *   description: string,
-     *   times: TimeRangeArrayWithDay[],
+     *   time: TimeRangeArray,
      *   neededVolunteers: int,
      *   organization: array{
      *      name: string,
@@ -35,11 +35,7 @@ class GetActivity
         return [
             'name' => $activity->name,
             'description' => $activity->longDescription,
-            'times' => array_map(fn($day, $time) => [
-                'day' => $day,
-                'start' => $time->start,
-                'end' => $time->end
-            ], array_keys($activity->times), array_values($activity->times)),
+            'time' => $activity->time->toArray(),
             'neededVolunteers' => $activity->neededVolunteers,
             'organization' => [
                 'name' => $organization->name,

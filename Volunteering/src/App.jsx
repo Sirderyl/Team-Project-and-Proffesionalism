@@ -12,7 +12,6 @@ import SignUp from './pages/SignUp'
 import NavMenu from './components/NavMenu'
 
 /** @typedef {import('./types/UserData').UserData} UserData */
-
 function App() {
   /**
    * @type {[UserData | null, function(UserData | null): void]}
@@ -96,7 +95,8 @@ function App() {
     fetchUser()
   }, [fetchUser])
 
-  useEffect(fetchAvailability, [fetchAvailability, userData?.userId])
+  //useEffect(fetchAvailability, [fetchAvailability, userData?.userId])
+  useEffect(fetchAvailability, [fetchAvailability, user.userId])
 
   const [tasks] = useState([
     {
@@ -159,7 +159,7 @@ function App() {
         <Route path='/account-details' element={<AccountDetails user={user} availability={availability} setAvailability={setAvailability} isLoading={availabilityLoading} />} />
         <Route path='/account-details/add-schedule-record' element={<AddScheduleRecord userId={user.userId} availability={availability} />} />
         <Route path='/feedback' element={<Feedback />} />
-        <Route path='/InviteForm' element={<InviteForm />} />
+        <Route path='/InviteForm' element={<InviteForm organizationId={1} />} /> {/* TODO: Replace with actual organization ID */}
         <Route path='/AssignedTasks' element={<AssignedTasks tasks={tasks} />} />
         <Route path='/scheduleApproval' element={<ScheduleApprovalPage taskRequests={taskRequests} />} />
       </Routes>

@@ -36,7 +36,6 @@ class AvailabilityDatabase implements AvailabilityDatabaseInterface {
         );
     }
 
-    /** @return \App\Availability[] */
     public function read(int $userId): array {
         $result = $this->connection->query(
             "SELECT day_of_week, start_hour, end_hour FROM user_availability WHERE user_id = :user_id",

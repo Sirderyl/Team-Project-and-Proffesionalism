@@ -11,7 +11,17 @@ import Login from './pages/Login'
 import SignUp from './pages/SignUp'
 import NavMenu from './components/NavMenu'
 
+/** @typedef {import('./types/UserData').UserData} UserData */
+
 function App() {
+  /**
+   * @type {[UserData | null, function(UserData | null): void]}
+   */
+  const [userData, setUserData] = useState(JSON.parse(localStorage.getItem('user')))
+  function handleLogin(data) {
+    setUserData(data)
+    localStorage.setItem('user', JSON.stringify(data))
+    
   const [user, setUser] = useState({
     userId: 1,
     isManager: false,
@@ -34,10 +44,24 @@ function App() {
   }
 
   function handleLogout() {
-    setToken(null)
-    localStorage.removeItem('token')
+    setUserData(null)
+    localStorage.removeItem('user')
   }
 
+  const [availability, setAvailability] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+
+    // Change to `${apiRoot}/user/${userId}/availability` in production
+    fetch(`https://w20010297.nuwebspace.co.uk/api/user/${userData.userId}/availability`)
+      .then(response => handleResponse(response))
+      .then(data => handleJSON(data))
+      .catch(err => {
+        console.error(err)
+      })
+  }
+  
   const daysOfWeek = useMemo(() => ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], [])
 
   const handleResponse = response => {
@@ -78,10 +102,8 @@ function App() {
   useEffect(() => {
     fetchUser()
   }, [fetchUser])
-
-  useEffect(() => {
-    fetchAvailability()
-  }, [fetchAvailability])
+  
+  useEffect(fetchAvailability, [fetchAvailability, userData?.userId])
 
   const [tasks] = useState([
     {
@@ -115,7 +137,7 @@ function App() {
       requester: "Alice Johnson"
     },
   ]);
-  const isLoggedIn = token !== null
+  const isLoggedIn = userData !== null
 
   /**
    * Routes for the app. Set navigable: false to hide a route from the NavMenu while keeping it in the app
@@ -133,7 +155,7 @@ function App() {
     <div className='App'>
       <NavMenu
         routes={routes.filter(route => route.navigable !== false)}
-        isLoggedIn={token !== null}
+        isLoggedIn={userData !== null}
         handleLogout={handleLogout}
       />
 

@@ -121,12 +121,44 @@ paths:
         - $ref: "#/components/parameters/id"
       responses:
         200: { $ref: "#/components/responses/Image" }
+    post:
+      tags: [User]
+      security: [ { bearer: [] } ]
+      summary: Upload a new profile picture
+      parameters:
+        - $ref: "#/components/parameters/id"
+      requestBody:
+        required: true
+        content:
+          image/jpeg:
+            schema:
+              type: string
+              format: binary
+      responses:
+        204: { $ref: "#/components/responses/NoContent" }
+        401: { $ref: "#/components/responses/Unauthorized" }
+        403: { $ref: "#/components/responses/Forbidden" }
+    delete:
+      tags: [User]
+      security: [ { bearer: [] } ]
+      summary: Delete a user's profile picture
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        204: { $ref: "#/components/responses/NoContent" }
+        401: { $ref: "#/components/responses/Unauthorized" }
+        403: { $ref: "#/components/responses/Forbidden" }
 
 components:
   securitySchemes:
     basic:
       type: http
       scheme: basic
+
+    bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
 
   parameters:
     id:
@@ -138,6 +170,10 @@ components:
         example: 123
 
   responses:
+    NoContent:
+      description: The request was successful but there is no content to return
+      content: {}
+
     Conflict:
       description: The request conflicts with the current state of the server
       content:
@@ -199,7 +235,10 @@ components:
           type: string
           description: Base64 encoded JWT token
           pattern: ^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$
-      required: [token]
+        userId:
+          type: integer
+          example: 123
+      required: [token, userId]
 
     TimeRange:
       type: object

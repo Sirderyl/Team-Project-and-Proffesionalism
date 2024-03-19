@@ -91,6 +91,13 @@ $app->post('/user/login', function (Request $request, Response $response, array 
     return $response->withHeader('Content-Type', 'application/json');
 });
 
+$app->get('/user/all', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\GetAllUsers::class, ['database' => $database]);
+    $data = $handler->getAllUsers();
+    $response->getBody()->write(json_encode($data));
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
 $app->get('/user/{id}', function (Request $request, Response $response, array $args) use ($container, $database) {
     $handler = $container->make(App\UserEndpoint::class, ['database' => $database]);
     $data = $handler->getUser(intval($args['id']));

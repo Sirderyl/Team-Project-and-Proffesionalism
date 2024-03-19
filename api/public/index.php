@@ -107,10 +107,25 @@ $app->get('/user/{id}', function (Request $request, Response $response, array $a
 
 $app->get('/user/{id}/profilepicture', function (Request $request, Response $response, array $args) use ($container, $database) {
     $handler = $container->make(App\ProfilePicture::class, ['database' => $database]);
-    $data = $handler->execute(intval($args['id']));
+    $data = $handler->executeGet(intval($args['id']));
     $response->getBody()->write($data);
     return $response->withHeader('Content-Type', $handler->getContentType());
 });
+$app->post('/user/{id}/profilepicture', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\ProfilePicture::class, ['database' => $database]);
+    $id = intval($args['id']);
+    App\Token::checkAuthMatchesUser($request->getHeader('Authorization')[0], $id);
+    $handler->executePost($id, $request->getBody()->getContents());
+    return $response->withStatus(204);
+});
+$app->delete('/user/{id}/profilepicture', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\ProfilePicture::class, ['database' => $database]);
+    $id = intval($args['id']);
+    App\Token::checkAuthMatchesUser($request->getHeader('Authorization')[0], $id);
+    $handler->executeDelete($id);
+    return $response->withStatus(204);
+});
+
 
 $app->get('/user/{id}/availability', function (Request $request, Response $response, array $args) use ($container, $database) {
     $handler = $container->make(App\AvailabilityEndpoint::class, ['database' => $database]);

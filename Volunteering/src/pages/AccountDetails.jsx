@@ -1,13 +1,12 @@
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import { apiRoot } from '../settings'
+//import { apiRoot } from '../settings'
 import toast, { Toaster } from 'react-hot-toast'
 
-export default function AccountDetails({ userId, availability, setAvailability, isLoading }) {
-
+export default function AccountDetails({ user, availability, setAvailability, isLoading }) {
 
     const handleDeleteRecord = day => {
-        fetch(`https://w20010297.nuwebspace.co.uk/api/user/${userId}/availability/${day}`,
+        fetch(`https://w20010297.nuwebspace.co.uk/api/user/${user.userId}/availability/${day}`,
             {
                 method: 'DELETE'
             })
@@ -35,19 +34,22 @@ export default function AccountDetails({ userId, availability, setAvailability, 
         )
     })
 
+    let formattedPhoneNumber = user.phoneNumber
+        ? user.phoneNumber.replace(/(\+\d{2})(\d{4})(\d{6})/, '$1 $2 $3')
+        : '';
+
     return (
         <div>
             <Toaster />
             <h1 className="text-3xl font-bold mb-3 ml-5">Account Details</h1>
             <div className="flex flex-row">
                 <div className="flex flex-col ml-5">
-                    <img src={`${apiRoot}/user/${userId}/profilepicture`} className="w-40 h-40 rounded-full" />
+                    {!isLoading && <img src={`https://w20010297.nuwebspace.co.uk/api/user/${user.userId}/profilepicture`} className="w-40 h-40 rounded-full" />}
                 </div>
                 <div className="flex flex-col ml-5">
-                    <p className="text-lg mt-6"><strong>Name: </strong>John Doe</p>
-                    <p className="text-lg"><strong>Email: </strong>johndoe@example.com</p>
-                    <p className="text-lg"><strong>Phone: </strong>123-456-7890</p>
-                    <p className="text-lg"><strong>Address: </strong>1234 Example St.</p>
+                    <p className="text-lg mt-10"><strong>Name: </strong>{!isLoading && user.userName}</p>
+                    <p className="text-lg"><strong>Email: </strong>{!isLoading && user.email}</p>
+                    <p className="text-lg"><strong>Phone: </strong>{!isLoading && formattedPhoneNumber}</p>
                 </div>
             </div>
 
@@ -75,9 +77,14 @@ export default function AccountDetails({ userId, availability, setAvailability, 
 }
 
 AccountDetails.propTypes = {
-    userId: PropTypes.number.isRequired,
+    user: PropTypes.shape({
+        userId: PropTypes.number.isRequired,
+        userName: PropTypes.string.isRequired,
+        email: PropTypes.string.isRequired,
+        phoneNumber: PropTypes.string.isRequired
+    }),
     availability: PropTypes.arrayOf(PropTypes.shape({
-        userId: PropTypes.string.isRequired,
+        userId: PropTypes.number.isRequired,
         day: PropTypes.string.isRequired,
         time: PropTypes.shape({
             start: PropTypes.number.isRequired,

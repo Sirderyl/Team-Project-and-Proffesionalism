@@ -1,5 +1,5 @@
 import { Routes, Route } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import Home from './pages/Home'
 import AccountDetails from './pages/AccountDetails'
 import AddScheduleRecord from './pages/AddScheduleRecord'
@@ -21,6 +21,26 @@ function App() {
   function handleLogin(data) {
     setUserData(data)
     localStorage.setItem('user', JSON.stringify(data))
+    
+  const [user, setUser] = useState({
+    userId: 1,
+    isManager: false,
+    userName: "John Doe",
+    availability: [
+      { day: "Monday", time: { start: "09:00", end: "17:00" } },
+      { day: "Tuesday", time: { start: "09:00", end: "17:00" } }
+    ],
+    phoneNumber: "+441234567890",
+    email: "email@example.com"
+  })
+  const [userId] = useState(1)
+  const [token, setToken] = useState(localStorage.getItem('token'))
+  const [availability, setAvailability] = useState([])
+  const [availabilityLoading, setAvailabilityLoading] = useState(true)
+
+  function handleLogin(token) {
+    setToken(token)
+    localStorage.setItem('token', token)
   }
 
   function handleLogout() {
@@ -33,13 +53,6 @@ function App() {
 
   const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
 
-  const fetchAvailability = () => {
-    if (userData === null) {
-      setAvailability([])
-      setIsLoading(false)
-      return
-    }
-
     // Change to `${apiRoot}/user/${userId}/availability` in production
     fetch(`https://w20010297.nuwebspace.co.uk/api/user/${userData.userId}/availability`)
       .then(response => handleResponse(response))
@@ -48,6 +61,8 @@ function App() {
         console.error(err)
       })
   }
+  
+  const daysOfWeek = useMemo(() => ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], [])
 
   const handleResponse = response => {
     if (response.ok) {
@@ -57,17 +72,38 @@ function App() {
     }
   }
 
-  const handleJSON = json => {
+  const handleJSON = useCallback((json) => {
     if (json.constructor === Array) {
       json.sort((a, b) => daysOfWeek.indexOf(a.day) - daysOfWeek.indexOf(b.day))
       setAvailability(json)
-      setIsLoading(false)
+      setAvailabilityLoading(false)
     } else {
       throw new Error('Invalid JSON: ' + json);
     }
-  }
+  }, [daysOfWeek])
 
-  useEffect(fetchAvailability, [userData?.userId])
+  const fetchUser = useCallback(() => {
+    // Change to `${apiRoot}/user/${userId} in production
+    fetch(`https://w20010297.nuwebspace.co.uk/api/user/${userId}`)
+      .then(response => handleResponse(response))
+      .then(data => setUser(data))
+  }, [userId])
+
+  const fetchAvailability = useCallback(() => {
+    if(user.userId) {
+      // Change to `${apiRoot}/user/${userId}/availability` in production
+      fetch(`https://w20010297.nuwebspace.co.uk/api/user/${user.userId}/availability`)
+        .then(response => handleResponse(response))
+        .then(data => handleJSON(data))
+        .catch(err => console.error(err))
+    }
+  }, [user.userId, handleJSON])
+
+  useEffect(() => {
+    fetchUser()
+  }, [fetchUser])
+  
+  useEffect(fetchAvailability, [fetchAvailability, userData?.userId])
 
   const [tasks] = useState([
     {
@@ -111,9 +147,10 @@ function App() {
     { path: '/', name: 'Home', element: <Home /> },
     { path: '/login', name: 'Login', element: <Login handleLogin={handleLogin} isLoggedIn={isLoggedIn} />, navigable: !isLoggedIn },
     { path: '/signup', name: 'Sign up', element: <SignUp handleLogin={handleLogin} isLoggedIn={isLoggedIn} />, navigable: !isLoggedIn },
-    { path: '/account-details', name: 'Account Details', element: <AccountDetails userId={userData?.userId} availability={availability} setAvailability={setAvailability} isLoading={isLoading} /> },
-    { path: '/account-details/add-schedule-record', name: 'Add Schedule Record', element: <AddScheduleRecord userId={userData} availability={availability} /> },
+    { path: '/account-details', name: 'Account Details', element: <AccountDetails user={user} availability={availability} setAvailability={setAvailability} isLoading={availabilityLoading} /> },
+    { path: '/account-details/add-schedule-record', name: 'Add Schedule Record', element: <AddScheduleRecord userId={user.userId} availability={availability} /> },
   ]
+
   return (
     <div className='App'>
       <NavMenu
@@ -124,15 +161,14 @@ function App() {
 
       <Routes>
         <Route path='/' element={<Home />} />
-        <Route path='/account-details' element={<AccountDetails userId={userData?.userId} availability={availability} setAvailability={setAvailability} isLoading={isLoading} />} />
-        <Route path='/account-details/add-schedule-record' element={<AddScheduleRecord userId={userData?.userId} availability={availability} />} />
+        <Route path='/login' element={<Login handleLogin={handleLogin} isLoggedIn={isLoggedIn} />} />
+        <Route path='/signup' element={<SignUp handleLogin={handleLogin} isLoggedIn={isLoggedIn} />} />
+        <Route path='/account-details' element={<AccountDetails user={user} availability={availability} setAvailability={setAvailability} isLoading={availabilityLoading} />} />
+        <Route path='/account-details/add-schedule-record' element={<AddScheduleRecord userId={user.userId} availability={availability} />} />
         <Route path='/feedback' element={<Feedback />} />
         <Route path='/InviteForm' element={<InviteForm />} />
         <Route path='/AssignedTasks' element={<AssignedTasks tasks={tasks} />} />
         <Route path='/scheduleApproval' element={<ScheduleApprovalPage taskRequests={taskRequests} />} />
-        {routes.map((route, index) => (
-          <Route key={index} path={route.path} element={route.element} />
-        ))}
       </Routes>
     </div>
   )

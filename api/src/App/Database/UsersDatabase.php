@@ -32,10 +32,10 @@ class UsersDatabase implements UsersDatabaseInterface
                     'start', user_availability.start_hour, 'end',
                     user_availability.end_hour
                 )) AS availability,
-                organization.id IS NOT NULL AS is_manager
+                user_organization.organization_id IS NOT NULL AS is_manager
             FROM user
             LEFT JOIN user_availability ON user.id = user_availability.user_id
-            LEFT JOIN organization ON user.id = organization.admin_id
+            LEFT JOIN user_organization ON user.id = user_organization.user_id AND user_organization.status = 'Manager'
             $filter
             GROUP BY user.id",
             $params

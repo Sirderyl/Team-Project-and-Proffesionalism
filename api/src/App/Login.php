@@ -37,7 +37,7 @@ class Login
 
         $user = null;
         try {
-            $user = $this->database->users()->getByEmail($email);
+            $user = $this->database->users()->get($email);
         } catch (Database\NotFoundException $e) {
             $this->throwInvalidCredentials();
         }

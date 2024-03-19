@@ -23,15 +23,21 @@ interface UsersDatabaseInterface
     public function getById(int $id): \App\User;
 
     /**
+     * Get all users
+     * @return \App\User[]
+     */
+    public function getAll(): array;
+
+    /**
      * Create a new user. Sets the user's ID on the User object.
      */
     public function create(\App\User $user): void;
 
     /**
      * Get a user's profile picture
-     * @return string The raw JPEG data, represents a byte array
+     * @return ?string The raw JPEG data, represents a byte array, or null if no picture
      */
-    public function getProfilePicture(int $userId): string;
+    public function getProfilePicture(int $userId): ?string;
 
     /**
      * Set a user's profile picture

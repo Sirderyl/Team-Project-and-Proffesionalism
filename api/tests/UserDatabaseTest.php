@@ -25,6 +25,27 @@ final class UserDatabaseTest extends TestCase
         $this->assertEquals($user, $output);
     }
 
+    public function testIsManagerTrue(): void
+    {
+        [$user] = Debug\DebugUser::createDummyUser($this->faker);
+        $this->database->users()->create($user);
+
+        $organization = Debug\DebugOrganization::createDummyOrganization($this->faker, $user->userId);
+        $this->database->organizations()->create($organization);
+
+        $output = $this->database->users()->getById($user->userId);
+        $this->assertTrue($output->isManager);
+    }
+
+    public function testIsManagerFalse(): void
+    {
+        [$user] = Debug\DebugUser::createDummyUser($this->faker);
+        $this->database->users()->create($user);
+
+        $output = $this->database->users()->getById($user->userId);
+        $this->assertFalse($output->isManager);
+    }
+
     public function testGettersReturnSameResult(): void
     {
         [$user] = Debug\DebugUser::createDummyUser($this->faker);

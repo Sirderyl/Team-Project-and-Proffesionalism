@@ -14,4 +14,6 @@ enum UserOrganizationStatus: string {
     case Applied = 'Applied';
     // The user is a member of the organization, and can be assigned to activities
     case Member = 'Member';
+    // The user is a manager of the organization, and can manage its members and activities
+    case Manager = 'Manager';
 }

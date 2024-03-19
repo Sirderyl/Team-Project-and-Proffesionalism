@@ -63,7 +63,7 @@ interface UsersDatabaseInterface
      * @return array<array{
      *   id: int,
      *   name: string,
-     *   isAdmin: bool
+     *   status: string
      * }>
      */
     public function getOrganizations(int $userId): array;

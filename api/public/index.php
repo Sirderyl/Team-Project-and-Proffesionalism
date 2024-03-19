@@ -98,6 +98,13 @@ $app->get('/user/{id}', function (Request $request, Response $response, array $a
     return $response->withHeader('Content-Type', 'application/json');
 });
 
+$app->get('/user/{id}/organizations', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\UserOrganizationsEndpoint::class, ['database' => $database]);
+    $data = $handler->execute(intval($args['id']));
+    $response->getBody()->write(json_encode($data));
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
 $app->get('/user/{id}/profilepicture', function (Request $request, Response $response, array $args) use ($container, $database) {
     $handler = $container->make(App\ProfilePicture::class, ['database' => $database]);
     $data = $handler->execute(intval($args['id']));

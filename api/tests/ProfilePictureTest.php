@@ -22,6 +22,11 @@ class ProfilePictureTest extends TestCase {
         $this->imageData = $this->faker->password(512, 512);
     }
 
+    //Placeholder test
+    public function testExecute(): void {
+        $this->assertTrue(true);
+    }
+
     /*public function testGet(): void {
         $this->database->users()->setProfilePicture($this->user->userId, $this->imageData);
         $this->assertEquals(

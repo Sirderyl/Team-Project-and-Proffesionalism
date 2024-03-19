@@ -20,22 +20,24 @@ class UsersDatabase implements UsersDatabaseInterface
      * Backing method for all `get` methods
      * @param string $filter The WHERE clause of the SQL query. MUST NOT contain user-provided data
      * @param array<string, string|int> $params The parameters to bind to the query.
-     * @return \App\User The user that was found
+     * @return \App\User[] The user that was found
      */
-    private function runGet(string $filter, array $params): \App\User
+    private function runGet(string $filter, array $params): array
     {
-        // NOTE: Using organization.id IS NOT NULL instead of COUNT(organization.id) > 0
-        // to avoid having to use a GROUP BY clause. This would discard all but one user_availability
-        // row and require greater refactoring of the fromRows method (return JSON from query instead of multiple rows)
         $result = $this->connection->query(
             "SELECT
                 user.id, user.name, user.email, user.password_hash, user.phone_number,
-                user_availability.day_of_week, user_availability.start_hour, user_availability.end_hour,
+                json_group_array(json_object(
+                    'day', user_availability.day_of_week,
+                    'start', user_availability.start_hour, 'end',
+                    user_availability.end_hour
+                )) AS availability,
                 organization.id IS NOT NULL AS is_manager
             FROM user
             LEFT JOIN user_availability ON user.id = user_availability.user_id
             LEFT JOIN organization ON user.id = organization.admin_id
-            WHERE $filter",
+            $filter
+            GROUP BY user.id",
             $params
         );
 
@@ -43,17 +45,22 @@ class UsersDatabase implements UsersDatabaseInterface
             throw new NotFoundException();
         }
 
-        return \App\User::fromRows($result)[0];
+        return array_map(fn ($row) => \App\User::fromRow($row), $result);
     }
 
     public function getByEmail(string $email): \App\User
     {
-        return $this->runGet("email = :email", ['email' => $email]);
+        return $this->runGet("WHERE email = :email", ['email' => $email])[0];
     }
 
     public function getById(int $id): \App\User
     {
-        return $this->runGet("user.id = :id", ['id' => $id]);
+        return $this->runGet("WHERE user.id = :id", ['id' => $id])[0];
+    }
+
+    public function getAll(): array
+    {
+        return $this->runGet('', []);
     }
 
     public function create(\App\User $user): void
@@ -93,7 +100,7 @@ class UsersDatabase implements UsersDatabaseInterface
         }
     }
 
-    public function getProfilePicture(int $userId): string
+    public function getProfilePicture(int $userId): ?string
     {
         $result = $this->connection->query(
             'SELECT profile_picture FROM user WHERE id = :id',

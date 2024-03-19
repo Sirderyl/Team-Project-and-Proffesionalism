@@ -9,8 +9,13 @@ namespace App;
  * @author Kieran
  */
 class TimeRange {
+    /** @param TimeRangeArray $array */
+    public static function fromArray(array $array): TimeRange {
+        return new TimeRange($array['start'], $array['end']);
+    }
     public float $start;
     public float $end;
+
 
     public function __construct(float $start, float $end) {
         if ($start < 0 || $start > 24) {

@@ -12,7 +12,13 @@ class ActivityDatabase implements ActivityDatabaseInterface {
         $this->connection = $connection;
     }
 
-    public function get(int $id): \App\Activity {
+    /**
+     * Backing method for all `get` methods
+     * @param string $filter The WHERE clause of the SQL query. MUST NOT contain user-provided data
+     * @param array<string, string|int> $params The parameters to bind to the query.
+     * @return \App\Activity[] The activity that was found
+     */
+    private function runGet(string $filter, array $params): array {
         $result = $this->connection->query(
             "SELECT
                 activity.id,
@@ -25,12 +31,23 @@ class ActivityDatabase implements ActivityDatabaseInterface {
                 activity_time.start_hour,
                 activity_time.end_hour
             FROM activity
-            LEFT JOIN activity_time ON activity.id = activity_time.activity_id
-            WHERE activity.id = :id",
-            [':id' => $id]
+            $filter",
+            $params
         );
 
-        return \App\Activity::fromRows($result)[0];
+        if (empty($result)) {
+            throw new NotFoundException();
+        }
+
+        return array_map(fn ($row) => \App\Activity::fromRow($row), $result);
+    }
+
+    public function get(int $id): \App\Activity {
+        return $this->runGet("WHERE id = :id", ['id' => $id])[0];
+    }
+
+    public function getAll(): array {
+        return $this->runGet("", []);
     }
 
     public function create(\App\Activity $activity): void {
@@ -100,5 +117,19 @@ class ActivityDatabase implements ActivityDatabaseInterface {
                 ':start' => $start->format(\DATE_ISO8601),
             ]
         );
+    }
+
+    public function getAllUserRatings(): array
+    {
+        $result = $this->connection->query(
+            "SELECT user_id, activity_id, rating FROM user_activity WHERE rating IS NOT NULL",
+            []
+        );
+
+        return array_map(fn ($row) => new \App\Rating(
+            $row['user_id'],
+            $row['activity_id'],
+            $row['rating']
+        ), $result);
     }
 }

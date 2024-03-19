@@ -18,10 +18,21 @@ function App() {
    * @type {[UserData | null, function(UserData | null): void]}
    */
   const [userData, setUserData] = useState(JSON.parse(localStorage.getItem('user')))
+
+  const [userId] = useState(1)
+  const [availability, setAvailability] = useState([])
+  const [availabilityLoading, setAvailabilityLoading] = useState(true)
+
   function handleLogin(data) {
     setUserData(data)
     localStorage.setItem('user', JSON.stringify(data))
-    
+  }
+
+  function handleLogout() {
+    setUserData(null)
+    localStorage.removeItem('user')
+  }
+
   const [user, setUser] = useState({
     userId: 1,
     isManager: false,
@@ -33,35 +44,7 @@ function App() {
     phoneNumber: "+441234567890",
     email: "email@example.com"
   })
-  const [userId] = useState(1)
-  const [token, setToken] = useState(localStorage.getItem('token'))
-  const [availability, setAvailability] = useState([])
-  const [availabilityLoading, setAvailabilityLoading] = useState(true)
 
-  function handleLogin(token) {
-    setToken(token)
-    localStorage.setItem('token', token)
-  }
-
-  function handleLogout() {
-    setUserData(null)
-    localStorage.removeItem('user')
-  }
-
-  const [availability, setAvailability] = useState([])
-  const [isLoading, setIsLoading] = useState(true)
-
-  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
-
-    // Change to `${apiRoot}/user/${userId}/availability` in production
-    fetch(`https://w20010297.nuwebspace.co.uk/api/user/${userData.userId}/availability`)
-      .then(response => handleResponse(response))
-      .then(data => handleJSON(data))
-      .catch(err => {
-        console.error(err)
-      })
-  }
-  
   const daysOfWeek = useMemo(() => ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], [])
 
   const handleResponse = response => {
@@ -90,19 +73,29 @@ function App() {
   }, [userId])
 
   const fetchAvailability = useCallback(() => {
-    if(user.userId) {
+    if (user.userId) {
       // Change to `${apiRoot}/user/${userId}/availability` in production
       fetch(`https://w20010297.nuwebspace.co.uk/api/user/${user.userId}/availability`)
         .then(response => handleResponse(response))
         .then(data => handleJSON(data))
         .catch(err => console.error(err))
     }
+
+    /*
+    // Change to `${apiRoot}/user/${userId}/availability` in production
+    fetch(`https://w20010297.nuwebspace.co.uk/api/user/${userData.userId}/availability`)
+      .then(response => handleResponse(response))
+      .then(data => handleJSON(data))
+      .catch(err => {
+        console.error(err)
+      })
+      */
   }, [user.userId, handleJSON])
 
   useEffect(() => {
     fetchUser()
   }, [fetchUser])
-  
+
   useEffect(fetchAvailability, [fetchAvailability, userData?.userId])
 
   const [tasks] = useState([

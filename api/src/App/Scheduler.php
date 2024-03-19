@@ -17,9 +17,7 @@ class Scheduler
 
     public $activityFour;
     public array $activities = [];
-    public array $activityRatings = [];
-    public array $scheduledTimeSlots = [];
-    public bool $overlap;
+    public array $ratings = [];
 
     public function __construct()
     {
@@ -47,37 +45,37 @@ class Scheduler
 
         $this->users = [$this->userOne, $this->userTwo, $this->userThree];
 
-        $this->activityOne = new Task();
-        $this->activityTwo = new Task();
-        $this->activityThree = new Task();
-        $this->activityFour = new Task();
+        $this->activityOne = new Activity();
+        $this->activityTwo = new Activity();
+        $this->activityThree = new Activity();
+        $this->activityFour = new Activity();
 
-        $this->activityOne->activityId = 1;
-        $this->activityOne->activityName = "Serving Food";
-        $this->activityOne->volunteerSlots = 2;
-        $this->activityOne->startTime = new \DateTime('2024-02-28 12:00:00');
-        $this->activityOne->endTime = new \DateTime('2024-02-28 13:00:00');
+        $this->activityOne->id = 1;
+        $this->activityOne->name = "Serving Food";
+        $this->activityOne->neededVolunteers = 2;
+        $this->activityOne->organizationId = 4;
+        $this->activityOne->setTime(DayOfWeek::Wednesday, new TimeRange(12.00, 13.00));
 
-        $this->activityTwo->activityId = 2;
-        $this->activityTwo->activityName = "Walking Dogs";
-        $this->activityTwo->volunteerSlots = 1;
-        $this->activityTwo->startTime = new \DateTime('2024-02-27 12:00:00');
-        $this->activityTwo->endTime = new \DateTime('2024-02-27 13:00:00');
+        $this->activityTwo->id = 2;
+        $this->activityTwo->name = "Walking Dogs";
+        $this->activityTwo->neededVolunteers = 1;
+        $this->activityTwo->organizationId = 4;
+        $this->activityTwo->setTime(DayOfWeek::Tuesday, new TimeRange(12.00, 13.00));
 
-        $this->activityThree->activityId = 3;
-        $this->activityThree->activityName = "Answering Calls";
-        $this->activityThree->volunteerSlots = 3;
-        $this->activityThree->startTime = new \DateTime('2024-02-26 12:00:00');
-        $this->activityThree->endTime = new \DateTime('2024-02-26 13:00:00');
+        $this->activityThree->id = 3;
+        $this->activityThree->name = "Answering Calls";
+        $this->activityThree->neededVolunteers = 3;
+        $this->activityThree->organizationId = 2;
+        $this->activityThree->setTime(DayOfWeek::Monday, new TimeRange(12.00, 13.00));
 
-        $this->activityFour->activityId = 4;
-        $this->activityFour->activityName = "Cleaning";
-        $this->activityFour->volunteerSlots = 3;
-        $this->activityFour->startTime = new \DateTime('2024-02-26 12:00:00');
-        $this->activityFour->endTime = new \DateTime('2024-02-26 13:00:00');
+        $this->activityFour->id = 4;
+        $this->activityFour->name = "Cleaning";
+        $this->activityFour->neededVolunteers = 3;
+        $this->activityFour->organizationId = 7;
+        $this->activityFour->setTime(DayOfWeek::Monday, new TimeRange(12.00, 13.00));
 
         $this->activities = [$this->activityOne, $this->activityTwo, $this->activityThree, $this->activityFour];
-        $this->activityRatings = array(
+        $this->ratings = array(
             new Rating(1, 1, 5),
             new Rating(1, 2, 2),
             new Rating(1, 3, 4),
@@ -89,94 +87,146 @@ class Scheduler
             new Rating(3, 3, 5)
         );
     }
-
-    public function getUserSchedule(string $userName)
+    public function assignActivities()
     {
         $schedule = [];
+        $scheduledTimeSlots = [];
+        $organizationRatings = $this->getOrganizationRatings();
+
         foreach ($this->activities as $activity) {
-            $activityDayOfWeek = $activity->startTime->format('l');
+            $activityDayOfWeek = array_keys($activity->times)[0];
             $volunteerSlotsFilled = 0;
 
             foreach ($this->users as $user) {
 
-                if (isset($user->availability[$activityDayOfWeek]) && $user->availability[$activityDayOfWeek] !== null) {
-                    $userAvailableStart = $user->availability[$activityDayOfWeek]->start;
-                    $userAvailableEnd = $user->availability[$activityDayOfWeek]->end;
+                $userOrganizationRatings = $organizationRatings[$user->userId]["organizations"];
+                $associatedOrgRating = NULL;
+                $activityRating = NULL;
 
-                    $activityStart = $activity->startTime->format('H') + $activity->startTime->format('i') / 60;
-                    $activityEnd = $activity->endTime->format('H') + $activity->endTime->format('i') / 60;
-
-                    $isUserAvailable = true;
-                    if (isset($this->scheduledTimeSlots[$user->userName])) {
-                        foreach ($this->scheduledTimeSlots[$user->userName] as $timeSlot) {
-                            if (($timeSlot["start"] < $activity->endTime) && ($timeSlot["end"] > $activity->startTime)) {
-                                $isUserAvailable = false;
-                                break;
-                            }
-                        }
-                    }
-
-                    if ($isUserAvailable && ($activityStart < $userAvailableEnd) && ($activityEnd > $userAvailableStart) && ($volunteerSlotsFilled < $activity->volunteerSlots)) {
-
-                        $volunteerSlotsFilled += 1;
-                        $this->scheduledTimeSlots[$user->userName][] = [
-                            "activity" => $activity->activityName,
-                            "start" => $activity->startTime,
-                            "end" => $activity->endTime
-                        ];
-
+                foreach ($this->ratings as $rating) {
+                    if (($rating->userId === $user->userId) && ($rating->activityId === $activity->id)) {
+                        $activityRating = $rating->rating;
+                        break; 
                     }
                 }
-            }
-        }
-        return [
-            "userName" => $userName,
-            "scheduledTimeSlots" => $this->scheduledTimeSlots[$userName]
-        ];
-    }
 
-    public function getManagerSchedule()
-    {
-        $schedule = [];
-        foreach ($this->activities as $activity) {
-            $activityDayOfWeek = $activity->startTime->format('l');
-            $volunteerSlotsFilled = 0;
+                foreach ($userOrganizationRatings as $userOrganizationRating) {
+                    if ($userOrganizationRating["organizationId"] == $activity->organizationId)
+                        $associatedOrgRating = $userOrganizationRating["rating"];
+                    break;
+                }
 
-            foreach ($this->users as $user) {
-
-                if (isset($user->availability[$activityDayOfWeek]) && $user->availability[$activityDayOfWeek] !== null) {
+                if (isset ($user->availability[$activityDayOfWeek]) && $user->availability[$activityDayOfWeek] !== null) {
                     $userAvailableStart = $user->availability[$activityDayOfWeek]->start;
                     $userAvailableEnd = $user->availability[$activityDayOfWeek]->end;
 
-                    $activityStart = $activity->startTime->format('H') + $activity->startTime->format('i') / 60;
-                    $activityEnd = $activity->endTime->format('H') + $activity->endTime->format('i') / 60;
+                    $activityStart = $activity->getTime(DayOfWeek::fromString($activityDayOfWeek))->start;
+                    $activityEnd = $activity->getTime(DayOfWeek::fromString($activityDayOfWeek))->end;
 
                     $isUserAvailable = true;
-                    if (isset($this->scheduledTimeSlots[$user->userName])) {
-                        foreach ($this->scheduledTimeSlots[$user->userName] as $timeSlot) {
-                            if (($timeSlot["start"] < $activity->endTime) && ($timeSlot["end"] > $activity->startTime)) {
+                    if (isset ($scheduledTimeSlots[$user->userId])) {
+                        foreach ($scheduledTimeSlots[$user->userId] as $timeSlot) {
+                            if (($timeSlot["start"] < $activityEnd) && ($timeSlot["end"] > $activityStart) && ($activityDayOfWeek == $timeSlot["day"])) {
                                 $isUserAvailable = false;
                                 break;
                             }
                         }
                     }
 
-                    if ($isUserAvailable && ($activityStart < $userAvailableEnd) && ($activityEnd > $userAvailableStart) && ($volunteerSlotsFilled < $activity->volunteerSlots)) {
+                    if ($isUserAvailable && ($activityStart < $userAvailableEnd) && ($activityEnd > $userAvailableStart) && ($volunteerSlotsFilled < $activity->neededVolunteers)) {
+                        if(($associatedOrgRating > 2.5) || ($activityRating >= 4))
+                        {
+                        if (!isset ($schedule[$activity->id])) {
+                            $schedule[$activity->id]["details"] =
+                                [
+                                    'activityName' => $activity->name,
+                                    'start' => $activityStart,
+                                    'end' => $activityEnd,
+                                    'day' => $activityDayOfWeek
+                                ];
 
-                        $schedule[$activity->activityName][$activity->startTime->format('Y-m-d H:i')][$activity->endTime->format('Y-m-d H:i')][] =
+                        }
+
+                        $schedule[$activity->id]["users"][] =
                             [
-                                'user' => $user->userName
+                                'userId' => $user->userId,
+                                'userName' => $user->userName
                             ];
-                        $volunteerSlotsFilled += 1;
-                        $this->scheduledTimeSlots[$user->userName][] = [
-                            "start" => $activity->startTime,
-                            "end" => $activity->endTime
-                        ];
 
+
+                        $volunteerSlotsFilled += 1;
+                        $scheduledTimeSlots[$user->userId][] = [
+                            "activity" => $activity->name,
+                            "start" => $activityStart,
+                            "end" => $activityEnd,
+                            "day" => $activityDayOfWeek
+                        ];
+                        }
                     }
                 }
             }
         }
         return $schedule;
+    }
+
+    public function getOrganizationRatings(/*array $ratings, array $activities*/): array
+    {
+        $ratings = $this->ratings;
+        $activities = $this->activities;
+
+        // Add OrganizationId to Ratings
+        foreach ($ratings as $rating) {
+            $organizationId = 0;
+
+            foreach ($activities as $activity) {
+                if ($activity->id == $rating->activityId) {
+                    $organizationId = $activity->organizationId;
+                    $rating->organizationId = $organizationId;
+                    break;
+                }
+            }
+        }
+
+        // Split Ratings into Separate Arrays for each user
+        $ratingsByUser = [];
+        foreach ($ratings as $rating) {
+            $userId = $rating->userId;
+            if (!isset ($ratingsByUser[$userId])) {
+                $ratingsByUser[$userId] = [];
+            }
+            $ratingsByUser[$userId][] = $rating;
+        }
+
+        //Calculate rating sum and count of each organization for each user
+        $organizationSumCount = [];
+        foreach ($ratingsByUser as $user) {
+            foreach ($user as $rating) {
+                $userId = $rating->userId;
+                if (!isset ($organizationSumCount[$userId][$rating->organizationId])) {
+                    $organizationSumCount[$userId][$rating->organizationId]['sum'] = 0;
+                    $organizationSumCount[$userId][$rating->organizationId]['count'] = 0;
+                }
+                $organizationSumCount[$userId][$rating->organizationId]['sum'] += $rating->rating;
+                $organizationSumCount[$userId][$rating->organizationId]['count']++;
+            }
+        }
+
+        //Calculate rating average for each organization for each user
+        $result = [];
+        foreach ($organizationSumCount as $userId => $organizations) {
+            $userRatings = [];
+            foreach ($organizations as $organizationId => $data) {
+                $userRatings[] = [
+                    "organizationId" => $organizationId,
+                    "rating" => $data['sum'] / $data['count']
+                ];
+            }
+            $result[$userId] = [
+                "userId" => $userId,
+                "organizations" => $userRatings
+            ];
+        }
+
+        return $result;
     }
 }

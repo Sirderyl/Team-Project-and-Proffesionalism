@@ -122,6 +122,32 @@ paths:
       responses:
         200: { $ref: "#/components/responses/Image" }
 
+  /user/{id}/organizations:
+    get:
+      tags: [User]
+      summary: Get the organizations a user is a member of
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                      example: "Local Council"
+                    id:
+                      type: integer
+                      example: 123
+                    isAdmin:
+                      type: boolean
+                      example: true
+
 components:
   securitySchemes:
     basic:

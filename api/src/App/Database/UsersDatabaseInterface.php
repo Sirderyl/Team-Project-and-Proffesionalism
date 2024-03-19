@@ -57,4 +57,14 @@ interface UsersDatabaseInterface
      * }>
      */
     public function getAssignedActivities(int $userId): array;
+
+    /**
+     * Get organizations the user is a member of or the admin
+     * @return array<array{
+     *   id: int,
+     *   name: string,
+     *   isAdmin: bool
+     * }>
+     */
+    public function getOrganizations(int $userId): array;
 }

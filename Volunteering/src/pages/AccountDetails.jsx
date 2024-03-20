@@ -77,7 +77,7 @@ export default function AccountDetails({ userId, availability, setAvailability, 
 AccountDetails.propTypes = {
     userId: PropTypes.number.isRequired,
     availability: PropTypes.arrayOf(PropTypes.shape({
-        userId: PropTypes.string.isRequired,
+        userId: PropTypes.number.isRequired,
         day: PropTypes.string.isRequired,
         time: PropTypes.shape({
             start: PropTypes.number.isRequired,

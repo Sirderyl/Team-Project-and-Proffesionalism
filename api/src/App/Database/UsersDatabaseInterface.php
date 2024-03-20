@@ -13,7 +13,20 @@ interface UsersDatabaseInterface
      * @param string $email
      * @throws NotFoundException If the user is not found
      */
-    public function get(string $email): \App\User;
+    public function getByEmail(string $email): \App\User;
+
+    /**
+     * Get a user by their ID
+     * @param int $id
+     * @throws NotFoundException If the user is not found
+     */
+    public function getById(int $id): \App\User;
+
+    /**
+     * Get all users
+     * @return \App\User[]
+     */
+    public function getAll(): array;
 
     /**
      * Create a new user. Sets the user's ID on the User object.
@@ -22,9 +35,9 @@ interface UsersDatabaseInterface
 
     /**
      * Get a user's profile picture
-     * @return string The raw JPEG data, represents a byte array
+     * @return ?string The raw JPEG data, represents a byte array, or null if no picture
      */
-    public function getProfilePicture(int $userId): string;
+    public function getProfilePicture(int $userId): ?string;
 
     /**
      * Set a user's profile picture

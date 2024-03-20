@@ -34,4 +34,31 @@ class ActivityDatabaseTest extends TestCase {
         $this->runRoundTripTest(0);
         $this->runRoundTripTest(5);
     }
+
+    public function testGetAll(): void
+    {
+        $activities = [];
+        for ($i = 0; $i < 7; $i++) {
+            [$admin] = Debug\DebugUser::createDummyUser($this->faker);
+            $this->database->users()->create($admin);
+            $organization = Debug\DebugOrganization::createDummyOrganization($this->faker, $admin->userId);
+            $this->database->organizations()->create($organization);
+
+            $activity = Debug\DebugActivity::createDummyActivity($this->faker, $organization->id, $i);
+            $this->database->activities()->create($activity);
+            $activities[$activity->id] = $activity;
+        }
+
+        $output = $this->database->activities()->getAll();
+
+        // Check that all activities are in the output exactly once
+        // If the counts are different, then this requirement must have been violated
+        $this->assertCount(count($activities), $output);
+        foreach ($output as $activity) {
+            $this->assertEquals($activities[$activity->id], $activity);
+            unset($activities[$activity->id]);
+        }
+        // If not empty, then there was an activity in $activities that wasn't in $output
+        $this->assertEmpty($activities);
+    }
 }

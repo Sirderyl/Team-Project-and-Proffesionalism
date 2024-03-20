@@ -51,11 +51,10 @@ $app->get('/greetings[/{language}]', function (Request $request, Response $respo
     return $response->withHeader('Content-Type', 'application/json');
 });
 
-$app->post('/assignActivities', function (Request $request, Response $response, array $args) use ($container) {
-    $schedule = $container->get(App\Scheduler::class);
-    $data = $schedule->assignActivities();
-    $body = json_encode($data, JSON_PRETTY_PRINT);
-    $response->getBody()->write($body);
+$app->post('/assignActivities', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\Scheduler::class, ['database' => $database]);
+    $data = $handler->assignActivities();
+    $response->getBody()->write(json_encode($data));
     return $response->withHeader('Content-Type', 'application/json');
 });
 
@@ -66,11 +65,10 @@ $app->get('/userSchedule/{userId}', function (Request $request, Response $respon
     return $response->withHeader('Content-Type', 'application/json');
 });
 
-$app->get('/devOrganizationRatings', function (Request $request, Response $response, array $args) use ($container) {
-    $schedule = $container->get(App\Scheduler::class);
-    $data = $schedule->getOrganizationRatings();
-    $body = json_encode($data, JSON_PRETTY_PRINT);
-    $response->getBody()->write($body);
+$app->get('/devOrganizationRatings', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\Scheduler::class, ['database' => $database]);
+    $data = $handler->getOrganizationRatings();
+    $response->getBody()->write(json_encode($data));
     return $response->withHeader('Content-Type', 'application/json');
 });
 

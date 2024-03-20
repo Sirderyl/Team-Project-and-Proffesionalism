@@ -6,10 +6,6 @@ namespace App;
 
 class Scheduler
 {
-
-    public $userOne;
-    public $userTwo;
-    public $userThree;
     public array $users = [];
     public $activityOne;
     public $activityTwo;
@@ -18,32 +14,12 @@ class Scheduler
     public $activityFour;
     public array $activities = [];
     public array $ratings = [];
+    private Database\DatabaseInterface $database;
 
-    public function __construct()
+    public function __construct(Database\DatabaseInterface $database)
     {
-        $this->userOne = new User();
-        $this->userTwo = new User();
-        $this->userThree = new User();
-
-        $this->userOne->setAvailability(DayOfWeek::Monday, new TimeRange(12.00, 13.00));
-        $this->userOne->setAvailability(DayOfWeek::Tuesday, new TimeRange(12.00, 13.00));
-        $this->userOne->setAvailability(DayOfWeek::Wednesday, new TimeRange(12.00, 13.00));
-        $this->userOne->userName = "Andy";
-        $this->userOne->userId = 1;
-
-        $this->userTwo->setAvailability(DayOfWeek::Monday, new TimeRange(12.00, 13.00));
-        $this->userTwo->setAvailability(DayOfWeek::Tuesday, new TimeRange(12.00, 13.00));
-        $this->userTwo->setAvailability(DayOfWeek::Wednesday, new TimeRange(12.00, 13.00));
-        $this->userTwo->userName = "Roy";
-        $this->userTwo->userId = 2;
-
-        $this->userThree->setAvailability(DayOfWeek::Monday, new TimeRange(12.00, 13.00));
-        $this->userThree->setAvailability(DayOfWeek::Tuesday, new TimeRange(12.00, 13.00));
-        $this->userThree->setAvailability(DayOfWeek::Wednesday, new TimeRange(12.00, 13.00));
-        $this->userThree->userName = "Filip";
-        $this->userThree->userId = 3;
-
-        $this->users = [$this->userOne, $this->userTwo, $this->userThree];
+        $this->database = $database;
+        $this->users = $this->database->users()->getAll();
 
         $this->activityOne = new Activity();
         $this->activityTwo = new Activity();
@@ -98,8 +74,10 @@ class Scheduler
             $volunteerSlotsFilled = 0;
 
             foreach ($this->users as $user) {
-
+                if(isset($organizationRatings[$user->userId]))
+                {
                 $userOrganizationRatings = $organizationRatings[$user->userId]["organizations"];
+                }
                 $associatedOrgRating = NULL;
                 $activityRating = NULL;
 
@@ -167,6 +145,7 @@ class Scheduler
             }
         }
         return $schedule;
+        //return $this->users;
     }
 
     public function getOrganizationRatings(/*array $ratings, array $activities*/): array

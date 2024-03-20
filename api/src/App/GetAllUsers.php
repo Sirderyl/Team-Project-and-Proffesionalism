@@ -3,7 +3,7 @@
 namespace App;
 
 /**
- * @author Nihal Kejman 
+ * @author Nihal Kejman
  */
 class GetAllUsers
 {
@@ -15,6 +15,7 @@ class GetAllUsers
         $this->database = $database;
     }
 
+    /** @return User[] */
     public function getAllUsers(): array
     {
         //getting all users

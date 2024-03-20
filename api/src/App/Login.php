@@ -25,7 +25,7 @@ class Login
     /**
      * Execute the endpoint
      * @return array{
-     *   'token': string
+     *   'token': string,
      *   'userId': int
      * }
      */

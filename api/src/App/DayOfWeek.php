@@ -27,7 +27,7 @@ enum DayOfWeek: string {
             default => throw new \InvalidArgumentException("Invalid index: $index"),
         };
         }
-        static function fromString(string $string) : DayofWeek {
+        static function fromString(string $string) : DayOfWeek {
             return match($string) {
                 "Monday" => self::Monday,
                 "Tuesday" => self::Tuesday,

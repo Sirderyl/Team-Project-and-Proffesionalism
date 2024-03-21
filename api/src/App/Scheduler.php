@@ -78,6 +78,7 @@ class Scheduler
                         if (!isset ($schedule[$activity->id])) {
                             $schedule[$activity->id]["details"] =
                                 [
+                                    'activityId' => $activity->id,
                                     'activityName' => $activity->name,
                                     'start' => $activityStart,
                                     'end' => $activityEnd,
@@ -167,5 +168,20 @@ class Scheduler
         }
 
         return $result;
+    }
+
+    public function updateDatabase(array $schedule) {
+        $userActivityRows = [];
+        foreach ($schedule as $activity)
+        {
+            foreach ($activity["users"] as $user)
+            {
+                $userActivity = new UserActivity;
+                $userActivity->userId = $user->userId;
+                $userActivity->activityId = $activity["details"]->activityId;
+                $userActivityRows[] = $userActivity;
+            }
+        }
+        //Call DB function with parameter (array of type UserActivity) here to update DB.
     }
 }

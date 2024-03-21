@@ -10,10 +10,9 @@ class UserActivity {
     public $rating;
     public $startTime;
 
-    public function __construct($userId, $activityId, $startTime, $rating) {
+    public function __construct($userId, $activityId, $rating) {
         $this->userId = $userId;
         $this->activityId = $activityId;
-        $this->startTime = $startTime;
         $this->rating = $rating;
     }
 }

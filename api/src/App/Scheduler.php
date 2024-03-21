@@ -106,7 +106,7 @@ class Scheduler
                 }
             }
         }
-
+       $this->updateDatabase($schedule);
         return $schedule;
     }
 
@@ -177,17 +177,17 @@ class Scheduler
         {
             foreach ($activity["users"] as $user)
             {
-                
-                $userId = $user->userId;
-                $activityId = $activity["details"]->activityId;
+                $userId = $user["userId"];
+                $activityId = $activity["details"]["activityId"];
+                $userActivity = new UserActivity($userId, $activityId, null);
 
-                $startTime = $activity["details"]->start;
+                $startTime = $activity["details"]["start"];
                 $hours = intval(floor($startTime));
                 $minutes = intval(($startTime - $hours) * 60);
-                $day = $activity["details"]->day;
-                $startTime = (new \DateTime("next $day"))->setTime($hours, $minutes);
-                $userActivity = new UserActivity($userId, $activityId, $startTime, null);
-
+                $day = $activity["details"]["day"];
+                $startDateTime = (new \DateTime("next $day"))->setTime($hours, $minutes);
+                
+                $userActivity->startTime = $startDateTime;
                 $userActivityRows[] = $userActivity;
             }
         }

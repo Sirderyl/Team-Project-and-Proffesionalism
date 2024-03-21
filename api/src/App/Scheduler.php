@@ -179,9 +179,20 @@ class Scheduler
                 $userActivity = new UserActivity;
                 $userActivity->userId = $user->userId;
                 $userActivity->activityId = $activity["details"]->activityId;
+
+                $startTime = $activity["details"]->start;
+                $hours = floor($startTime);
+                $minutes = ($startTime - $hours) * 60;
+                $day = $activity["details"]->day;
+                $userActivity->startTime = (new \DateTime("next $day"))->setTime($hours, $minutes);
+
                 $userActivityRows[] = $userActivity;
             }
         }
-        //Call DB function with parameter (array of type UserActivity) here to update DB.
+
+        foreach ($userActivityRows as $row)
+        {
+            $this->database->activities()->assignToUser($row->activityId, $row->userId, $row->startTime);
+        }
     }
 }

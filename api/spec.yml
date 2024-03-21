@@ -137,6 +137,33 @@ paths:
         - $ref: "#/components/parameters/id"
       responses:
         200: { $ref: "#/components/responses/Image" }
+    post:
+      tags: [User]
+      security: [ { bearer: [] } ]
+      summary: Upload a new profile picture
+      parameters:
+        - $ref: "#/components/parameters/id"
+      requestBody:
+        required: true
+        content:
+          image/jpeg:
+            schema:
+              type: string
+              format: binary
+      responses:
+        204: { $ref: "#/components/responses/NoContent" }
+        401: { $ref: "#/components/responses/Unauthorized" }
+        403: { $ref: "#/components/responses/Forbidden" }
+    delete:
+      tags: [User]
+      security: [ { bearer: [] } ]
+      summary: Delete a user's profile picture
+      parameters:
+        - $ref: "#/components/parameters/id"
+      responses:
+        204: { $ref: "#/components/responses/NoContent" }
+        401: { $ref: "#/components/responses/Unauthorized" }
+        403: { $ref: "#/components/responses/Forbidden" }
 
 components:
   securitySchemes:
@@ -230,6 +257,25 @@ components:
           type: number
           example: 12.5
       required: [start, end]
+
+    OrganizationStatusNotNone:
+      type: string
+      enum: [Invited, Applied, Member, Manager]
+
+    OrganizationStatusNotNone:
+      type: string
+      enum: [Invited, Applied, Member, Manager]
+
+    TimeRangeWithDay:
+      allOf:
+        - $ref: "#/components/schemas/TimeRange"
+        - type: object
+          properties:
+            day:
+              type: string
+              enum: [Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday]
+              example: "Monday"
+          required: [day]
 
     TimeRangeWithDay:
       allOf:

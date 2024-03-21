@@ -35,6 +35,12 @@ class ActivityDatabaseTest extends TestCase {
         $this->runRoundTripTest(5);
     }
 
+    public function testFailsIfInvalidId(): void
+    {
+        $this->expectException(\App\Database\NotFoundException::class);
+        $this->database->activities()->get(1337);
+    }
+
     public function testGetAll(): void
     {
         $activities = [];
@@ -60,5 +66,56 @@ class ActivityDatabaseTest extends TestCase {
         }
         // If not empty, then there was an activity in $activities that wasn't in $output
         $this->assertEmpty($activities);
+    }
+
+    private function prepareActivityForAssignment(): \App\Activity
+    {
+        [$admin] = Debug\DebugUser::createDummyUser($this->faker);
+        $this->database->users()->create($admin);
+        $organization = Debug\DebugOrganization::createDummyOrganization($this->faker, $admin->userId);
+        $this->database->organizations()->create($organization);
+        $activity = Debug\DebugActivity::createDummyActivity($this->faker, $organization->id);
+        $this->database->activities()->create($activity);
+        return $activity;
+    }
+
+    public function testAssignToUserOk(): void
+    {
+        $activity = $this->prepareActivityForAssignment();
+
+        [$user] = Debug\DebugUser::createDummyUser($this->faker);
+        $this->database->users()->create($user);
+
+        $dateTime = $this->faker->dateTime();
+        $dateTime->setTime(15, 0, 0); // 3:00 PM
+        $this->database->activities()->assignToUser($activity->id, $user->userId, $dateTime);
+
+        $output = $this->database->users()->getAssignedActivities($user->userId);
+
+        $this->assertCount(1, $output);
+        $this->assertEquals([
+            'activity' => [
+                'name' => $activity->name,
+                'id' => $activity->id,
+                'shortDescription' => $activity->shortDescription
+            ],
+            'start' => $dateTime
+        ], $output[0]);
+    }
+
+    public function testAssignToUserFailsIfDuplicate(): void
+    {
+        $activity = $this->prepareActivityForAssignment();
+
+        [$user] = Debug\DebugUser::createDummyUser($this->faker);
+        $this->database->users()->create($user);
+
+        $dateTime = $this->faker->dateTime();
+        $dateTime->setTime(15, 0, 0); // 3:00 PM
+        $this->database->activities()->assignToUser($activity->id, $user->userId, $dateTime);
+
+        $this->expectException(\PDOException::class);
+        $this->expectExceptionMessage('UNIQUE constraint failed');
+        $this->database->activities()->assignToUser($activity->id, $user->userId, $dateTime);
     }
 }

@@ -10,7 +10,6 @@ class Scheduler
     public $activityOne;
     public $activityTwo;
     public $activityThree;
-
     public $activityFour;
     public array $activities = [];
     public array $ratings = [];
@@ -145,10 +144,9 @@ class Scheduler
             }
         }
         return $schedule;
-        //return $this->users;
     }
 
-    public function getOrganizationRatings(/*array $ratings, array $activities*/): array
+    public function getOrganizationRatings(): array
     {
         $ratings = $this->ratings;
         $activities = $this->activities;

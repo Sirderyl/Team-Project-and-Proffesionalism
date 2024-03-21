@@ -262,10 +262,6 @@ components:
       type: string
       enum: [Invited, Applied, Member, Manager]
 
-    OrganizationStatusNotNone:
-      type: string
-      enum: [Invited, Applied, Member, Manager]
-
     TimeRangeWithDay:
       allOf:
         - $ref: "#/components/schemas/TimeRange"

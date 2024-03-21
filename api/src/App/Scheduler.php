@@ -181,8 +181,8 @@ class Scheduler
                 $userActivity->activityId = $activity["details"]->activityId;
 
                 $startTime = $activity["details"]->start;
-                $hours = floor($startTime);
-                $minutes = ($startTime - $hours) * 60;
+                $hours = intval(floor($startTime));
+                $minutes = intval(($startTime - $hours) * 60);
                 $day = $activity["details"]->day;
                 $userActivity->startTime = (new \DateTime("next $day"))->setTime($hours, $minutes);
 

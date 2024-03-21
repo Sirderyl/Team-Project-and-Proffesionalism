@@ -158,19 +158,4 @@ class UsersDatabase implements UsersDatabaseInterface
             'start' => new \DateTime($row['start_time'])
         ], $result);
     }
-
-    public function getOrganizations(int $userId): array
-    {
-        // We use JOIN instead of LEFT JOIN to return an empty array if the user has no organizations
-        return $this->connection->query(
-            "SELECT
-                organization.id,
-                organization.name,
-                user_organization.status
-            FROM user_organization
-            JOIN organization ON user_organization.organization_id = organization.id
-            WHERE user_organization.user_id = :userId",
-            ['userId' => $userId]
-        );
-    }
 }

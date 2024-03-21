@@ -14,40 +14,51 @@ class ActivityDatabaseTest extends TestCase {
         $this->database = Debug\DebugDatabase::createTestDatabase();
     }
 
-    public function testRoundTrip(): void
+    private function runRoundTripTest(int $days): void
     {
         [$admin] = Debug\DebugUser::createDummyUser($this->faker);
         $this->database->users()->create($admin);
         $organization = Debug\DebugOrganization::createDummyOrganization($this->faker, $admin->userId);
         $this->database->organizations()->create($organization);
 
-        $activity = Debug\DebugActivity::createDummyActivity($this->faker, $organization->id);
+        $activity = Debug\DebugActivity::createDummyActivity($this->faker, $organization->id, $days);
         $this->database->activities()->create($activity);
         $output = $this->database->activities()->get($activity->id);
 
         $this->assertEquals($activity, $output);
     }
 
+    public function testRoundTrip(): void
+    {
+        // Make sure it works with 0 days and more than 0 days
+        $this->runRoundTripTest(0);
+        $this->runRoundTripTest(5);
+    }
+
     public function testGetAll(): void
     {
-        [$admin] = Debug\DebugUser::createDummyUser($this->faker);
-        $this->database->users()->create($admin);
-        $organization = Debug\DebugOrganization::createDummyOrganization($this->faker, $admin->userId);
-        $this->database->organizations()->create($organization);
-
         $activities = [];
-        for ($i = 0; $i < 10; $i++) {
-            $activity = Debug\DebugActivity::createDummyActivity($this->faker, $organization->id);
+        for ($i = 0; $i < 7; $i++) {
+            [$admin] = Debug\DebugUser::createDummyUser($this->faker);
+            $this->database->users()->create($admin);
+            $organization = Debug\DebugOrganization::createDummyOrganization($this->faker, $admin->userId);
+            $this->database->organizations()->create($organization);
+
+            $activity = Debug\DebugActivity::createDummyActivity($this->faker, $organization->id, $i);
             $this->database->activities()->create($activity);
             $activities[$activity->id] = $activity;
         }
 
         $output = $this->database->activities()->getAll();
+
+        // Check that all activities are in the output exactly once
+        // If the counts are different, then this requirement must have been violated
         $this->assertCount(count($activities), $output);
         foreach ($output as $activity) {
             $this->assertEquals($activities[$activity->id], $activity);
             unset($activities[$activity->id]);
         }
+        // If not empty, then there was an activity in $activities that wasn't in $output
         $this->assertEmpty($activities);
     }
 }

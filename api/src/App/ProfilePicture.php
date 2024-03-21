@@ -16,7 +16,7 @@ class ProfilePicture {
     /**
      * Get the raw JPEG data for a user's profile picture
      */
-    public function executeGet(int $userId): string {
+    public function executeGet(int $userId): ?string {
         return $this->database->users()->getProfilePicture($userId);
     }
 

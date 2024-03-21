@@ -23,7 +23,7 @@ interface ActivityDatabaseInterface {
     /**
      * Get all ratings for all activities and users.
      * Does not include assigned activities without ratings.
-     * @return \App\Rating[]
+     * @return \App\UserActivity[]
      */
     public function getAllUserRatings(): array;
 }

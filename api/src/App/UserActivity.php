@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App;
 
-class Rating {
+class UserActivity {
     public $userId;
     public $activityId;
     public $rating;

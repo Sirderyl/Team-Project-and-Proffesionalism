@@ -10,8 +10,6 @@ import ScheduleApprovalPage from './pages/ScheduleApprovalPage'
 import Login from './pages/Login'
 import SignUp from './pages/SignUp'
 import NavMenu from './components/NavMenu'
-import NeedsLogin from './pages/NeedsLogin'
-import NotFound from './pages/NotFound'
 
 /** @typedef {import('./types/UserData').UserData} UserData */
 
@@ -113,22 +111,8 @@ function App() {
     { path: '/', name: 'Home', element: <Home /> },
     { path: '/login', name: 'Login', element: <Login handleLogin={handleLogin} isLoggedIn={isLoggedIn} />, navigable: !isLoggedIn },
     { path: '/signup', name: 'Sign up', element: <SignUp handleLogin={handleLogin} isLoggedIn={isLoggedIn} />, navigable: !isLoggedIn },
-    {
-      path: '/account-details', name: 'Account Details',
-      element: isLoggedIn ? <AccountDetails userId={userData?.userId} availability={availability} setAvailability={setAvailability} isLoading={isLoading} /> : <NeedsLogin />,
-      navigable: isLoggedIn
-    },
-    {
-      path: '/account-details/add-schedule-record', name: 'Add Schedule Record',
-      element: isLoggedIn ? <AddScheduleRecord userId={userData} availability={availability} /> : <NeedsLogin />,
-      navigable: isLoggedIn
-    },
-    {
-      path: '/invite', name: 'Invite',
-      // TODO: Merge Nihal's updates
-      element: isLoggedIn ? <InviteForm organizationId={1} /> : <NeedsLogin />,
-      navigable: isLoggedIn
-    }
+    { path: '/account-details', name: 'Account Details', element: <AccountDetails userId={userData?.userId} availability={availability} setAvailability={setAvailability} isLoading={isLoading} /> },
+    { path: '/account-details/add-schedule-record', name: 'Add Schedule Record', element: <AddScheduleRecord userId={userData} availability={availability} /> },
   ]
   return (
     <div className='App'>
@@ -139,14 +123,16 @@ function App() {
       />
 
       <Routes>
-        {/* TODO: Rest of these should be in the nav menu */}
+        <Route path='/' element={<Home />} />
+        <Route path='/account-details' element={<AccountDetails userId={userData?.userId} availability={availability} setAvailability={setAvailability} isLoading={isLoading} />} />
+        <Route path='/account-details/add-schedule-record' element={<AddScheduleRecord userId={userData?.userId} availability={availability} />} />
         <Route path='/feedback' element={<Feedback />} />
+        <Route path='/InviteForm' element={<InviteForm />} />
         <Route path='/AssignedTasks' element={<AssignedTasks tasks={tasks} />} />
         <Route path='/scheduleApproval' element={<ScheduleApprovalPage taskRequests={taskRequests} />} />
         {routes.map((route, index) => (
           <Route key={index} path={route.path} element={route.element} />
         ))}
-        <Route path='*' element={<NotFound />} />
       </Routes>
     </div>
   )

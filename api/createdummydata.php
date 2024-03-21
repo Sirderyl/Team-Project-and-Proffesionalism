@@ -78,7 +78,6 @@ for ($i = 0; $i < NUM_ORGANIZATIONS; $i++) {
 
     $organization = App\Debug\DebugOrganization::createDummyOrganization($faker, $manager->userId);
     $database->organizations()->create($organization);
-    $database->organizations()->setUserStatus((int)$organization->id, $manager->userId, App\UserOrganizationStatus::Manager);
 
     // Make sure we have a wide range of activity counts, including 0
     $numActivities = min($i, 10);

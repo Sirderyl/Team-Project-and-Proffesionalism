@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { apiRoot } from '../settings'
@@ -6,19 +5,6 @@ import toast, { Toaster } from 'react-hot-toast'
 
 export default function AccountDetails({ userId, availability, setAvailability, isLoading }) {
 
-    const [user, setUser] = useState(undefined)
-    useEffect(() => {
-        async function fetchUser() {
-            const response = await fetch(`${apiRoot}/user/${userId}`)
-            if (!response.ok) {
-                throw new Error('Error fetching user data: ' + response.status)
-            }
-
-            const data = await response.json()
-            setUser(data)
-        }
-        fetchUser()
-    }, [userId])
 
     const handleDeleteRecord = day => {
         fetch(`https://w20010297.nuwebspace.co.uk/api/user/${userId}/availability/${day}`,
@@ -58,10 +44,10 @@ export default function AccountDetails({ userId, availability, setAvailability, 
                     <img src={`${apiRoot}/user/${userId}/profilepicture`} className="w-40 h-40 rounded-full" />
                 </div>
                 <div className="flex flex-col ml-5">
-                    <p className="text-lg mt-6"><strong>Name: </strong>{user?.userName}</p>
-                    <p className="text-lg"><strong>Email: </strong>{user?.email}</p>
-                    <p className="text-lg"><strong>Phone: </strong>{user?.phoneNumber}</p>
-                    <p className="text-lg"><strong>Is Manager: </strong>{user?.isManager ? 'Yes' : 'No'}</p>
+                    <p className="text-lg mt-6"><strong>Name: </strong>John Doe</p>
+                    <p className="text-lg"><strong>Email: </strong>johndoe@example.com</p>
+                    <p className="text-lg"><strong>Phone: </strong>123-456-7890</p>
+                    <p className="text-lg"><strong>Address: </strong>1234 Example St.</p>
                 </div>
             </div>
 

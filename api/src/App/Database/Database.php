@@ -23,6 +23,11 @@ class Database implements DatabaseInterface
         $this->availability = new AvailabilityDatabase($connection);
     }
 
+    public function getConnection(): ConnectionInterface
+    {
+        return $this->connection;
+    }
+
     public function activities(): ActivityDatabaseInterface
     {
         return $this->activities;

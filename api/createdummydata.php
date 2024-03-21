@@ -73,7 +73,10 @@ if ($dummyActivityImg === false) {
 
 
 for ($i = 0; $i < NUM_ORGANIZATIONS; $i++) {
-    $organization = App\Debug\DebugOrganization::createDummyOrganization($faker, $users[rand(0, NUM_USERS - 1)]->userId);
+    $manager = App\Debug\DebugUser::createDummyUser($faker, "$i@manager.com", "password$i")[0];
+    $database->users()->create($manager);
+
+    $organization = App\Debug\DebugOrganization::createDummyOrganization($faker, $manager->userId);
     $database->organizations()->create($organization);
 
     // Make sure we have a wide range of activity counts, including 0

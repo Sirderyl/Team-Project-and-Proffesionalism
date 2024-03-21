@@ -127,7 +127,7 @@ function App() {
         <Route path='/account-details' element={<AccountDetails userId={userData?.userId} availability={availability} setAvailability={setAvailability} isLoading={isLoading} />} />
         <Route path='/account-details/add-schedule-record' element={<AddScheduleRecord userId={userData?.userId} availability={availability} />} />
         <Route path='/feedback' element={<Feedback />} />
-        <Route path='/InviteForm' element={<InviteForm />} />
+        <Route path='/InviteForm' element={<InviteForm userId={userData?.userId} />} />
         <Route path='/AssignedTasks' element={<AssignedTasks tasks={tasks} />} />
         <Route path='/scheduleApproval' element={<ScheduleApprovalPage taskRequests={taskRequests} />} />
         {routes.map((route, index) => (

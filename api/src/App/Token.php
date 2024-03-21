@@ -4,6 +4,7 @@ namespace App;
 
 use Firebase\JWT\JWT;
 use Firebase\JWT\Key;
+use Firebase\JWT\SignatureInvalidException;
 
 /**
  * Utility class for issuing and verifying tokens
@@ -40,5 +41,18 @@ class Token
         $payload = JWT::decode($token, new Key(self::JWT_SECRET, 'HS256'));
 
         return $payload->sub;
+    }
+
+    /**
+     * Assert that the provided user ID matches the one given in the token
+     * @throws SignatureInvalidException If the token is for a different user
+     */
+    public static function checkAuthMatchesUser(string $token, int $userId): void
+    {
+        $issued = self::verify($token);
+
+        if ($issued != $userId) {
+            throw new SignatureInvalidException("Token does not match user ID");
+        }
     }
 }

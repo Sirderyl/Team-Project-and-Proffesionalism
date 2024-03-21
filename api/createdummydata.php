@@ -58,7 +58,7 @@ $profilePicture = getProfilePicture();
 $users = [];
 
 for ($i = 0; $i < NUM_USERS; $i++) {
-    [$user] = App\Debug\DebugUser::createDummyUser($faker);
+    [$user] = App\Debug\DebugUser::createDummyUser($faker, "$i@example.com", "password$i");
     $users[] = $user;
 
     $database->users()->create($user);
@@ -73,8 +73,12 @@ if ($dummyActivityImg === false) {
 
 
 for ($i = 0; $i < NUM_ORGANIZATIONS; $i++) {
-    $organization = App\Debug\DebugOrganization::createDummyOrganization($faker, $users[rand(0, NUM_USERS - 1)]->userId);
+    $manager = App\Debug\DebugUser::createDummyUser($faker, "$i@manager.com", "password$i")[0];
+    $database->users()->create($manager);
+
+    $organization = App\Debug\DebugOrganization::createDummyOrganization($faker, $manager->userId);
     $database->organizations()->create($organization);
+    $database->organizations()->setUserStatus((int)$organization->id, $manager->userId, App\UserOrganizationStatus::Manager);
 
     // Make sure we have a wide range of activity counts, including 0
     $numActivities = min($i, 10);

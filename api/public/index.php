@@ -51,9 +51,24 @@ $app->get('/greetings[/{language}]', function (Request $request, Response $respo
     return $response->withHeader('Content-Type', 'application/json');
 });
 
-$app->get('/managerSchedule', function (Request $request, Response $response, array $args) use ($container) {
+$app->post('/assignActivities', function (Request $request, Response $response, array $args) use ($container) {
     $schedule = $container->get(App\Scheduler::class);
-    $data = $schedule->getManagerSchedule();
+    $data = $schedule->assignActivities();
+    $body = json_encode($data, JSON_PRETTY_PRINT);
+    $response->getBody()->write($body);
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
+$app->get('/userSchedule/{userId}', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $data = $database->users()->getAssignedActivities(intval($args['userId']));
+    $body = json_encode($data, JSON_PRETTY_PRINT);
+    $response->getBody()->write($body);
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
+$app->get('/devOrganizationRatings', function (Request $request, Response $response, array $args) use ($container) {
+    $schedule = $container->get(App\Scheduler::class);
+    $data = $schedule->getOrganizationRatings();
     $body = json_encode($data, JSON_PRETTY_PRINT);
     $response->getBody()->write($body);
     return $response->withHeader('Content-Type', 'application/json');
@@ -91,6 +106,13 @@ $app->post('/user/login', function (Request $request, Response $response, array 
     return $response->withHeader('Content-Type', 'application/json');
 });
 
+$app->get('/user/all', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\GetAllUsers::class, ['database' => $database]);
+    $data = $handler->getAllUsers();
+    $response->getBody()->write(json_encode($data));
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
 $app->get('/user/{id}', function (Request $request, Response $response, array $args) use ($container, $database) {
     $handler = $container->make(App\UserEndpoint::class, ['database' => $database]);
     $data = $handler->getUser(intval($args['id']));
@@ -98,12 +120,41 @@ $app->get('/user/{id}', function (Request $request, Response $response, array $a
     return $response->withHeader('Content-Type', 'application/json');
 });
 
+$app->get('/user/{id}/organizations', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\UserOrganizationsEndpoint::class, ['database' => $database]);
+    $data = $handler->execute(intval($args['id']));
+    $response->getBody()->write(json_encode($data));
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
+$app->get('/userSchedule/{1}', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\UserActivitiesEndpoint::class, ['database' => $database]);
+    $data = $handler->execute(intval($args['id']));
+    $response->getBody()->write(json_encode($data));
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
 $app->get('/user/{id}/profilepicture', function (Request $request, Response $response, array $args) use ($container, $database) {
     $handler = $container->make(App\ProfilePicture::class, ['database' => $database]);
-    $data = $handler->execute(intval($args['id']));
+    $data = $handler->executeGet(intval($args['id']));
     $response->getBody()->write($data);
     return $response->withHeader('Content-Type', $handler->getContentType());
 });
+$app->post('/user/{id}/profilepicture', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\ProfilePicture::class, ['database' => $database]);
+    $id = intval($args['id']);
+    App\Token::checkAuthMatchesUser($request->getHeader('Authorization')[0], $id);
+    $handler->executePost($id, $request->getBody()->getContents());
+    return $response->withStatus(204);
+});
+$app->delete('/user/{id}/profilepicture', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\ProfilePicture::class, ['database' => $database]);
+    $id = intval($args['id']);
+    App\Token::checkAuthMatchesUser($request->getHeader('Authorization')[0], $id);
+    $handler->executeDelete($id);
+    return $response->withStatus(204);
+});
+
 
 $app->get('/user/{id}/availability', function (Request $request, Response $response, array $args) use ($container, $database) {
     $handler = $container->make(App\AvailabilityEndpoint::class, ['database' => $database]);
@@ -122,6 +173,27 @@ $app->delete('/user/{id}/availability/{day}', function (Request $request, Respon
     $handler = $container->make(App\AvailabilityEndpoint::class, ['database' => $database]);
     $handler->deleteAvailability(intval($args['id']), App\DayOfWeek::from($args['day']));
     return $response->withStatus(200);
+});
+
+$app->get('/organization/{id}/user/{userId}/status', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\UpdateManagerForm::class, ['database' => $database]);
+    $status = $handler->getUserStatus(intval($args['id']), intval($args['userId']));
+    $response->getBody()->write(json_encode([
+        "status" => $status
+    ]));
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
+$app->post('/organization/{id}/user/{userId}/status', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $orgId = intval($args['id']);
+    $organiztion = $database->organizations()->get($orgId);
+    $status = $request->getQueryParams()['status'];
+    // TODO: Verify the manager is logged in
+
+    $handler = $container->make(App\UpdateManagerForm::class, ['database' => $database]);
+    $handler->setUserStatus($orgId, intval($args['userId']), App\UserOrganizationStatus::from($status));
+
+    return $response->withStatus(201);
 });
 
 $app->post('/user/{email}/{name}', function (Request $request, Response $response, array $args) use ($container, $database) {

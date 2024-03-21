@@ -16,8 +16,16 @@ class ProfilePicture {
     /**
      * Get the raw JPEG data for a user's profile picture
      */
-    public function execute(int $userId): string {
+    public function executeGet(int $userId): ?string {
         return $this->database->users()->getProfilePicture($userId);
+    }
+
+    public function executePost(int $userId, string $data): void {
+        $this->database->users()->setProfilePicture($userId, $data);
+    }
+
+    public function executeDelete(int $userId): void {
+        $this->database->users()->setProfilePicture($userId, null);
     }
 
     public function getContentType(): string {

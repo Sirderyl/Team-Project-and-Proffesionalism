@@ -127,6 +127,13 @@ $app->get('/user/{id}/organizations', function (Request $request, Response $resp
     return $response->withHeader('Content-Type', 'application/json');
 });
 
+$app->get('/user/{id}/activities', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\UserActivitiesEndpoint::class, ['database' => $database]);
+    $data = $handler->execute(intval($args['id']));
+    $response->getBody()->write(json_encode($data));
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
 $app->get('/user/{id}/profilepicture', function (Request $request, Response $response, array $args) use ($container, $database) {
     $handler = $container->make(App\ProfilePicture::class, ['database' => $database]);
     $data = $handler->executeGet(intval($args['id']));

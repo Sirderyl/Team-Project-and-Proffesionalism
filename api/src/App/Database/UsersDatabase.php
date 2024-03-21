@@ -32,10 +32,10 @@ class UsersDatabase implements UsersDatabaseInterface
                     'start', user_availability.start_hour, 'end',
                     user_availability.end_hour
                 )) AS availability,
-                organization.id IS NOT NULL AS is_manager
+                user_organization.organization_id IS NOT NULL AS is_manager
             FROM user
             LEFT JOIN user_availability ON user.id = user_availability.user_id
-            LEFT JOIN organization ON user.id = organization.admin_id
+            LEFT JOIN user_organization ON user.id = user_organization.user_id AND user_organization.status = 'Manager'
             $filter
             GROUP BY user.id",
             $params
@@ -124,8 +124,12 @@ class UsersDatabase implements UsersDatabaseInterface
 
     public function getInvites(int $userId): array
     {
+        // TODO: This doesn't support multiple admins, but changing would require changing the Organization class and all js that uses it
         $result = $this->connection->query("
-            SELECT organization.id, organization.name, organization.admin_id
+            SELECT
+                organization.id,
+                organization.name,
+                (SELECT user_id FROM user_organization WHERE organization_id = organization.id AND status = 'Manager') AS admin_id
             FROM user_organization
             JOIN organization ON user_organization.organization_id = organization.id
             WHERE user_organization.user_id = :userId AND user_organization.status = 'Invited'
@@ -153,5 +157,20 @@ class UsersDatabase implements UsersDatabaseInterface
             ],
             'start' => new \DateTime($row['start_time'])
         ], $result);
+    }
+
+    public function getOrganizations(int $userId): array
+    {
+        // We use JOIN instead of LEFT JOIN to return an empty array if the user has no organizations
+        return $this->connection->query(
+            "SELECT
+                organization.id,
+                organization.name,
+                user_organization.status
+            FROM user_organization
+            JOIN organization ON user_organization.organization_id = organization.id
+            WHERE user_organization.user_id = :userId",
+            ['userId' => $userId]
+        );
     }
 }

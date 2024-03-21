@@ -4,8 +4,7 @@
 
 CREATE TABLE organization (
     id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    name TEXT NOT NULL,
-    admin_id INTEGER NOT NULL REFERENCES user(id)
+    name TEXT NOT NULL
 );
 
 CREATE TABLE activity (
@@ -62,7 +61,7 @@ CREATE TABLE user_organization (
     status TEXT NOT NULL,
 
     PRIMARY KEY (user_id, organization_id),
-    CHECK (status IN ('Invited', 'Applied', 'Member'))
+    CHECK (status IN ('Invited', 'Applied', 'Member', 'Manager'))
 );
 
 CREATE TABLE user_activity (

@@ -62,5 +62,15 @@ interface UsersDatabaseInterface
      *   start: \DateTime,
      * }>
      */
-    public function getAssignedActivities(int $userId): array;
+    public function getAssignedActivities(int $userId, ?\DateTime $earliestStart = null, ?\DateTime $latestStart = null): array;
+
+    /**
+     * Get organizations the user is a member of or the admin
+     * @return array<array{
+     *   id: int,
+     *   name: string,
+     *   status: string
+     * }>
+     */
+    public function getOrganizations(int $userId): array;
 }

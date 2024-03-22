@@ -13,25 +13,33 @@ class OrganizationDatabase implements OrganizationDatabaseInterface {
     }
 
     public function get(int $id): \App\Organization {
-        $result = $this->connection->query('
-            SELECT id, name, admin_id
+        // TODO: Support multiple admins
+        $result = $this->connection->query("
+            SELECT
+                id,
+                name,
+                (SELECT user_id FROM user_organization WHERE organization_id = organization.id AND status = 'Manager') AS admin_id
             FROM organization
             WHERE id = :id
-        ', [':id' => $id]);
+        ", [':id' => $id]);
 
         return \App\Organization::fromRow($result[0]);
     }
 
     public function create(\App\Organization $organization): void {
         $this->connection->execute('
-            INSERT INTO organization (name, admin_id)
-            VALUES (:name, :admin_id)
+            INSERT INTO organization (name)
+            VALUES (:name)
         ', [
             ':name' => $organization->name,
-            ':admin_id' => $organization->adminId
         ]);
 
         $organization->id = $this->connection->lastInsertId();
+
+        $this->connection->execute("
+            INSERT INTO user_organization (user_id, organization_id, status)
+            VALUES (:user_id, :organization_id, 'Manager')
+        ", [ ':user_id' => $organization->adminId, ':organization_id' => $organization->id ]);
     }
 
     public function setUserStatus(int $organizationId, int $userId, \App\UserOrganizationStatus $status): void {

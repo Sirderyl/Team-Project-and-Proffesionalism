@@ -87,4 +87,37 @@ final class UserDatabaseTest extends TestCase
         }
         $this->assertEmpty($users);
     }
+
+    public function testAssignedActivitiesOrderedByDate(): void
+    {
+        [$user] = Debug\DebugUser::createDummyUser($this->faker);
+        $this->database->users()->create($user);
+
+        $organization = Debug\DebugOrganization::createDummyOrganization($this->faker, $user->userId);
+        $this->database->organizations()->create($organization);
+
+        $activity = Debug\DebugActivity::createDummyActivity($this->faker, $organization->id);
+        $this->database->activities()->create($activity);
+
+        // Create in a shuffled order as SQLite is ordered by insertion order by default
+        $this->database->activities()->assignToUser($activity->id, $user->userId, new DateTime('2021-01-10 12:00:00'));
+        $this->database->activities()->assignToUser($activity->id, $user->userId, new DateTime('2021-01-01 12:00:00'));
+        $this->database->activities()->assignToUser($activity->id, $user->userId, new DateTime('2021-01-05 12:00:00'));
+        $this->database->activities()->assignToUser($activity->id, $user->userId, new DateTime('2021-01-15 12:00:00'));
+
+        $output = $this->database->users()->getAssignedActivities($user->userId);
+        $this->assertCount(4, $output);
+
+        $times = array_map(fn ($a) => $a['start'], $output);
+
+        $this->assertEquals(
+            [
+                new DateTime('2021-01-01 12:00:00'),
+                new DateTime('2021-01-05 12:00:00'),
+                new DateTime('2021-01-10 12:00:00'),
+                new DateTime('2021-01-15 12:00:00'),
+            ],
+            $times
+        );
+    }
 }

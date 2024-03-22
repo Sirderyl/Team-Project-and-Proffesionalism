@@ -58,8 +58,14 @@ $app->post('/assignActivities', function (Request $request, Response $response, 
     return $response->withHeader('Content-Type', 'application/json');
 });
 
-$app->get('/userSchedule/{userId}', function (Request $request, Response $response, array $args) use ($container, $database) {
-    $data = $database->users()->getAssignedActivities(intval($args['userId']));
+$app->get('/userSchedule/{userId}', function (Request $request, Response $response, array $args) use ($database) {
+    $startParam = $request->getQueryParams()['start'] ?? null;
+    $endParam = $request->getQueryParams()['end'] ?? null;
+
+    $start = $startParam ? new DateTime($startParam) : null;
+    $end = $endParam ? new DateTime($endParam) : null;
+
+    $data = $database->users()->getAssignedActivities(intval($args['userId']), $start, $end);
     $body = json_encode($data, JSON_PRETTY_PRINT);
     $response->getBody()->write($body);
     return $response->withHeader('Content-Type', 'application/json');
@@ -114,6 +120,13 @@ $app->get('/user/all', function (Request $request, Response $response, array $ar
 $app->get('/user/{id}', function (Request $request, Response $response, array $args) use ($container, $database) {
     $handler = $container->make(App\UserEndpoint::class, ['database' => $database]);
     $data = $handler->getUser(intval($args['id']));
+    $response->getBody()->write(json_encode($data));
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
+$app->get('/user/{id}/organizations', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\UserOrganizationsEndpoint::class, ['database' => $database]);
+    $data = $handler->execute(intval($args['id']));
     $response->getBody()->write(json_encode($data));
     return $response->withHeader('Content-Type', 'application/json');
 });
@@ -178,6 +191,12 @@ $app->post('/organization/{id}/user/{userId}/status', function (Request $request
     $handler->setUserStatus($orgId, intval($args['userId']), App\UserOrganizationStatus::from($status));
 
     return $response->withStatus(201);
+});
+
+$app->post('/user/{email}/{name}', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\MailerEndpoint::class, ['mailer' => $container->get(App\Mailer::class)]);
+    $response->getBody()->write($handler->sendEmail($args['email'], $args['name']));
+    return $response->withHeader('Content-Type', 'application/json');
 });
 
 function getErrorCode(Throwable $exception): int

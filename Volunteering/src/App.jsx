@@ -114,9 +114,6 @@ function App() {
     { path: '/account-details', name: 'Account Details', navigable: isLoggedIn,
       element: isLoggedIn ? <AccountDetails userData={userData} availability={availability} setAvailability={setAvailability} /> : <NeedsLogIn />
     },
-    { path: '/account-details/add-schedule-record', name: 'Add Schedule Record', navigable: isLoggedIn,
-      element: isLoggedIn ? <AddScheduleRecord userId={userData.userId} availability={availability} /> : <NeedsLogIn />
-    },
   ]
   return (
     <div className='App'>
@@ -127,6 +124,11 @@ function App() {
       />
 
       <Routes>
+        <Route
+          path='/account-details/add-schedule-record'
+          element={isLoggedIn ? <AddScheduleRecord userId={userData.userId} availability={availability} /> : <NeedsLogIn />}
+        />
+
         <Route path='/feedback' element={<Feedback />} />
         <Route path='/InviteForm' element={<InviteForm />} />
         <Route path='/AssignedTasks' element={<AssignedTasks tasks={tasks} />} />

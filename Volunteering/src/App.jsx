@@ -69,38 +69,7 @@ function App() {
 
   useEffect(fetchAvailability, [userData, handleJSON])
 
-  const [tasks] = useState([
-    {
-      id: 0,
-      title: "Sample Task",
-      description: "Descriptions",
-      volunteers: [{ id: 0, name: "Nihal Kejman" }],
-      deadline: "2024-03-10",
-    },
-  ]);
-  const [taskRequests] = useState([
-    {
-      id: 1,
-      title: "dog walk",
-      description: "Pll.",
-      deadline: "2024-03-15",
-      requester: "John Doe"
-    },
-    {
-      id: 2,
-      title: "Babysit",
-      description: "jjj.",
-      deadline: "2024-03-20",
-      requester: "Jane Smith"
-    },
-    {
-      id: 3,
-      title: "Dog walk",
-      description: "........",
-      deadline: "2024-03-25",
-      requester: "Alice Johnson"
-    },
-  ]);
+
   const isLoggedIn = userData !== null
 
   const [tasks, setTasks] = useState([]);

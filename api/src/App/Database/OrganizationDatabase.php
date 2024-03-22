@@ -74,6 +74,7 @@ class OrganizationDatabase implements OrganizationDatabaseInterface {
     public function getActivitySchedule(int $organizationId, \DateTime $from = null, \DateTime $to = null): array {
         $result = $this->connection->query(
             "SELECT
+                user_activity.rowid,
                 activity.id AS activity_id,
                 activity.name AS activity_name,
                 activity.short_description AS activity_short_description,
@@ -102,6 +103,7 @@ class OrganizationDatabase implements OrganizationDatabaseInterface {
                 'name' => $row['activity_name'],
                 'shortDescription' => $row['activity_short_description'],
             ],
+            'id' => $row['rowid'],
             'startTime' => new \DateTime($row['start_time']),
             'users' => json_decode($row['users'], true),
         ], $result);

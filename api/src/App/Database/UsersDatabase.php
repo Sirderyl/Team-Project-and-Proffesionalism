@@ -144,7 +144,8 @@ class UsersDatabase implements UsersDatabaseInterface
         // These can be compared as regular strings to get the correct ordering
         $result = $this->connection->query(
             "SELECT
-                activity.name, activity.id, activity.short_description,
+                user_activity.rowid,
+                activity.name AS act_name, activity.id AS act_id, activity.short_description AS act_desc,
                 user_activity.start_time
             FROM user_activity
             JOIN activity ON user_activity.activity_id = activity.id
@@ -161,10 +162,11 @@ class UsersDatabase implements UsersDatabaseInterface
 
         return array_map(fn ($row) => [
             'activity' => [
-                'name' => $row['name'],
-                'id' => $row['id'],
-                'shortDescription' => $row['short_description']
+                'name' => $row['act_name'],
+                'id' => $row['act_id'],
+                'shortDescription' => $row['act_desc']
             ],
+            'id' => $row['rowid'],
             'start' => new \DateTime($row['start_time'])
         ], $result);
     }

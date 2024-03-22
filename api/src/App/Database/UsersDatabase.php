@@ -140,13 +140,14 @@ class UsersDatabase implements UsersDatabaseInterface
 
     public function getAssignedActivities(int $userId): array
     {
-        $result = $this->connection->query("
-            SELECT
+        $result = $this->connection->query(
+            "SELECT
                 activity.name, activity.id, activity.short_description,
                 user_activity.start_time
             FROM user_activity
             JOIN activity ON user_activity.activity_id = activity.id
             WHERE user_activity.user_id = :userId
+            ORDER BY datetime(user_activity.start_time) ASC
         ", ['userId' => $userId]);
 
         return array_map(fn ($row) => [

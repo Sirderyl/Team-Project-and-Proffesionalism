@@ -106,7 +106,7 @@ class Scheduler
                 }
             }
         }
-       $this->updateDatabase($schedule);
+       //$this->updateDatabase($schedule);
         return $schedule;
     }
 

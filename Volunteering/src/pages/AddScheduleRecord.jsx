@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import { apiRoot } from '../settings'
 import toast, { Toaster } from 'react-hot-toast'
 import PropTypes from 'prop-types'
 
@@ -52,7 +53,7 @@ export default function AddScheduleRecord({ userId, availability }) {
         formData.append('start', timeStartDB)
         formData.append('end', timeEndDB)
 
-        fetch(`https://w20010297.nuwebspace.co.uk/api/user/${userId}/availability`,
+        fetch(`${apiRoot}/user/${userId}/availability`,
             {
                 method: 'POST',
                 body: formData

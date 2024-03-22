@@ -122,7 +122,7 @@ class ActivityDatabase implements ActivityDatabaseInterface {
             []
         );
 
-        return array_map(fn ($row) => new \App\Rating(
+        return array_map(fn ($row) => new \App\UserActivity(
             $row['user_id'],
             $row['activity_id'],
             $row['rating']

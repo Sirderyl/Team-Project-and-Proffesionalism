@@ -6,86 +6,17 @@ namespace App;
 
 class Scheduler
 {
-
-    public $userOne;
-    public $userTwo;
-    public $userThree;
     public array $users = [];
-    public $activityOne;
-    public $activityTwo;
-    public $activityThree;
-
-    public $activityFour;
     public array $activities = [];
     public array $ratings = [];
+    private Database\DatabaseInterface $database;
 
-    public function __construct()
+    public function __construct(Database\DatabaseInterface $database)
     {
-        $this->userOne = new User();
-        $this->userTwo = new User();
-        $this->userThree = new User();
-
-        $this->userOne->setAvailability(DayOfWeek::Monday, new TimeRange(12.00, 13.00));
-        $this->userOne->setAvailability(DayOfWeek::Tuesday, new TimeRange(12.00, 13.00));
-        $this->userOne->setAvailability(DayOfWeek::Wednesday, new TimeRange(12.00, 13.00));
-        $this->userOne->userName = "Andy";
-        $this->userOne->userId = 1;
-
-        $this->userTwo->setAvailability(DayOfWeek::Monday, new TimeRange(12.00, 13.00));
-        $this->userTwo->setAvailability(DayOfWeek::Tuesday, new TimeRange(12.00, 13.00));
-        $this->userTwo->setAvailability(DayOfWeek::Wednesday, new TimeRange(12.00, 13.00));
-        $this->userTwo->userName = "Roy";
-        $this->userTwo->userId = 2;
-
-        $this->userThree->setAvailability(DayOfWeek::Monday, new TimeRange(12.00, 13.00));
-        $this->userThree->setAvailability(DayOfWeek::Tuesday, new TimeRange(12.00, 13.00));
-        $this->userThree->setAvailability(DayOfWeek::Wednesday, new TimeRange(12.00, 13.00));
-        $this->userThree->userName = "Filip";
-        $this->userThree->userId = 3;
-
-        $this->users = [$this->userOne, $this->userTwo, $this->userThree];
-
-        $this->activityOne = new Activity();
-        $this->activityTwo = new Activity();
-        $this->activityThree = new Activity();
-        $this->activityFour = new Activity();
-
-        $this->activityOne->id = 1;
-        $this->activityOne->name = "Serving Food";
-        $this->activityOne->neededVolunteers = 2;
-        $this->activityOne->organizationId = 4;
-        $this->activityOne->setTime(DayOfWeek::Wednesday, new TimeRange(12.00, 13.00));
-
-        $this->activityTwo->id = 2;
-        $this->activityTwo->name = "Walking Dogs";
-        $this->activityTwo->neededVolunteers = 1;
-        $this->activityTwo->organizationId = 4;
-        $this->activityTwo->setTime(DayOfWeek::Tuesday, new TimeRange(12.00, 13.00));
-
-        $this->activityThree->id = 3;
-        $this->activityThree->name = "Answering Calls";
-        $this->activityThree->neededVolunteers = 3;
-        $this->activityThree->organizationId = 2;
-        $this->activityThree->setTime(DayOfWeek::Monday, new TimeRange(12.00, 13.00));
-
-        $this->activityFour->id = 4;
-        $this->activityFour->name = "Cleaning";
-        $this->activityFour->neededVolunteers = 3;
-        $this->activityFour->organizationId = 7;
-        $this->activityFour->setTime(DayOfWeek::Monday, new TimeRange(12.00, 13.00));
-
-        $this->activities = [$this->activityOne, $this->activityTwo, $this->activityThree, $this->activityFour];
-        $this->ratings = array(
-            new Rating(1, 1, 5),
-            new Rating(1, 2, 2),
-            new Rating(1, 3, 4),
-            new Rating(2, 1, 2),
-            new Rating(2, 2, 5),
-            new Rating(2, 3, 1),
-            new Rating(3, 1, 1),
-            new Rating(3, 2, 1),
-            new Rating(3, 3, 5)
-        );
+        $this->database = $database;
+        $this->users = $this->database->users()->getAll();
+        $this->ratings = $this->database->activities()->getAllUserRatings();
+        $this->activities = $this->database->activities()->getAll();
     }
     public function assignActivities()
     {
@@ -94,12 +25,17 @@ class Scheduler
         $organizationRatings = $this->getOrganizationRatings();
 
         foreach ($this->activities as $activity) {
+            if(isset(array_keys($activity->times)[0]))
+            {
             $activityDayOfWeek = array_keys($activity->times)[0];
+            }
             $volunteerSlotsFilled = 0;
 
             foreach ($this->users as $user) {
-
+                if(isset($organizationRatings[$user->userId]))
+                {
                 $userOrganizationRatings = $organizationRatings[$user->userId]["organizations"];
+                }
                 $associatedOrgRating = NULL;
                 $activityRating = NULL;
 
@@ -119,9 +55,12 @@ class Scheduler
                 if (isset ($user->availability[$activityDayOfWeek]) && $user->availability[$activityDayOfWeek] !== null) {
                     $userAvailableStart = $user->availability[$activityDayOfWeek]->start;
                     $userAvailableEnd = $user->availability[$activityDayOfWeek]->end;
-
+                    if(isset($activity->getTime(DayOfWeek::fromString($activityDayOfWeek))->start)){
                     $activityStart = $activity->getTime(DayOfWeek::fromString($activityDayOfWeek))->start;
+                    }
+                    if(isset($activity->getTime(DayOfWeek::fromString($activityDayOfWeek))->end)){
                     $activityEnd = $activity->getTime(DayOfWeek::fromString($activityDayOfWeek))->end;
+                    }
 
                     $isUserAvailable = true;
                     if (isset ($scheduledTimeSlots[$user->userId])) {
@@ -139,6 +78,7 @@ class Scheduler
                         if (!isset ($schedule[$activity->id])) {
                             $schedule[$activity->id]["details"] =
                                 [
+                                    'activityId' => $activity->id,
                                     'activityName' => $activity->name,
                                     'start' => $activityStart,
                                     'end' => $activityEnd,
@@ -166,10 +106,11 @@ class Scheduler
                 }
             }
         }
+       //$this->updateDatabase($schedule);
         return $schedule;
     }
 
-    public function getOrganizationRatings(/*array $ratings, array $activities*/): array
+    public function getOrganizationRatings(): array
     {
         $ratings = $this->ratings;
         $activities = $this->activities;
@@ -228,5 +169,32 @@ class Scheduler
         }
 
         return $result;
+    }
+
+    public function updateDatabase(array $schedule) {
+        $userActivityRows = [];
+        foreach ($schedule as $activity)
+        {
+            foreach ($activity["users"] as $user)
+            {
+                $userId = $user["userId"];
+                $activityId = $activity["details"]["activityId"];
+                $userActivity = new UserActivity($userId, $activityId, null);
+
+                $startTime = $activity["details"]["start"];
+                $hours = intval(floor($startTime));
+                $minutes = intval(($startTime - $hours) * 60);
+                $day = $activity["details"]["day"];
+                $startDateTime = (new \DateTime("next $day"))->setTime($hours, $minutes);
+                
+                $userActivity->startTime = $startDateTime;
+                $userActivityRows[] = $userActivity;
+            }
+        }
+
+        foreach ($userActivityRows as $row)
+        {
+            $this->database->activities()->assignToUser($row->activityId, $row->userId, $row->startTime);
+        }
     }
 }

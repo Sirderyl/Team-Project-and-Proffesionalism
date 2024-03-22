@@ -30,9 +30,17 @@ const AssignedTasks = ({ tasks, user, activities }) => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {activities.map(activity => (
                             <div key={activity.id} className="bg-white rounded-lg shadow-md p-6">
-                                <h3 className="text-lg font-semibold mb-2">{activity.name}</h3>
-                                <p className="text-gray-600 mb-2">{activity.shortDescription}</p>
-                                <p className='text-gray-600 mb-2'>Assigned to: {activity.assignedTo}</p>
+                                <h3 className="text-lg font-semibold mb-2">{activity.activity.name}</h3>
+                                <p className="text-gray-600 mb-2">{activity.activity.shortDescription}</p>
+                                <p className="text-gray-600 mb-2">Start Date: {activity.startTime.date}</p>
+                                <p className='text-gray-600 mb-2'>Assigned to:{" "}
+                                    {activity.users.map((user, index) => (
+                                        <span key={user.id}>
+                                            {index > 0 && ', '}
+                                            {user.name}
+                                        </span>
+                                    ))}
+                                </p>
                             </div>
                         ))}
                     </div>
@@ -46,7 +54,8 @@ const AssignedTasks = ({ tasks, user, activities }) => {
 
 AssignedTasks.propTypes = {
     tasks: PropTypes.array.isRequired,
-    user: PropTypes.object.isRequired
+    user: PropTypes.object.isRequired,
+    activities: PropTypes.array.isRequired
 };
 
 export default AssignedTasks;

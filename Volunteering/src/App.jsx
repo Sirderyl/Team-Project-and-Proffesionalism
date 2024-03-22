@@ -37,6 +37,7 @@ function App() {
   const [availability, setAvailability] = useState([])
 
   const [allActivities, setAllActivities] = useState([])
+  const [organizationId, setOrganizationId] = useState(0)
 
   const daysOfWeek = useMemo(() => ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], [])
 
@@ -94,7 +95,25 @@ function App() {
   }, [userData])
 
   const fetchAllActivities = useCallback(() => {
-    fetch(`${apiRoot}/activities`)
+    if (!user.isManager) {
+      setAllActivities([])
+      return
+    }
+
+    fetch(`${apiRoot}/user/${user.userId}/organizations`)
+      .then(response => {
+        if (response.ok) {
+          return response.json()
+        } else {
+          throw new Error('Error fetching user: ' + response.status)
+        }
+      })
+      .then(data => {
+        setOrganizationId(data[0].id)
+      })
+      .catch(err => console.error(err))
+
+    fetch(`${apiRoot}/organization/${organizationId}/schedule`)
       .then(response => {
         if (response.ok) {
           return response.json()
@@ -107,7 +126,7 @@ function App() {
         setAllActivities(data)
       })
       .catch(err => console.error(err))
-  }, [])
+  }, [user, organizationId])
 
   useEffect(fetchAvailability, [userData, handleJSON])
   useEffect(() => {

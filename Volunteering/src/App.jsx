@@ -112,7 +112,7 @@ function App() {
     { path: '/login', name: 'Login', element: <Login handleLogin={handleLogin} isLoggedIn={isLoggedIn} />, navigable: !isLoggedIn },
     { path: '/signup', name: 'Sign up', element: <SignUp handleLogin={handleLogin} isLoggedIn={isLoggedIn} />, navigable: !isLoggedIn },
     { path: '/account-details', name: 'Account Details', element: <AccountDetails userId={userData?.userId} availability={availability} setAvailability={setAvailability} isLoading={isLoading} /> },
-    { path: '/account-details/add-schedule-record', name: 'Add Schedule Record', element: <AddScheduleRecord userId={userData} availability={availability} /> },
+    { path: '/account-details/add-schedule-record', name: 'Add Schedule Record', element: <AddScheduleRecord userId={userData.userId} availability={availability} /> },
   ]
   return (
     <div className='App'>
@@ -124,8 +124,6 @@ function App() {
 
       <Routes>
         <Route path='/' element={<Home />} />
-        <Route path='/account-details' element={<AccountDetails userId={userData?.userId} availability={availability} setAvailability={setAvailability} isLoading={isLoading} />} />
-        <Route path='/account-details/add-schedule-record' element={<AddScheduleRecord userId={userData?.userId} availability={availability} />} />
         <Route path='/feedback' element={<Feedback />} />
         <Route path='/InviteForm' element={<InviteForm />} />
         <Route path='/AssignedTasks' element={<AssignedTasks tasks={tasks} />} />

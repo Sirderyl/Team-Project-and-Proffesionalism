@@ -70,4 +70,40 @@ class OrganizationDatabase implements OrganizationDatabaseInterface {
 
         return \App\UserOrganizationStatus::from($result[0]['status']);
     }
+
+    public function getActivitySchedule(int $organizationId, \DateTime $from = null, \DateTime $to = null): array {
+        $result = $this->connection->query(
+            "SELECT
+                activity.id AS activity_id,
+                activity.name AS activity_name,
+                activity.short_description AS activity_short_description,
+                user_activity.start_time AS start_time,
+                json_group_array(json_object(
+                    'id', user.id,
+                    'name', user.name
+                )) AS users
+                FROM activity
+                LEFT JOIN user_activity ON activity.id = user_activity.activity_id
+                LEFT JOIN user ON user_activity.user_id = user.id
+                WHERE activity.organization_id = :organizationId
+                AND (:from IS NULL OR user_activity.start_time >= :from)
+                AND (:to IS NULL OR user_activity.start_time <= :to)
+                GROUP BY activity.id, user_activity.start_time",
+                [
+                    'organizationId' => $organizationId,
+                    'from' => $from ? $from->format(\DateTime::ISO8601) : null,
+                    'to' => $to ? $to->format(\DateTime::ISO8601) : null,
+                ]
+            );
+
+        return array_map(fn ($row) => [
+            'activity' => [
+                'id' => $row['activity_id'],
+                'name' => $row['activity_name'],
+                'shortDescription' => $row['activity_short_description'],
+            ],
+            'startTime' => new \DateTime($row['start_time']),
+            'users' => json_decode($row['users'], true),
+        ], $result);
+    }
 }

@@ -172,6 +172,18 @@ $app->delete('/user/{id}/availability/{day}', function (Request $request, Respon
     return $response->withStatus(200);
 });
 
+$app->get('/organization/{id}/schedule', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $startParam = $request->getQueryParams()['start'] ?? null;
+    $endParam = $request->getQueryParams()['end'] ?? null;
+
+    $start = $startParam ? new DateTime($startParam) : null;
+    $end = $endParam ? new DateTime($endParam) : null;
+
+    $data = $database->organizations()->getActivitySchedule(intval($args['id']), $start, $end);
+    $response->getBody()->write(json_encode($data));
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
 $app->get('/organization/{id}/user/{userId}/status', function (Request $request, Response $response, array $args) use ($container, $database) {
     $handler = $container->make(App\UpdateManagerForm::class, ['database' => $database]);
     $status = $handler->getUserStatus(intval($args['id']), intval($args['userId']));

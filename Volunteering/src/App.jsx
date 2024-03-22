@@ -10,6 +10,7 @@ import ScheduleApprovalPage from './pages/ScheduleApprovalPage'
 import Login from './pages/Login'
 import SignUp from './pages/SignUp'
 import NavMenu from './components/NavMenu'
+import NeedsLogIn from './pages/NeedsLogIn'
 
 /** @typedef {import('./types/UserData').UserData} UserData */
 
@@ -111,8 +112,12 @@ function App() {
     { path: '/', name: 'Home', element: <Home /> },
     { path: '/login', name: 'Login', element: <Login handleLogin={handleLogin} isLoggedIn={isLoggedIn} />, navigable: !isLoggedIn },
     { path: '/signup', name: 'Sign up', element: <SignUp handleLogin={handleLogin} isLoggedIn={isLoggedIn} />, navigable: !isLoggedIn },
-    { path: '/account-details', name: 'Account Details', element: <AccountDetails userId={userData?.userId} availability={availability} setAvailability={setAvailability} isLoading={isLoading} /> },
-    { path: '/account-details/add-schedule-record', name: 'Add Schedule Record', element: <AddScheduleRecord userId={userData.userId} availability={availability} /> },
+    { path: '/account-details', name: 'Account Details', navigable: isLoggedIn,
+      element: isLoggedIn ? <AccountDetails userId={userData.userId} availability={availability} setAvailability={setAvailability} isLoading={isLoading} /> : <NeedsLogIn />
+    },
+    { path: '/account-details/add-schedule-record', name: 'Add Schedule Record', navigable: isLoggedIn,
+      element: isLoggedIn ? <AddScheduleRecord userId={userData.userId} availability={availability} /> : <NeedsLogIn />
+    },
   ]
   return (
     <div className='App'>
@@ -123,7 +128,6 @@ function App() {
       />
 
       <Routes>
-        <Route path='/' element={<Home />} />
         <Route path='/feedback' element={<Feedback />} />
         <Route path='/InviteForm' element={<InviteForm />} />
         <Route path='/AssignedTasks' element={<AssignedTasks tasks={tasks} />} />

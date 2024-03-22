@@ -1,8 +1,28 @@
- import { useState, useEffect } from 'react';
-// import PropTypes from 'prop-types';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import PropTypes from 'prop-types'; 
+
+// Search Component
+const Search = ({ search, handleSearch }) => {
+    return (
+        <input
+            type="text"
+            placeholder="Search activities..."
+            value={search}
+            onChange={handleSearch}
+            className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring focus:border-blue-400"
+        />
+    );
+};
+Search.propTypes = {
+    search: PropTypes.string.isRequired, 
+    handleSearch: PropTypes.func.isRequired,
+};
 
 const AllActivities = () => {
     const [activities, setActivities] = useState([]);
+    const [page, setPage] = useState(1);
+    const [search, setSearch] = useState('');
 
     useEffect(() => {
         const fetchActivities = async () => {
@@ -21,12 +41,37 @@ const AllActivities = () => {
         fetchActivities();
     }, []);
 
+    const startIndex = (page - 1) * 20;
+    const endIndex = startIndex + 20;
+    const paginatedActivities = activities.filter(activity =>
+        activity.name.toLowerCase().includes(search.toLowerCase()) ||
+        activity.shortDescription.toLowerCase().includes(search.toLowerCase())
+    ).slice(startIndex, endIndex);
+
+    const nextPage = () => {
+        setPage(page + 1);
+    };
+
+    const prevPage = () => {
+        setPage(page - 1);
+    };
+
+    const handleSearch = (event) => {
+        setSearch(event.target.value);
+        setPage(1); 
+    };
+
     return (
         <div className="max-w-4xl mx-auto mt-8">
             <h1 className="text-3xl font-bold mb-4">All Activities</h1>
-            {activities.length > 0 ? (
+            <Search search={search} handleSearch={handleSearch} />
+            <div className="flex justify-between mt-4">
+                <button onClick={prevPage} disabled={page === 1} className="px-4 py-2 bg-gray-200 rounded-md">Previous</button>
+                <button onClick={nextPage} disabled={endIndex >= activities.length} className="px-4 py-2 bg-gray-200 rounded-md">Next</button>
+            </div>
+            {paginatedActivities.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {activities.map(activity => (
+                    {paginatedActivities.map(activity => (
                         <div key={activity.id} className="bg-white rounded-lg shadow-md p-6">
                             <h3 className="text-lg font-semibold mb-2">{activity.name}</h3>
                             <p className="text-gray-600 mb-2">{activity.shortDescription}</p>
@@ -39,12 +84,17 @@ const AllActivities = () => {
                                     ))}
                                 </ul>
                             </div>
+                            <Link to={`/activity/${activity.id}`} className="text-blue-600 hover:underline">View Details</Link>
                         </div>
                     ))}
                 </div>
             ) : (
                 <p className="text-gray-600">No activities available</p>
             )}
+            <div className="flex justify-between mt-4">
+                <button onClick={prevPage} disabled={page === 1} className="px-4 py-2 bg-gray-200 rounded-md">Previous</button>
+                <button onClick={nextPage} disabled={endIndex >= activities.length} className="px-4 py-2 bg-gray-200 rounded-md">Next</button>
+            </div>
         </div>
     );
 };

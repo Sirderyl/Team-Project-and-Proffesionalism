@@ -199,6 +199,13 @@ $app->post('/user/{email}/{name}', function (Request $request, Response $respons
     return $response->withHeader('Content-Type', 'application/json');
 });
 
+$app->get('/activities', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\ActivitiesEndpoint::class, ['database' => $database]);
+    $data = $handler->getAll();
+    $response->getBody()->write(json_encode($data));
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
 function getErrorCode(Throwable $exception): int
 {
     if ($exception instanceof NotFoundException) {

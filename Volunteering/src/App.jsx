@@ -1,5 +1,5 @@
 import { Routes, Route } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import Home from './pages/Home'
 import AccountDetails from './pages/AccountDetails'
 import AddScheduleRecord from './pages/AddScheduleRecord'
@@ -31,7 +31,7 @@ function App() {
   const [availability, setAvailability] = useState([])
   const [isLoading, setIsLoading] = useState(true)
 
-  const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+  const daysOfWeek = useMemo(() => ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], [])
 
   const fetchAvailability = () => {
     if (userData === null) {
@@ -57,7 +57,7 @@ function App() {
     }
   }
 
-  const handleJSON = json => {
+  const handleJSON = useCallback((json) => {
     if (json.constructor === Array) {
       json.sort((a, b) => daysOfWeek.indexOf(a.day) - daysOfWeek.indexOf(b.day))
       setAvailability(json)
@@ -65,9 +65,9 @@ function App() {
     } else {
       throw new Error('Invalid JSON: ' + json);
     }
-  }
+  }, [daysOfWeek])
 
-  useEffect(fetchAvailability, [userData?.userId])
+  useEffect(fetchAvailability, [userData, handleJSON])
 
   const [tasks] = useState([
     {
@@ -111,8 +111,8 @@ function App() {
     { path: '/', name: 'Home', element: <Home /> },
     { path: '/login', name: 'Login', element: <Login handleLogin={handleLogin} isLoggedIn={isLoggedIn} />, navigable: !isLoggedIn },
     { path: '/signup', name: 'Sign up', element: <SignUp handleLogin={handleLogin} isLoggedIn={isLoggedIn} />, navigable: !isLoggedIn },
-    { path: '/account-details', name: 'Account Details', element: <AccountDetails userId={userData?.userId} availability={availability} setAvailability={setAvailability} isLoading={isLoading} /> },
-    { path: '/account-details/add-schedule-record', name: 'Add Schedule Record', element: <AddScheduleRecord userId={userData.userId} availability={availability} /> },
+    { path: '/account-details', name: 'Account Details', element: <AccountDetails userData={userData} availability={availability} setAvailability={setAvailability} isLoading={isLoading} /> },
+    { path: '/account-details/add-schedule-record', name: 'Add Schedule Record', element: <AddScheduleRecord userId={userData?.userId} availability={availability} /> },
   ]
   return (
     <div className='App'>

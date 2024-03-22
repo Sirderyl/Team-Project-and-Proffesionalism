@@ -146,13 +146,20 @@ class UsersDatabase implements UsersDatabaseInterface
             "SELECT
                 user_activity.rowid,
                 activity.name AS act_name, activity.id AS act_id, activity.short_description AS act_desc,
-                user_activity.start_time
+                user_activity.start_time,
+                json_group_array(json_object(
+                    'id', user.id,
+                    'name', user.name
+                )) AS all_users
             FROM user_activity
             JOIN activity ON user_activity.activity_id = activity.id
+            JOIN user_activity as all_user ON all_user.activity_id = activity.id AND all_user.start_time = user_activity.start_time
+            JOIN user ON all_user.user_id = user.id
             WHERE
                 user_activity.user_id = :userId AND
                 (:earliestStart IS NULL OR user_activity.start_time >= :earliestStart) AND
                 (:latestStart IS NULL OR user_activity.start_time <= :latestStart)
+            GROUP BY user_activity.rowid
             ORDER BY datetime(user_activity.start_time) ASC
         ", [
             'userId' => $userId,
@@ -167,7 +174,8 @@ class UsersDatabase implements UsersDatabaseInterface
                 'shortDescription' => $row['act_desc']
             ],
             'id' => $row['rowid'],
-            'start' => new \DateTime($row['start_time'])
+            'start' => new \DateTime($row['start_time']),
+            'users' => json_decode($row['all_users']),
         ], $result);
     }
 

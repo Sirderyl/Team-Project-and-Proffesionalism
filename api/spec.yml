@@ -27,6 +27,20 @@ paths:
   /userSchedule/{id}:
     get:
       description: Query an individual user's assigned activities from database
+      parameters:
+        - $ref: "#/components/parameters/id"
+        - in: query
+          name: start
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - in: query
+          name: end
+          required: false
+          schema:
+            type: string
+            format: date-time
       responses:
         '200':
           description: OK

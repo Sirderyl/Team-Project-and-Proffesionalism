@@ -138,16 +138,26 @@ class UsersDatabase implements UsersDatabaseInterface
         return array_map(fn ($row) => \App\Organization::fromRow($row), $result);
     }
 
-    public function getAssignedActivities(int $userId): array
+    public function getAssignedActivities(int $userId, ?\DateTime $earliestStart = null, ?\DateTime $latestStart = null): array
     {
-        $result = $this->connection->query("
-            SELECT
+        // NOTE: All times are stored as ISO8601 strings in the database
+        // These can be compared as regular strings to get the correct ordering
+        $result = $this->connection->query(
+            "SELECT
                 activity.name, activity.id, activity.short_description,
                 user_activity.start_time
             FROM user_activity
             JOIN activity ON user_activity.activity_id = activity.id
-            WHERE user_activity.user_id = :userId
-        ", ['userId' => $userId]);
+            WHERE
+                user_activity.user_id = :userId AND
+                (:earliestStart IS NULL OR user_activity.start_time >= :earliestStart) AND
+                (:latestStart IS NULL OR user_activity.start_time <= :latestStart)
+            ORDER BY datetime(user_activity.start_time) ASC
+        ", [
+            'userId' => $userId,
+            'earliestStart' => $earliestStart ? $earliestStart->format(\DateTime::ISO8601) : null,
+            'latestStart' => $latestStart ? $latestStart->format(\DateTime::ISO8601) : null
+        ]);
 
         return array_map(fn ($row) => [
             'activity' => [

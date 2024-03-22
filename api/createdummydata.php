@@ -79,6 +79,15 @@ for ($i = 0; $i < NUM_ORGANIZATIONS; $i++) {
     $organization = App\Debug\DebugOrganization::createDummyOrganization($faker, $manager->userId);
     $database->organizations()->create($organization);
 
+    $orgUsers = [];
+    // Add some users
+    $numUsers = min($i, 10);
+    for ($user = 0; $user < $numUsers; $user++) {
+        $selected = $users[rand(0, NUM_USERS - 1)]->userId;
+        $database->organizations()->setUserStatus($organization->id, $selected, App\UserOrganizationStatus::Member);
+        $orgUsers[] = $selected;
+    }
+
     // Make sure we have a wide range of activity counts, including 0
     $numActivities = min($i, 10);
     for ($act = 0; $act < $numActivities; $act++) {
@@ -86,13 +95,21 @@ for ($i = 0; $i < NUM_ORGANIZATIONS; $i++) {
 
         $database->activities()->create($activity);
         $database->activities()->setPreviewPicture($activity->id, $dummyActivityImg);
-    }
 
-    // Add some users
-    $numUsers = min($i, 10);
-    for ($user = 0; $user < $numUsers; $user++) {
-        $selected = $users[rand(0, NUM_USERS - 1)]->userId;
-        $database->organizations()->setUserStatus($organization->id, $selected, App\UserOrganizationStatus::Member);
+        // Assign the activity for the past month and next month
+        foreach ($activity->times as $day => $time) {
+            for ($weekDiff = -4; $weekDiff <= 4; $weekDiff++) {
+                $date = new DateTime();
+                $date->setTimestamp(strtotime("next $day") + $weekDiff * 7 * 24 * 60 * 60);
+                $date->setTime((int)$time->start, 0);
+
+                $database->activities()->assignToUser(
+                    $activity->id,
+                    $orgUsers[rand(0, $numUsers - 1)],
+                    $date
+                );
+            }
+        }
     }
 }
 

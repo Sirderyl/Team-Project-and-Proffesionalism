@@ -59,8 +59,14 @@ $app->post('/assignActivities', function (Request $request, Response $response, 
     return $response->withHeader('Content-Type', 'application/json');
 });
 
-$app->get('/userSchedule/{userId}', function (Request $request, Response $response, array $args) use ($container, $database) {
-    $data = $database->users()->getAssignedActivities(intval($args['userId']));
+$app->get('/userSchedule/{userId}', function (Request $request, Response $response, array $args) use ($database) {
+    $startParam = $request->getQueryParams()['start'] ?? null;
+    $endParam = $request->getQueryParams()['end'] ?? null;
+
+    $start = $startParam ? new DateTime($startParam) : null;
+    $end = $endParam ? new DateTime($endParam) : null;
+
+    $data = $database->users()->getAssignedActivities(intval($args['userId']), $start, $end);
     $body = json_encode($data, JSON_PRETTY_PRINT);
     $response->getBody()->write($body);
     return $response->withHeader('Content-Type', 'application/json');

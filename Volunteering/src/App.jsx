@@ -11,6 +11,7 @@ import Login from './pages/Login'
 import SignUp from './pages/SignUp'
 import NavMenu from './components/NavMenu'
 import NeedsLogIn from './pages/NeedsLogIn'
+import NotFound from './pages/NotFound'
 
 /** @typedef {import('./types/UserData').UserData} UserData */
 
@@ -135,6 +136,7 @@ function App() {
         {routes.map((route, index) => (
           <Route key={index} path={route.path} element={route.element} />
         ))}
+        <Route path='*' element={<NotFound />} />
       </Routes>
     </div>
   )

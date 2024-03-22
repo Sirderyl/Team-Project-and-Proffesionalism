@@ -4,7 +4,7 @@ import { apiRoot } from '../settings'
 import toast, { Toaster } from 'react-hot-toast'
 import { useCallback, useEffect, useState } from 'react'
 
-export default function AccountDetails({ userData, availability, setAvailability, isLoading }) {
+export default function AccountDetails({ userData, availability, setAvailability }) {
 
     const [user, setUser] = useState({})
     const [userLoading, setUserLoading] = useState(true)
@@ -88,10 +88,10 @@ export default function AccountDetails({ userData, availability, setAvailability
                         </tr>
                     </thead>
                     <tbody>
-                        {!isLoading && scheduleTable}
+                        {!userLoading && scheduleTable}
                     </tbody>
                 </table>
-                {isLoading && <p className="ml-5 text-slate-700">Loading...</p>}
+                {userLoading && <p className="ml-5 text-slate-700">Loading...</p>}
 
                 <Link to='/account-details/add-schedule-record'>
                     <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5">Add Record</button>
@@ -111,6 +111,5 @@ AccountDetails.propTypes = {
             end: PropTypes.number.isRequired
         })
     })),
-    setAvailability: PropTypes.func.isRequired,
-    isLoading: PropTypes.bool.isRequired
+    setAvailability: PropTypes.func.isRequired
 }

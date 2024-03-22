@@ -13,6 +13,7 @@ import NavMenu from './components/NavMenu'
 import NeedsLogIn from './pages/NeedsLogIn'
 import NotFound from './pages/NotFound'
 import { apiRoot } from './settings'
+import  AllActivities from './pages/AllActivities'
 
 /** @typedef {import('./types/UserData').UserData} UserData */
 
@@ -117,6 +118,7 @@ function App() {
         <Route path='/feedback' element={<Feedback />} />
         <Route path='/InviteForm' element={<InviteForm userId={userData?.userId} />} />
         <Route path="/AssignedTasks" element={<AssignedTasks tasks={tasks} />} />
+        <Route path="/AllActivities" element={<AllActivities />} />
         {/* <Route path='/scheduleApproval' element={<ScheduleApprovalPage taskRequests={taskRequests} />} /> */}
         {routes.map((route, index) => (
           <Route key={index} path={route.path} element={route.element} />

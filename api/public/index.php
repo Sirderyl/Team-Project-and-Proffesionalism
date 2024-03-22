@@ -71,6 +71,15 @@ $app->get('/userSchedule/{userId}', function (Request $request, Response $respon
     return $response->withHeader('Content-Type', 'application/json');
 });
 
+$app->post('/userSchedule/rating', function (Request $request, Response $response, array $args) use ($database) {
+    $rowid = $request->getQueryParams()['id'];
+    $rating = $request->getQueryParams()['rating'];
+
+    $database->activities()->setRating(intval($rowid), intval($rating));
+
+    return $response->withHeader('Content-Type', 'application/json');
+});
+
 $app->get('/devOrganizationRatings', function (Request $request, Response $response, array $args) use ($container, $database) {
     $handler = $container->make(App\Scheduler::class, ['database' => $database]);
     $data = $handler->getOrganizationRatings();

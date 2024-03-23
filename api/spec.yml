@@ -18,9 +18,9 @@ tags:
     description: Operations about user accounts
 
 paths:
-  /assignActivities:
-    post:
-      description: Execute scheduling algorithm to get all the scheduled activities and the user's assigned to each activity.
+  /recommendedActivities/{id}:
+    get:
+      description: Execute algorithm to get all the recommended activities for a particular user.
       responses:
         '200':
           description: OK

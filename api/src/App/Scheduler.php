@@ -20,7 +20,27 @@ class Scheduler
     }
     public function getRecommendedActivities(int $userId)
     {
-        
+        foreach ($this->activities as $activity) {
+
+            foreach ($activity->times as $day => $timeRange) {
+
+               foreach($this->users as $user)
+               {
+                    foreach($user->availability as $day => $timeRange)
+                    {
+
+                    }
+               }
+
+               foreach($this->users as $user)
+               {
+                    foreach($user->availability as $day => $timeRange)
+                    {
+
+                    }
+               }
+            }
+        }
     }
 
     public function getOrganizationRatings(): array

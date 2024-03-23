@@ -20,27 +20,85 @@ class Scheduler
     }
     public function getRecommendedActivities(int $userId)
     {
+        $activitiesSchedule = [];
+        $usersOccupiedTimes = [];
         foreach ($this->activities as $activity) {
+            $volunteerSlotsFilled = 0;
+            
 
-            foreach ($activity->times as $day => $timeRange) {
+            foreach ($activity->times as $activityDay => $activityTimeRange) {
 
-               foreach($this->users as $user)
+                /*foreach($this->users as $user)
                {
                     foreach($user->availability as $day => $timeRange)
                     {
 
                     }
-               }
+               }*/
 
                foreach($this->users as $user)
                {
-                    foreach($user->availability as $day => $timeRange)
+                    foreach($user->availability as $userDay => $userTimeRange)
                     {
-
+                        $overlap = false;
+                        if(isset($usersOccupiedTimes[$user->userId][$activityDay]))
+                        {
+                        foreach ($usersOccupiedTimes[$user->userId][$activityDay] as $occupiedTime)
+                        {
+                            if (($activityTimeRange->start >= $occupiedTime["start"] && $activityTimeRange->start < $occupiedTime["end"]) || 
+                                ($activityTimeRange->end > $occupiedTime["start"] && $activityTimeRange->end <= $occupiedTime["end"]) ||
+                                ($activityTimeRange->start <= $occupiedTime["start"] && $activityTimeRange->end >= $occupiedTime["end"])) {
+                                $overlap = true;
+                                break;
+                            }
+                        }
                     }
-               }
+                        if (($userTimeRange->start <= $activityTimeRange->start)
+                        && ($userTimeRange->end >= $activityTimeRange->end)
+                        && ($activityDay == $userDay)
+                        && ($volunteerSlotsFilled < $activity->neededVolunteers)
+                        && !$overlap)
+                        {
+                            $activitiesSchedule[$activity->id][$activityDay] = 
+                            [
+                                'activityId' => $activity->id,
+                                'activityName' => $activity->name,
+                                'activityDay' => $activityDay,
+                                'activityStart' => $activityTimeRange->start,
+                                'activityEnd' => $activityTimeRange->end
+                            ];
+
+                            if (isset($activitiesSchedule[$activity->id][$activityDay]['users'])) {
+                                $activitiesSchedule[$activity->id][$activityDay]['users'][] = [
+                                    'userId' => $user->userId,
+                                    'userName' => $user->userName
+                                ];
+                            }
+                            else {
+                                $activitiesSchedule[$activity->id][$activityDay]['users'] = [
+                                    ['userId' => $user->userId, 'userName' => $user->userName]
+                                ];
+                            }
+
+                            if (isset($usersOccupiedTimes[$user->userId][$userDay])){
+                                $usersOccupiedTimes[$user->userId][$userDay][] = [
+                                 'start' => $activityTimeRange->start,
+                                 'end' => $activityTimeRange->end];
+                            }
+                            else {
+                                $usersOccupiedTimes[$user->userId][$userDay] = [[
+                                    'start' => $activityTimeRange->start,
+                                    'end' => $activityTimeRange->end]];
+                            }
+                            
+
+                            $volunteerSlotsFilled++;
+                        }
+                    }
+               }    
             }
         }
+        return $activitiesSchedule;
     }
 
     public function getOrganizationRatings(): array

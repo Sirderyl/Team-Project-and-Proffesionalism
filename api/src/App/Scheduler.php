@@ -18,7 +18,7 @@ class Scheduler
         $this->ratings = $this->database->activities()->getAllUserRatings();
         $this->activities = $this->database->activities()->getAll();
     }
-    public function assignActivities()
+    public function getRecommendedActivities(int $userId)
     {
         $schedule = [];
         $scheduledTimeSlots = [];
@@ -106,8 +106,16 @@ class Scheduler
                 }
             }
         }
-       //$this->updateDatabase($schedule);
-        return $schedule;
+
+        $recommendedActivities = array_filter($schedule, function($activity) use ($userId) {
+            foreach ($activity['users'] as $user) {
+                if ($user['userId'] == $userId) {
+                    return true;
+                }
+            }
+            return false;
+        });
+        return $recommendedActivities;
     }
 
     public function getOrganizationRatings(): array
@@ -169,32 +177,5 @@ class Scheduler
         }
 
         return $result;
-    }
-
-    public function updateDatabase(array $schedule) {
-        $userActivityRows = [];
-        foreach ($schedule as $activity)
-        {
-            foreach ($activity["users"] as $user)
-            {
-                $userId = $user["userId"];
-                $activityId = $activity["details"]["activityId"];
-                $userActivity = new UserActivity($userId, $activityId, null);
-
-                $startTime = $activity["details"]["start"];
-                $hours = intval(floor($startTime));
-                $minutes = intval(($startTime - $hours) * 60);
-                $day = $activity["details"]["day"];
-                $startDateTime = (new \DateTime("next $day"))->setTime($hours, $minutes);
-                
-                $userActivity->startTime = $startDateTime;
-                $userActivityRows[] = $userActivity;
-            }
-        }
-
-        foreach ($userActivityRows as $row)
-        {
-            $this->database->activities()->assignToUser($row->activityId, $row->userId, $row->startTime);
-        }
     }
 }

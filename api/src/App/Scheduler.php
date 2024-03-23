@@ -25,10 +25,10 @@ class Scheduler
         $organizationRatings = $this->getOrganizationRatings();
 
         foreach ($this->activities as $activity) {
-            if(isset(array_keys($activity->times)[0]))
-            {
-            $activityDayOfWeek = array_keys($activity->times)[0];
-            }
+        foreach ($activity->times as $day => $timeRange) {
+
+
+            $activityDayOfWeek = $day;
             $volunteerSlotsFilled = 0;
 
             foreach ($this->users as $user) {
@@ -73,42 +73,40 @@ class Scheduler
                     }
 
                     if ($isUserAvailable && ($activityStart < $userAvailableEnd) && ($activityEnd > $userAvailableStart) && ($volunteerSlotsFilled < $activity->neededVolunteers)) {
-                        if(($associatedOrgRating > 2.5) || ($activityRating >= 4))
-                        {
+                        //if(($associatedOrgRating > 2.5) || ($activityRating >= 4))
+                        //{
                         if (!isset ($schedule[$activity->id])) {
-                            $schedule[$activity->id]["details"] =
+                            $schedule[$activity->id]["day"] =
                                 [
                                     'activityId' => $activity->id,
                                     'activityName' => $activity->name,
                                     'start' => $activityStart,
                                     'end' => $activityEnd,
-                                    'day' => $activityDayOfWeek
+                                    'day' => $activityDayOfWeek,
+                                    'users' => [
+                                    ['userId' => $user->userId,
+                                    'userName' => $user->userName]
+                                    ]
                                 ];
 
                         }
 
-                        $schedule[$activity->id]["users"][] =
-                            [
-                                'userId' => $user->userId,
-                                'userName' => $user->userName
-                            ];
-
-
                         $volunteerSlotsFilled += 1;
-                        $scheduledTimeSlots[$user->userId][] = [
+                        $scheduledTimeSlots[$user->userId][$activityDayOfWeek] = [
                             "activity" => $activity->name,
                             "start" => $activityStart,
                             "end" => $activityEnd,
                             "day" => $activityDayOfWeek
                         ];
-                        }
+                        //}
                     }
                 }
             }
+        }    
         }
 
         $recommendedActivities = array_filter($schedule, function($activity) use ($userId) {
-            foreach ($activity['users'] as $user) {
+            foreach ($activity['day']['users'] as $user) {
                 if ($user['userId'] == $userId) {
                     return true;
                 }

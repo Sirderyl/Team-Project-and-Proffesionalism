@@ -160,7 +160,7 @@ class UsersDatabase implements UsersDatabaseInterface
                 (:earliestStart IS NULL OR user_activity.start_time >= :earliestStart) AND
                 (:latestStart IS NULL OR user_activity.start_time <= :latestStart)
             GROUP BY user_activity.rowid
-            ORDER BY datetime(user_activity.start_time) ASC
+            ORDER BY user_activity.start_time ASC
         ", [
             'userId' => $userId,
             'earliestStart' => $earliestStart ? $earliestStart->format(\DateTime::ISO8601) : null,
@@ -175,7 +175,7 @@ class UsersDatabase implements UsersDatabaseInterface
             ],
             'id' => $row['rowid'],
             'start' => new \DateTime($row['start_time']),
-            'users' => json_decode($row['all_users']),
+            'users' => json_decode($row['all_users'], true),
         ], $result);
     }
 

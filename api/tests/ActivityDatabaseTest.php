@@ -88,7 +88,7 @@ class ActivityDatabaseTest extends TestCase {
 
         $dateTime = $this->faker->dateTime();
         $dateTime->setTime(15, 0, 0); // 3:00 PM
-        $this->database->activities()->assignToUser($activity->id, $user->userId, $dateTime);
+        $id = $this->database->activities()->assignToUser($activity->id, $user->userId, $dateTime);
 
         $output = $this->database->users()->getAssignedActivities($user->userId);
 
@@ -99,7 +99,12 @@ class ActivityDatabaseTest extends TestCase {
                 'id' => $activity->id,
                 'shortDescription' => $activity->shortDescription
             ],
-            'start' => $dateTime
+            'start' => $dateTime,
+            'id' => $id,
+            'users' => [ [ // Expecting an array of 1 element, which is another array
+                'id' => $user->userId,
+                'name' => $user->userName,
+            ] ],
         ], $output[0]);
     }
 

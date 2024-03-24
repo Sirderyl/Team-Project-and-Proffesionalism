@@ -98,7 +98,17 @@ class Scheduler
                }    
             }
         }
-        return $activitiesSchedule;
+
+        foreach ($activitiesSchedule as $activity) {
+
+            foreach ($activity as $day => $details) {
+                foreach ($details['users'] as $user) {
+                    if ($user['userId'] == $userId) {
+                        return $activity[$day];
+                    }
+                }
+            }
+        }
     }
 
     public function getOrganizationRatings(): array

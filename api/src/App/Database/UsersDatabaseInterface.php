@@ -59,7 +59,12 @@ interface UsersDatabaseInterface
      *     id: int,
      *     shortDescription: string
      *   },
+     *   id: int,
      *   start: \DateTime,
+     *   users: array<array{
+     *     id: int,
+     *     name: string
+     *   }>
      * }>
      */
     public function getAssignedActivities(int $userId, ?\DateTime $earliestStart = null, ?\DateTime $latestStart = null): array;

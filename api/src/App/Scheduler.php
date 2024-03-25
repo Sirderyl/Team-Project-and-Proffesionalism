@@ -20,6 +20,7 @@ class Scheduler
     }
     public function getRecommendedActivities(int $userId)
 {
+    $organizationRatings = $this->getOrganizationRatings();
     $activitiesSchedule = [];
     $usersOccupiedTimes = [];
     
@@ -29,6 +30,26 @@ class Scheduler
         foreach ($activity->times as $activityDay => $activityTimeRange) {
             
             foreach ($this->users as $user) {
+                if(isset($organizationRatings[$user->userId]))
+                {
+                $userOrganizationRatings = $organizationRatings[$user->userId]["organizations"];
+                }
+                $activityRating = null;
+                $associatedOrgRating = null;
+
+                foreach ($this->ratings as $rating) {
+                    if (($rating->userId === $user->userId) && ($rating->activityId === $activity->id)) {
+                        $activityRating = $rating->rating;
+                        break; 
+                    }
+                }
+
+                foreach ($userOrganizationRatings as $userOrganizationRating) {
+                    if ($userOrganizationRating["organizationId"] == $activity->organizationId)
+                        $associatedOrgRating = $userOrganizationRating["rating"];
+                    break;
+                }
+
                 foreach ($user->availability as $userDay => $userTimeRange) {
                     $overlap = false;
                     
@@ -49,22 +70,26 @@ class Scheduler
                         && ($volunteerSlotsFilled < $activity->neededVolunteers)
                         && !$overlap) {
                         
-                        $activitiesSchedule[$activity->id][$activityDay][] = [
-                            'activityId' => $activity->id,
-                            'activityName' => $activity->name,
-                            'activityDay' => $activityDay,
-                            'activityStart' => $activityTimeRange->start,
-                            'activityEnd' => $activityTimeRange->end,
-                            'userId' => $user->userId,
-                            'userName' => $user->userName
-                        ];
+                        if(($activityRating >=4 || $associatedOrgRating > 2.5) || ($associatedOrgRating == NULL))
+                         {
                         
-                        $usersOccupiedTimes[$user->userId][$userDay][] = [
-                            'start' => $activityTimeRange->start,
-                            'end' => $activityTimeRange->end
-                        ];
-                        
-                        $volunteerSlotsFilled++;
+                            $activitiesSchedule[$activity->id][$activityDay][] = [
+                                'activityId' => $activity->id,
+                                'activityName' => $activity->name,
+                                'activityDay' => $activityDay,
+                                'activityStart' => $activityTimeRange->start,
+                                'activityEnd' => $activityTimeRange->end,
+                                'userId' => $user->userId,
+                                'userName' => $user->userName
+                            ];
+                            
+                            $usersOccupiedTimes[$user->userId][$userDay][] = [
+                                'start' => $activityTimeRange->start,
+                                'end' => $activityTimeRange->end
+                            ];
+                            
+                            $volunteerSlotsFilled++;
+                        }
                     }
                 }
             }

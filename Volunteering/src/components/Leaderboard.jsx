@@ -1,28 +1,38 @@
-import PropTypes from 'prop-types'
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { v4 } from 'uuid';
 import LeaderboardEntry from "./LeaderboardEntry";
 
 export default function Leaderboard() {
-    const [entries] = useState([
-        { id: v4(), position: 1, name: "Some Person 1", stats: 100 },
-        { id: v4(), position: 2, name: "Some Person 2", stats: 50 },
-        { id: v4(), position: 3, name: "Some Person 3", stats: 20 }
-    ]);
+    const [userData, setUserData] = useState([]);
+
+    const fetchUsers = useCallback(() => {
+        fetch("https://w21010679.nuwebspace.co.uk/api/user/all")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Error fetching users: " + response.status);
+                }
+                return response.json();
+            })
+            .then(data => {
+                setUserData(data);
+            })
+            .catch(error => {
+                console.error("Error fetching users:", error);
+            });
+    }, []);
+    
+    useEffect(() => {
+        fetchUsers();
+    }, [fetchUsers]);
 
     return (
-        entries.map(entry => (
+        userData.map(user => (
             <LeaderboardEntry
-                key={entry.id}
-                position={entry.position}
-                name={entry.name}
-                stats={entry.stats}
+                key={v4()}
+                position={1}
+                name={user.userName}
+                stats={100}
             />
         ))
     );
-}
-
-Leaderboard.propTypes = {
-    userData: PropTypes.object.isRequired,
-    tasks: PropTypes.array.isRequired
 }

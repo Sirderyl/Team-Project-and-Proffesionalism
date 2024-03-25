@@ -4,9 +4,9 @@ export default function LeaderboardEntry({ position, name, stats }) {
 
     return (
         <li>
-            {position}<br/>
-            {name}<br/>
-            {stats}
+            <span>{position} </span>
+            <span>{name} </span>
+            <span>{stats} </span>
         </li>
     );
 }

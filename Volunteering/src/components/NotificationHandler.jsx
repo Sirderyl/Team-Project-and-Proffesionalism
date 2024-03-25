@@ -1,28 +1,25 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { v4 } from 'uuid';
+import PropTypes from 'prop-types';
 import Notification from './Notification';
 import bellIcon from '../../public/bell.png';
 
-export default function NotificationHandler() {
-    const [notifications, setNotifications] = useState([
-        { id: v4(), message: "Low Priority Notification", priority: "low" },
-        { id: v4(), message: "Medium Priority Notification", priority: "medium" },
-        { id: v4(), message: "High Priority Notification", priority: "high", link:"/account-details" },
-    ]);
+export default function NotificationHandler({ tasks }) {
+    const [notifications, setNotifications] = useState([]);
     const [showNotifications, setShowNotifications] = useState(false);
     const numberOfNotifications = notifications.length
 
-    /*
-    const addNotification = (message, priority, link) => {
-        const newNotification = {
-            id: v4(),
-            message,
-            priority,
-            link
-        }
-        setNotifications([...notifications, newNotification])
-    }
-    */
+    const addNotification = useCallback((message, priority, link, dismissable) => {
+        setNotifications(prevNotifications => [
+            ...prevNotifications, { 
+                id: v4(), 
+                message, 
+                priority, 
+                link,
+                dismissable
+            }
+        ]);
+    }, [])
 
     const removeNotification = (id) => {
         setNotifications(notifications.filter(notification => notification.id !== id))
@@ -31,6 +28,15 @@ export default function NotificationHandler() {
     const toggleShowNotifications = () => {
         setShowNotifications(!showNotifications)
     };
+
+    useEffect(() => {
+        const pendingTasksNotification = notifications.find(notification => notification.message === "You have been assigned tasks!");
+        // fix: Rarely this notification will randomly for seemingly no reason duplicate after a while
+        // todo: make sure this notification doesn't appear if tasks have already happened
+        if (tasks.length !== 0 && !pendingTasksNotification) {
+            addNotification("You have been assigned tasks!", "high", "AssignedTasks");
+        }
+    }, [tasks, notifications, addNotification]);
 
     return (
         <div className="relative flex items-center">
@@ -61,3 +67,7 @@ export default function NotificationHandler() {
         </div>
     )
 }
+
+NotificationHandler.propTypes = {
+    tasks: PropTypes.array.isRequired
+};

@@ -9,7 +9,8 @@ import NotificationHandler from './NotificationHandler';
 export default function NavMenu({
     routes,
     isLoggedIn,
-    handleLogout
+    handleLogout,
+    tasks
 }) {
     return (
         <nav>
@@ -20,7 +21,7 @@ export default function NavMenu({
             {isLoggedIn && (
             <>
                 <li><button onClick={handleLogout}>Log Out</button></li>
-                <li><NotificationHandler /></li>
+                <li><NotificationHandler tasks={tasks}/></li>
             </>
             )}
             </ul>
@@ -33,5 +34,6 @@ NavMenu.propTypes = {
         name: PropTypes.string.isRequired
     })).isRequired,
     isLoggedIn: PropTypes.bool.isRequired,
-    handleLogout: PropTypes.func.isRequired
+    handleLogout: PropTypes.func.isRequired,
+    tasks: PropTypes.array.isRequired
 }

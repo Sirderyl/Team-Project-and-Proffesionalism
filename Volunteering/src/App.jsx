@@ -12,6 +12,7 @@ import SignUp from './pages/SignUp'
 import NavMenu from './components/NavMenu'
 import NeedsLogIn from './pages/NeedsLogIn'
 import NotFound from './pages/NotFound'
+import LeaderboardPage from './pages/LeaderboardPage'
 import { apiRoot } from './settings'
 
 /** @typedef {import('./types/UserData').UserData} UserData */
@@ -135,6 +136,7 @@ function App() {
           <Route key={index} path={route.path} element={route.element} />
         ))}
         <Route path='*' element={<NotFound />} />
+        <Route path='/leaderboard' element={<LeaderboardPage />} />
       </Routes>
     </div>
   )

@@ -4,6 +4,7 @@ import LeaderboardEntry from "./LeaderboardEntry";
 
 export default function Leaderboard() {
     const [userData, setUserData] = useState([]);
+    const position = 1;
 
     const fetchUsers = useCallback(() => {
         fetch("https://w21010679.nuwebspace.co.uk/api/user/all")
@@ -25,11 +26,13 @@ export default function Leaderboard() {
         fetchUsers();
     }, [fetchUsers]);
 
+    const volunteerUsers = userData.filter(user => !user.isManager);
+
     return (
-        userData.map(user => (
+        volunteerUsers.map(user => (
             <LeaderboardEntry
                 key={v4()}
-                position={1}
+                position={position}
                 name={user.userName}
                 stats={100}
             />

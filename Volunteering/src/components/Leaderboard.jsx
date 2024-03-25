@@ -3,46 +3,70 @@ import { v4 } from 'uuid';
 import LeaderboardEntry from "./LeaderboardEntry";
 
 export default function Leaderboard() {
-    const [userData, setUserData] = useState([]);
-    const position = 1;
+    const [userData, setUserData] = useState([])
+    const [currentPage, setCurrentPage] = useState(1)
+    const [totalPages, setTotalPages] = useState(1)
+    const usersPerPage = 20
 
     const fetchUsers = useCallback(async () => {
         try {
-            const userDataResponse = await fetch("https://w21010679.nuwebspace.co.uk/api/user/all");
+            const userDataResponse = await fetch("https://w21017158.nuwebspace.co.uk/api/user/all")
             if (!userDataResponse.ok) {
                 throw new Error("Error fetching users: " + userDataResponse.status);
             }
-            const userData = await userDataResponse.json();
+            const userData = await userDataResponse.json()
 
             const usersWithTasks = await Promise.all(userData.map(async (user) => {
-                const userTasksResponse = await fetch(`https://w21017158.nuwebspace.co.uk/api/userSchedule/${user.userId}`);
+                const userTasksResponse = await fetch(`https://w21017158.nuwebspace.co.uk/api/userSchedule/${user.userId}`)
                 if (!userTasksResponse.ok) {
-                    throw new Error(`Error fetching tasks for user ${user.userId}: ` + userTasksResponse.status);
+                    throw new Error(`Error fetching tasks for user ${user.userId}: ` + userTasksResponse.status)
                 }
-                const userTasks = await userTasksResponse.json();
-                const totalStats = userTasks.length;
-                return { ...user, stats: totalStats };
+                const userTasks = await userTasksResponse.json()
+                const totalStats = userTasks.length
+                return { ...user, stats: totalStats }
             }));
-            setUserData(usersWithTasks);
+            setUserData(usersWithTasks)
         } catch (error) {
-            console.error("Error fetching users and tasks:", error);
+            console.error("Error fetching users and tasks:", error)
         }
     }, []);
-    
+
     useEffect(() => {
         fetchUsers();
     }, [fetchUsers]);
 
     const volunteerUsers = userData.filter(user => !user.isManager && user.stats !== 0);
+    volunteerUsers.sort((a, b) => b.stats - a.stats);
+
+    useEffect(() => {
+        setTotalPages(Math.ceil(volunteerUsers.length / usersPerPage));
+    }, [volunteerUsers]);
+
+    const startIndex = (currentPage - 1) * usersPerPage;
+    const endIndex = currentPage * usersPerPage;
+
+    const usersForCurrentPage = volunteerUsers.slice(startIndex, endIndex);
 
     return (
-        volunteerUsers.map(user => (
-            <LeaderboardEntry
-                key={v4()}
-                position={position}
-                name={user.userName}
-                stats={user.stats}
-            />
-        ))
+        <>
+            {usersForCurrentPage.map((user, index) => (
+                <LeaderboardEntry
+                    key={v4()}
+                    position={startIndex + index + 1}
+                    name={user.userName}
+                    stats={user.stats}
+                />
+            ))}
+            {totalPages > 1 && (
+                <div>
+                    {currentPage > 1 && (
+                        <button onClick={() => setCurrentPage(currentPage - 1)}>Previous Page</button>
+                    )}
+                    {currentPage < totalPages && (
+                        <button onClick={() => setCurrentPage(currentPage + 1)}>Next Page</button>
+                    )}
+                </div>
+            )}
+        </>
     );
 }

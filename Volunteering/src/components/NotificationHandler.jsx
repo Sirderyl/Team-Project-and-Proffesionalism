@@ -9,6 +9,8 @@ export default function NotificationHandler({ tasks }) {
     const [showNotifications, setShowNotifications] = useState(false);
     const numberOfNotifications = notifications.length
 
+    console.log(tasks)
+
     const addNotification = useCallback((message, priority, link, dismissible) => {
         setNotifications(prevNotifications => [
             ...prevNotifications, { 
@@ -31,7 +33,7 @@ export default function NotificationHandler({ tasks }) {
 
     useEffect(() => {
         const pendingTasksNotification = notifications.find(notification => notification.message === "You have been assigned tasks!");
-        // fix: Rarely this notification will randomly for seemingly no reason duplicate after a while
+        // fix: This notification gets duplicated on login, it is fixed if you refresh the page
         // todo: make sure this notification doesn't appear if tasks have already happened
         if (tasks.length !== 0 && !pendingTasksNotification) {
             addNotification("You have been assigned tasks!", "high", "AssignedTasks");

@@ -33,7 +33,6 @@ function App() {
   }
 
   const [user, setUser] = useState({})
-  const [userLoading, setUserLoading] = useState(true)
   const [availability, setAvailability] = useState([])
 
   const [allActivities, setAllActivities] = useState([])
@@ -89,7 +88,6 @@ function App() {
       })
       .then(data => {
         setUser(data)
-        setUserLoading(false)
       })
       .catch(err => console.error(err))
   }, [userData])
@@ -133,7 +131,7 @@ function App() {
         setAllActivities(data)
       })
       .catch(err => console.error(err))
-  }, [user, organizationId])
+  }, [user, organizationId, currentDateStr, endDateStr])
 
   useEffect(fetchAvailability, [userData, handleJSON])
   useEffect(() => {

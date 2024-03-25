@@ -76,6 +76,7 @@ class Scheduler
                             $activitiesSchedule[$activity->id][$activityDay][] = [
                                 'activityId' => $activity->id,
                                 'activityName' => $activity->name,
+                                'shortDescription' => $activity->shortDescription,
                                 'activityDay' => $activityDay,
                                 'activityStart' => $activityTimeRange->start,
                                 'activityEnd' => $activityTimeRange->end,

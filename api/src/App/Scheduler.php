@@ -44,11 +44,14 @@ class Scheduler
                     }
                 }
 
+                if(isset($userOrganizationRatings))
+                {
                 foreach ($userOrganizationRatings as $userOrganizationRating) {
                     if ($userOrganizationRating["organizationId"] == $activity->organizationId)
                         $associatedOrgRating = $userOrganizationRating["rating"];
                     break;
                 }
+            }
 
                 foreach ($user->availability as $userDay => $userTimeRange) {
                     $overlap = false;

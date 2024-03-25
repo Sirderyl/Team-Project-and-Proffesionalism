@@ -94,6 +94,13 @@ function App() {
       .catch(err => console.error(err))
   }, [userData])
 
+  const currentDate = new Date();
+  const endDate = new Date();
+  endDate.setDate(currentDate.getDate() + 7);
+
+  const currentDateStr = currentDate.toISOString().split('T')[0];
+  const endDateStr = endDate.toISOString().split('T')[0];
+
   const fetchAllActivities = useCallback(() => {
     if (!user.isManager) {
       setAllActivities([])
@@ -113,7 +120,7 @@ function App() {
       })
       .catch(err => console.error(err))
 
-    fetch(`${apiRoot}/organization/${organizationId}/schedule`)
+    fetch(`${apiRoot}/organization/${organizationId}/schedule?start=${currentDateStr}&end=${endDateStr}`)
       .then(response => {
         if (response.ok) {
           return response.json()
@@ -148,19 +155,20 @@ function App() {
         return
       }
       try {
-        const response = await fetch(`https://w20010297.nuwebspace.co.uk/api/userSchedule/${userData.userId}`);
+        const response = await fetch(`https://w20010297.nuwebspace.co.uk/api/userSchedule/${userData.userId}?start=${currentDateStr}&end=${endDateStr}`);
         if (!response.ok) {
           throw new Error('Failed to fetch tasks');
         }
         const data = await response.json();
-        setTasks(data);
+        const sortedTasks = data.sort((a, b) => new Date(a.start.date) - new Date(b.start.date));
+        setTasks(sortedTasks);
       } catch (error) {
         console.error('Error fetching tasks:', error);
       }
     };
 
     fetchTasks();
-  }, [userData]);
+  }, [userData, currentDateStr, endDateStr]);
   /**
    * Routes for the app. Set navigable: false to hide a route from the NavMenu while keeping it in the app
    * @type {Array<import('react-router-dom').RouteProps & {navigable?: boolean}>}

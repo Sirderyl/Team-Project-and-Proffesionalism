@@ -33,8 +33,7 @@ export default function Leaderboard() {
         fetchUsers();
     }, [fetchUsers]);
 
-    var volunteerUsers = userData.filter(user => !user.isManager);
-    volunteerUsers = volunteerUsers.filter(user => !user.stats == 0)
+    const volunteerUsers = userData.filter(user => !user.isManager && user.stats !== 0);
 
     return (
         volunteerUsers.map(user => (

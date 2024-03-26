@@ -33,6 +33,7 @@ function App() {
   }
 
   const [user, setUser] = useState({})
+  const [userLoading, setUserLoading] = useState(true)
   const [availability, setAvailability] = useState([])
 
   const [allActivities, setAllActivities] = useState([])
@@ -88,6 +89,7 @@ function App() {
       })
       .then(data => {
         setUser(data)
+        setUserLoading(false)
       })
       .catch(err => console.error(err))
   }, [userData])
@@ -177,11 +179,11 @@ function App() {
     { path: '/signup', name: 'Sign up', element: <SignUp handleLogin={handleLogin} isLoggedIn={isLoggedIn} />, navigable: !isLoggedIn },
     {
       path: '/account-details', name: 'Account Details', navigable: isLoggedIn,
-      element: isLoggedIn ? <AccountDetails userData={userData} availability={availability} setAvailability={setAvailability} /> : <NeedsLogIn />
+      element: isLoggedIn ? <AccountDetails user={user} userLoading={userLoading  } availability={availability} setAvailability={setAvailability} /> : <NeedsLogIn />
     },
     {
       path: '/account-details/add-schedule-record', name: 'Add Schedule Record', navigable: isLoggedIn,
-      element: isLoggedIn ? <AddScheduleRecord userId={userData.userId} availability={availability} /> : <NeedsLogIn />
+      element: isLoggedIn ? <AddScheduleRecord user={user} availability={availability} /> : <NeedsLogIn />
     },
   ]
   return (

@@ -2,29 +2,8 @@ import { Link } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { apiRoot } from '../settings'
 import toast, { Toaster } from 'react-hot-toast'
-import { useCallback, useEffect, useState } from 'react'
 
-export default function AccountDetails({ userData, availability, setAvailability }) {
-
-    const [user, setUser] = useState({})
-    const [userLoading, setUserLoading] = useState(true)
-
-    const fetchUser = useCallback(() => {
-        fetch(`${apiRoot}/user/${userData.userId}`)
-            .then(response => {
-                if (response.ok) {
-                    return response.json()
-                } else {
-                    throw new Error('Error fetching user: ' + response.status)
-                }
-            })
-            .then(data => {
-                setUser(data)
-                setUserLoading(false)
-            })
-            .catch(err => console.error(err))
-    }, [userData])
-
+export default function AccountDetails({ user, userLoading, availability, setAvailability }) {
 
     const handleDeleteRecord = day => {
         fetch(`${apiRoot}/user/${user.userId}/availability/${day}`,
@@ -42,10 +21,6 @@ export default function AccountDetails({ userData, availability, setAvailability
             })
             .catch(err => console.error(err))
     }
-
-    useEffect(() => {
-        fetchUser()
-    }, [fetchUser])
 
     let formattedPhoneNumber = user.phoneNumber
         ? user.phoneNumber.replace(/(\+\d{2})(\d{4})(\d{6})/, '$1 $2 $3')
@@ -78,31 +53,33 @@ export default function AccountDetails({ userData, availability, setAvailability
                 </div>
             </div>
 
-            <div className='mt-10 ml-5'>
-                <h1 className='font-bold mb-5'>Availability Schedule</h1>
-                <table className='table-auto'>
-                    <thead>
-                        <tr>
-                            <th className='px-4 py-2'>Week Day</th>
-                            <th className='px-4 py-2'>Time</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {!userLoading && scheduleTable}
-                    </tbody>
-                </table>
-                {userLoading && <p className="ml-5 text-slate-700">Loading...</p>}
+            {!userLoading && !user.isManager && (
+                <div className='mt-10 ml-5'>
+                    <h1 className='font-bold mb-5'>Availability Schedule</h1>
+                    <table className='table-auto'>
+                        <thead>
+                            <tr>
+                                <th className='px-4 py-2'>Week Day</th>
+                                <th className='px-4 py-2'>Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {scheduleTable}
+                        </tbody>
+                    </table>
 
-                <Link to='/account-details/add-schedule-record'>
-                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5">Add Record</button>
-                </Link>
-            </div>
+                    <Link to='/account-details/add-schedule-record'>
+                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5">Add Record</button>
+                    </Link>
+                </div>
+            )}
         </div>
     )
 }
 
 AccountDetails.propTypes = {
-    userData: PropTypes.object.isRequired,
+    user: PropTypes.object.isRequired,
+    userLoading: PropTypes.bool.isRequired,
     availability: PropTypes.arrayOf(PropTypes.shape({
         userId: PropTypes.number.isRequired,
         day: PropTypes.string.isRequired,

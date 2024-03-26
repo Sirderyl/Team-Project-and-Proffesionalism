@@ -14,17 +14,20 @@ class Token
 {
     // TODO: Settings class
     private const JWT_SECRET = 'T&=JIz;3sN<g@&4z?E[;"32[etAsCh';
+    // 7 days
+    private const VALID_SECONDS = 3600 * 24 * 7;
 
     /**
      * Issue a token
      */
     public static function issue(int $userId): string
     {
+        $now = time();
         $payload = [
-            "iat" => time(),
-            "nbf" => time(),
+            "iat" => $now,
+            "nbf" => $now,
             // TODO: Settings class
-            "exp" => time() + 3600,
+            "exp" => $now + self::VALID_SECONDS,
             "iss" => $_SERVER['HTTP_HOST'],
             "sub" => $userId,
         ];

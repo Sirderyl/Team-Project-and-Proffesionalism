@@ -1,9 +1,11 @@
 import { Rating } from "@mui/material"
 import { apiRoot } from '../settings'
 import {useState, useEffect} from 'react';
+import {Link} from 'react-router-dom';
 import axios from 'axios';
+import PropTypes from 'prop-types'
 
-function Feedback() {
+export default function Feedback({user}) {
     const [activityRating, setActivityRating] = useState();
     const [activity, setActivity] = useState();
 
@@ -35,7 +37,16 @@ function Feedback() {
         }
     };
     
-
+    if(user.isManager) {
+        return (
+            <div>
+                <h1 className="text-3xl font-bold mb-3 ml-5">Managers are not allowed to rate activities</h1>
+                <Link to='/'>
+                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5 ml-5">Back</button>
+                </Link>
+            </div>
+        )
+    }
     return (
         <div>
             
@@ -64,4 +75,4 @@ function Feedback() {
     )
 }
 
-export default Feedback
+Feedback.propTypes = {user: PropTypes.object.isRequired}

@@ -185,6 +185,10 @@ function App() {
       path: '/account-details/add-schedule-record', name: 'Add Schedule Record', navigable: isLoggedIn,
       element: isLoggedIn ? <AddScheduleRecord user={user} availability={availability} /> : <NeedsLogIn />
     },
+    {
+      path: '/feedback', name: 'Activity Feedback', navigable: isLoggedIn,
+      element: isLoggedIn ? <Feedback user={user} /> : <NeedsLogIn />
+    },
   ]
   return (
     <div className='App'>
@@ -195,7 +199,6 @@ function App() {
       />
 
       <Routes>
-        <Route path='/feedback' element={<Feedback />} />
         <Route path='/InviteForm' element={<InviteForm userId={userData?.userId} />} />
         <Route path="/AssignedTasks" element={<AssignedTasks tasks={tasks} user={user} activities={allActivities} />} />
         <Route path="/AllActivities" element={<AllActivities />} />

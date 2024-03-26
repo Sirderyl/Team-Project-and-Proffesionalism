@@ -24,6 +24,8 @@ class LoginTest extends TestCase {
         $result = $this->login->execute($this->user->email, $this->password);
         $this->assertEquals(App\Token::verify($result['token']), $this->user->userId);
         $this->assertEquals($result['userId'], $this->user->userId);
+
+        App\Token::checkAuthMatchesUser('Bearer ' . $result['token'], $this->user->userId);
     }
 
     public function testEmailIsCaseInsensitive(): void {

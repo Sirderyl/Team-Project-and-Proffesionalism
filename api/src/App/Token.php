@@ -50,8 +50,14 @@ class Token
      * Assert that the provided user ID matches the one given in the token
      * @throws SignatureInvalidException If the token is for a different user
      */
-    public static function checkAuthMatchesUser(string $token, int $userId): void
+    public static function checkAuthMatchesUser(string $header, int $userId): void
     {
+        if (!preg_match('/Bearer (.+)/i', $header, $matches)) {
+            throw new SignatureInvalidException("Invalid authorization header");
+        }
+
+        $token = $matches[1];
+
         $issued = self::verify($token);
 
         if ($issued != $userId) {

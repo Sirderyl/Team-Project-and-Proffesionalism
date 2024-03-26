@@ -51,9 +51,9 @@ $app->get('/greetings[/{language}]', function (Request $request, Response $respo
     return $response->withHeader('Content-Type', 'application/json');
 });
 
-$app->post('/assignActivities', function (Request $request, Response $response, array $args) use ($container, $database) {
+$app->get('/recommendedActivities/{userId}', function (Request $request, Response $response, array $args) use ($container, $database) {
     $handler = $container->make(App\Scheduler::class, ['database' => $database]);
-    $data = $handler->assignActivities();
+    $data = $handler->getRecommendedActivities(intval($args['userId']));
     $response->getBody()->write(json_encode($data));
     return $response->withHeader('Content-Type', 'application/json');
 });

@@ -115,6 +115,16 @@ class ActivityDatabase implements ActivityDatabaseInterface {
         );
     }
 
+    public function setRating(int $scheduleId, ?int $rating): void {
+        $this->connection->execute(
+            "UPDATE user_activity SET rating = :rating WHERE rowid = :id",
+            [
+                ':id' => $scheduleId,
+                ':rating' => $rating
+            ]
+        );
+    }
+
     public function getAllUserRatings(): array
     {
         $result = $this->connection->query(

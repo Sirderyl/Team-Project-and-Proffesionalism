@@ -1,37 +1,65 @@
+// import React from 'react';
 import PropTypes from 'prop-types';
 
-const AssignedTasks = ({ tasks }) => {
-    return (
-        <div className="max-w-4xl mx-auto mt-8">
-            <h1 className="text-3xl font-bold mb-4">Page Title</h1>
-            <h2 className="text-2xl font-bold mb-4">Assigned Tasks</h2>
-            {tasks.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {tasks.map(task => (
-                        <div key={task.id} className="bg-white rounded-lg shadow-md p-6">
-                            <h3 className="text-lg font-semibold mb-2">{task.title}</h3>
-                            <p className="text-gray-600 mb-2">{task.description}</p>
-                            <div className="flex flex-wrap items-center mb-2">
-                                <span className="text-gray-600 mr-2">Volunteers:</span>
-                                {task.volunteers.map(volunteer => (
-                                    <span key={volunteer.id} className="bg-gray-100 text-gray-800 rounded-full px-2 py-1 text-sm mr-2 mb-2">
-                                        {volunteer.name}
-                                    </span>
-                                ))}
+const AssignedTasks = ({ tasks, user, activities }) => {
+
+    if (!user.isManager) {
+        // Volunteer view
+        return (
+            <div className="max-w-4xl mx-auto mt-8">
+                <h1 className="text-3xl font-bold mb-4">Assigned Tasks</h1>
+                {tasks.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {tasks.map(task => (
+                            <div key={task.id} className="bg-white rounded-lg shadow-md p-6">
+                                <h3 className="text-lg font-semibold mb-2">{task.activity.name}</h3>
+                                <p className="text-gray-600 mb-2">{task.activity.shortDescription}</p>
+                                <p className="text-gray-600 mb-2">Start Date: {new Date(task.start.date).toLocaleDateString('en-US',
+                                    { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
                             </div>
-                            <p className="text-gray-600 mb-2">Deadline: {task.deadline}</p>
-                        </div>
-                    ))}
-                </div>
-            ) : (
-                <p className="text-gray-600">No assigned tasks</p>
-            )}
-        </div>
-    );
+                        ))}
+                    </div>
+                ) : (
+                    <p className="text-gray-600">No assigned tasks</p>
+                )}
+            </div>
+        );
+    } else {
+        // Manager view
+        return (
+            <div className="max-w-4xl mx-auto mt-8">
+                <h1 className="text-3xl font-bold mb-4">{`Your organization's current activities`}</h1>
+                {activities.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {activities.map(activity => (
+                            <div key={activity.id} className="bg-white rounded-lg shadow-md p-6">
+                                <h3 className="text-lg font-semibold mb-2">{activity.activity.name}</h3>
+                                <p className="text-gray-600 mb-2">{activity.activity.shortDescription}</p>
+                                <p className="text-gray-600 mb-2">Start Date: {new Date(activity.startTime.date).toLocaleDateString('en-US',
+                                    { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+                                <p className='text-gray-600 mb-2'>Assigned to:{" "}
+                                    {activity.users.map((user, index) => (
+                                        <span key={user.id}>
+                                            {index > 0 && ', '}
+                                            {user.name}
+                                        </span>
+                                    ))}
+                                </p>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <p className="text-gray-600">No assigned tasks</p>
+                )}
+            </div>
+        );
+    }
+};
+
+AssignedTasks.propTypes = {
+    tasks: PropTypes.array.isRequired,
+    user: PropTypes.object.isRequired,
+    activities: PropTypes.array.isRequired
 };
 
 export default AssignedTasks;
-
-AssignedTasks.propTypes = {
-    tasks: PropTypes.array.isRequired
-};

@@ -18,26 +18,24 @@ class Scheduler
         $this->ratings = $this->database->activities()->getAllUserRatings();
         $this->activities = $this->database->activities()->getAll();
     }
-    public function assignActivities()
-    {
-        $schedule = [];
-        $scheduledTimeSlots = [];
-        $organizationRatings = $this->getOrganizationRatings();
-
-        foreach ($this->activities as $activity) {
-            if(isset(array_keys($activity->times)[0]))
-            {
-            $activityDayOfWeek = array_keys($activity->times)[0];
-            }
-            $volunteerSlotsFilled = 0;
-
+    public function getRecommendedActivities(int $userId)
+{
+    $organizationRatings = $this->getOrganizationRatings();
+    $activitiesSchedule = [];
+    $usersOccupiedTimes = [];
+    
+    foreach ($this->activities as $activity) {
+        $volunteerSlotsFilled = 0;
+        
+        foreach ($activity->times as $activityDay => $activityTimeRange) {
+            
             foreach ($this->users as $user) {
                 if(isset($organizationRatings[$user->userId]))
                 {
                 $userOrganizationRatings = $organizationRatings[$user->userId]["organizations"];
                 }
-                $associatedOrgRating = NULL;
-                $activityRating = NULL;
+                $activityRating = null;
+                $associatedOrgRating = null;
 
                 foreach ($this->ratings as $rating) {
                     if (($rating->userId === $user->userId) && ($rating->activityId === $activity->id)) {
@@ -46,69 +44,76 @@ class Scheduler
                     }
                 }
 
+                if(isset($userOrganizationRatings))
+                {
                 foreach ($userOrganizationRatings as $userOrganizationRating) {
                     if ($userOrganizationRating["organizationId"] == $activity->organizationId)
                         $associatedOrgRating = $userOrganizationRating["rating"];
                     break;
                 }
+            }
 
-                if (isset ($user->availability[$activityDayOfWeek]) && $user->availability[$activityDayOfWeek] !== null) {
-                    $userAvailableStart = $user->availability[$activityDayOfWeek]->start;
-                    $userAvailableEnd = $user->availability[$activityDayOfWeek]->end;
-                    if(isset($activity->getTime(DayOfWeek::fromString($activityDayOfWeek))->start)){
-                    $activityStart = $activity->getTime(DayOfWeek::fromString($activityDayOfWeek))->start;
-                    }
-                    if(isset($activity->getTime(DayOfWeek::fromString($activityDayOfWeek))->end)){
-                    $activityEnd = $activity->getTime(DayOfWeek::fromString($activityDayOfWeek))->end;
-                    }
-
-                    $isUserAvailable = true;
-                    if (isset ($scheduledTimeSlots[$user->userId])) {
-                        foreach ($scheduledTimeSlots[$user->userId] as $timeSlot) {
-                            if (($timeSlot["start"] < $activityEnd) && ($timeSlot["end"] > $activityStart) && ($activityDayOfWeek == $timeSlot["day"])) {
-                                $isUserAvailable = false;
+                foreach ($user->availability as $userDay => $userTimeRange) {
+                    $overlap = false;
+                    
+                    if (isset($usersOccupiedTimes[$user->userId][$activityDay])) {
+                        foreach ($usersOccupiedTimes[$user->userId][$activityDay] as $occupiedTime) {
+                            if (($activityTimeRange->start >= $occupiedTime["start"] && $activityTimeRange->start < $occupiedTime["end"]) || 
+                                ($activityTimeRange->end > $occupiedTime["start"] && $activityTimeRange->end <= $occupiedTime["end"]) ||
+                                ($activityTimeRange->start <= $occupiedTime["start"] && $activityTimeRange->end >= $occupiedTime["end"])) {
+                                $overlap = true;
                                 break;
                             }
                         }
                     }
-
-                    if ($isUserAvailable && ($activityStart < $userAvailableEnd) && ($activityEnd > $userAvailableStart) && ($volunteerSlotsFilled < $activity->neededVolunteers)) {
-                        if(($associatedOrgRating > 2.5) || ($activityRating >= 4))
-                        {
-                        if (!isset ($schedule[$activity->id])) {
-                            $schedule[$activity->id]["details"] =
-                                [
-                                    'activityId' => $activity->id,
-                                    'activityName' => $activity->name,
-                                    'start' => $activityStart,
-                                    'end' => $activityEnd,
-                                    'day' => $activityDayOfWeek
-                                ];
-
-                        }
-
-                        $schedule[$activity->id]["users"][] =
-                            [
+                    
+                    if (($userTimeRange->start <= $activityTimeRange->start)
+                        && ($userTimeRange->end >= $activityTimeRange->end)
+                        && ($activityDay == $userDay)
+                        && ($volunteerSlotsFilled < $activity->neededVolunteers)
+                        && !$overlap) {
+                        
+                        if(($activityRating >=4 || $associatedOrgRating > 2.5) || ($associatedOrgRating == NULL))
+                         {
+                        
+                            $activitiesSchedule[$activity->id][$activityDay][] = [
+                                'activityId' => $activity->id,
+                                'activityName' => $activity->name,
+                                'shortDescription' => $activity->shortDescription,
+                                'activityDay' => $activityDay,
+                                'activityStart' => $activityTimeRange->start,
+                                'activityEnd' => $activityTimeRange->end,
                                 'userId' => $user->userId,
                                 'userName' => $user->userName
                             ];
-
-
-                        $volunteerSlotsFilled += 1;
-                        $scheduledTimeSlots[$user->userId][] = [
-                            "activity" => $activity->name,
-                            "start" => $activityStart,
-                            "end" => $activityEnd,
-                            "day" => $activityDayOfWeek
-                        ];
+                            
+                            $usersOccupiedTimes[$user->userId][$userDay][] = [
+                                'start' => $activityTimeRange->start,
+                                'end' => $activityTimeRange->end
+                            ];
+                            
+                            $volunteerSlotsFilled++;
                         }
                     }
                 }
             }
         }
-       //$this->updateDatabase($schedule);
-        return $schedule;
     }
+    
+    $userActivities = [];
+    foreach ($activitiesSchedule as $activity) {
+        foreach ($activity as $day => $details) {
+            foreach ($details as $detail) {
+                if ($detail['userId'] == $userId) {
+                    $userActivities[] = $detail;
+                }
+            }
+        }
+    }
+    
+    return $userActivities;
+}
+
 
     public function getOrganizationRatings(): array
     {
@@ -169,32 +174,5 @@ class Scheduler
         }
 
         return $result;
-    }
-
-    public function updateDatabase(array $schedule) {
-        $userActivityRows = [];
-        foreach ($schedule as $activity)
-        {
-            foreach ($activity["users"] as $user)
-            {
-                $userId = $user["userId"];
-                $activityId = $activity["details"]["activityId"];
-                $userActivity = new UserActivity($userId, $activityId, null);
-
-                $startTime = $activity["details"]["start"];
-                $hours = intval(floor($startTime));
-                $minutes = intval(($startTime - $hours) * 60);
-                $day = $activity["details"]["day"];
-                $startDateTime = (new \DateTime("next $day"))->setTime($hours, $minutes);
-                
-                $userActivity->startTime = $startDateTime;
-                $userActivityRows[] = $userActivity;
-            }
-        }
-
-        foreach ($userActivityRows as $row)
-        {
-            $this->database->activities()->assignToUser($row->activityId, $row->userId, $row->startTime);
-        }
     }
 }

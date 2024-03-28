@@ -6,9 +6,11 @@ import axios from 'axios';
 import PropTypes from 'prop-types'
 
 export default function Feedback({ user }) {
-    const [activityRating, setActivityRating] = useState();
-    const [selectedActivity, setSelectedActivity] = useState();
+    const [activityRating, setActivityRating] = useState(null);
+    const [error, setError] = useState(null);
+    const [selectedActivity, setSelectedActivity] = useState(null);
     const [pastActivities, setPastActivities] = useState([]);
+    const [submitted, setSubmitted] = useState(false);
     const currentDate = new Date();
     const startDate = new Date();
     startDate.setDate(currentDate.getDate() - 7);
@@ -34,9 +36,8 @@ export default function Feedback({ user }) {
     }, [user, currentDateStr, startDateStr]);
 
     const handleSelectActivity = (selectedActivityId) => {
-        
+
         const strSelectedActivityId = parseInt(selectedActivityId);
-        console.log(strSelectedActivityId);
         const selectedActivity = pastActivities.find(activity => activity.activity.id === strSelectedActivityId);
         if (selectedActivity) {
             setSelectedActivity(selectedActivity);
@@ -50,12 +51,24 @@ export default function Feedback({ user }) {
 
     const handleSubmitFeedback = async () => {
         try {
-            await axios.post('https://w21017158.nuwebspace.co.uk/api/userSchedule/rating', null, {
-                params: {
-                    id: selectedActivity.activity.id,
-                    rating: activityRating
-                }
-            });
+            if (activityRating) {
+
+                await axios.post('https://w21017158.nuwebspace.co.uk/api/userSchedule/rating', null, {
+                    params: {
+                        id: selectedActivity.activity.id,
+                        rating: activityRating
+                    }
+                });
+                setSubmitted(true);
+                setTimeout(() => {
+                    setSubmitted(false);
+                }, 5000);
+            } else {
+                setError(true);
+                setTimeout(() => {
+                    setError(false);
+                }, 5000);
+            }
         } catch (error) {
             console.error('Error submitting feedback:', error);
         }
@@ -75,8 +88,8 @@ export default function Feedback({ user }) {
         <div>
 
             <h1 className="text-3xl font-bold mb-3 ml-5">Volunteering Feedback</h1>
-            <form className="max-w-sm ml-5">
-                <label htmlFor="assignedTasks" className=" ml-5 block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select an activity you have completed: </label>
+            <form className="max-w-sm">
+                <label htmlFor="assignedTasks" className="ml-5 block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select an activity you have completed: </label>
                 <select id="assignedTasks" className="ml-5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onChange={(e) => handleSelectActivity(e.target.value)}>
                     {pastActivities.map((activity, index) => (
                         <option key={index + 1} value={activity.activity.id}>
@@ -100,10 +113,33 @@ export default function Feedback({ user }) {
                         <p>Emma</p><Rating></Rating>
                         <p>Alex</p><Rating></Rating>
                     </div>
-                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5" onClick={handleSubmitFeedback}>Submit Feedback</button>
-                    </>
-                )}
-                
+                    {error && (
+                        <div className="flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" role="alert">
+                        <svg className="flex-shrink-0 inline w-4 h-4 me-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"/>
+                        </svg>
+                        <span className="sr-only">Info</span>
+                        <div>
+                          <span className="font-medium">Error</span> You must rate the activity before submitting feedback.
+                        </div>
+                      </div>
+                    )}
+                    {submitted ? (
+                        <button className="ml-5 mb-5 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-5">
+                            Submitted
+                        </button>
+                    ) : (
+                        <button
+                            className="ml-5 mb-5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5"
+                            onClick={handleSubmitFeedback}
+                        >
+                            Submit Feedback
+                        </button>
+                    )}
+                    
+                </>
+            )}
+
         </div>
     )
 }

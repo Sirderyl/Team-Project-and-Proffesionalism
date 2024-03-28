@@ -41,8 +41,6 @@ export default function Feedback({ user }) {
         const selectedActivity = pastActivities.find(activity => activity.activity.id === strSelectedActivityId);
         if (selectedActivity) {
             setSelectedActivity(selectedActivity);
-        } else {
-            console.log("Activity not found with ID:", selectedActivityId);
         }
     }
 

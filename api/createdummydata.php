@@ -92,6 +92,9 @@ for ($i = 0; $i < NUM_ORGANIZATIONS; $i++) {
     $numActivities = min($i, 10);
     for ($act = 0; $act < $numActivities; $act++) {
         $activity = App\Debug\DebugActivity::createDummyActivity($faker, $organization->id);
+        if ($activity->neededVolunteers > $numUsers) {
+            $activity->neededVolunteers = $numUsers;
+        }
 
         $database->activities()->create($activity);
         $database->activities()->setPreviewPicture($activity->id, $dummyActivityImg);
@@ -103,11 +106,22 @@ for ($i = 0; $i < NUM_ORGANIZATIONS; $i++) {
                 $date->setTimestamp(strtotime("next $day") + $weekDiff * 7 * 24 * 60 * 60);
                 $date->setTime((int)$time->start, 0);
 
-                $database->activities()->assignToUser(
-                    $activity->id,
-                    $orgUsers[rand(0, $numUsers - 1)],
-                    $date
-                );
+                $assignedUsers = [];
+
+                for ($j = 0; $j < $activity->neededVolunteers; $j++) {
+                    // this is dumb but it's friday and i have a headache
+                    $pickedId = null;
+                    do {
+                        $pickedId = $orgUsers[rand(0, $numUsers - 1)];
+                    } while (in_array($pickedId, $assignedUsers));
+                    $assignedUsers[] = $pickedId;
+
+                    $database->activities()->assignToUser(
+                        $activity->id,
+                        $pickedId,
+                        $date
+                    );
+                }
             }
         }
     }

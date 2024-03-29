@@ -32,7 +32,12 @@ function App() {
     localStorage.removeItem('user')
   }
 
+  const [user, setUser] = useState({})
+  const [userLoading, setUserLoading] = useState(true)
   const [availability, setAvailability] = useState([])
+
+  const [allActivities, setAllActivities] = useState([])
+  const [organizationId, setOrganizationId] = useState(0)
 
   const daysOfWeek = useMemo(() => ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'], [])
 
@@ -68,7 +73,75 @@ function App() {
     }
   }, [daysOfWeek])
 
+  const fetchUser = useCallback(() => {
+    if (userData === null) {
+      setAvailability([])
+      return
+    }
+
+    fetch(`${apiRoot}/user/${userData.userId}`)
+      .then(response => {
+        if (response.ok) {
+          return response.json()
+        } else {
+          throw new Error('Error fetching user: ' + response.status)
+        }
+      })
+      .then(data => {
+        setUser(data)
+        setUserLoading(false)
+      })
+      .catch(err => console.error(err))
+  }, [userData])
+
+  const currentDate = new Date();
+  const endDate = new Date();
+  endDate.setDate(currentDate.getDate() + 7);
+
+  const currentDateStr = currentDate.toISOString().split('T')[0];
+  const endDateStr = endDate.toISOString().split('T')[0];
+
+  const fetchAllActivities = useCallback(() => {
+    if (!user.isManager) {
+      setAllActivities([])
+      return
+    }
+
+    fetch(`${apiRoot}/user/${user.userId}/organizations`)
+      .then(response => {
+        if (response.ok) {
+          return response.json()
+        } else {
+          throw new Error('Error fetching user: ' + response.status)
+        }
+      })
+      .then(data => {
+        setOrganizationId(data[0].id)
+      })
+      .catch(err => console.error(err))
+
+    fetch(`${apiRoot}/organization/${organizationId}/schedule?start=${currentDateStr}&end=${endDateStr}`)
+      .then(response => {
+        if (response.ok) {
+          return response.json()
+        } else {
+          throw new Error('Error fetching activities: ' + response.status)
+        }
+      }
+      )
+      .then(data => {
+        setAllActivities(data)
+      })
+      .catch(err => console.error(err))
+  }, [user, organizationId, currentDateStr, endDateStr])
+
   useEffect(fetchAvailability, [userData, handleJSON])
+  useEffect(() => {
+    fetchUser()
+  }, [fetchUser])
+  useEffect(() => {
+    fetchAllActivities()
+  }, [fetchAllActivities])
 
 
   const isLoggedIn = userData !== null
@@ -77,20 +150,25 @@ function App() {
 
   useEffect(() => {
     const fetchTasks = async () => {
+      if (userData === null) {
+        setAvailability([])
+        return
+      }
       try {
-        const response = await fetch('https://w21017158.nuwebspace.co.uk/api/userSchedule/1');
+        const response = await fetch(`https://w20010297.nuwebspace.co.uk/api/userSchedule/${userData.userId}?start=${currentDateStr}&end=${endDateStr}`);
         if (!response.ok) {
           throw new Error('Failed to fetch tasks');
         }
         const data = await response.json();
-        setTasks(data);
+        const sortedTasks = data.sort((a, b) => new Date(a.start.date) - new Date(b.start.date));
+        setTasks(sortedTasks);
       } catch (error) {
         console.error('Error fetching tasks:', error);
       }
     };
 
     fetchTasks();
-  }, []);
+  }, [userData, currentDateStr, endDateStr]);
   /**
    * Routes for the app. Set navigable: false to hide a route from the NavMenu while keeping it in the app
    * @type {Array<import('react-router-dom').RouteProps & {navigable?: boolean}>}
@@ -99,11 +177,13 @@ function App() {
     { path: '/', name: 'Home', element: <Home /> },
     { path: '/login', name: 'Login', element: <Login handleLogin={handleLogin} isLoggedIn={isLoggedIn} />, navigable: !isLoggedIn },
     { path: '/signup', name: 'Sign up', element: <SignUp handleLogin={handleLogin} isLoggedIn={isLoggedIn} />, navigable: !isLoggedIn },
-    { path: '/account-details', name: 'Account Details', navigable: isLoggedIn,
-      element: isLoggedIn ? <AccountDetails userData={userData} availability={availability} setAvailability={setAvailability} /> : <NeedsLogIn />
+    {
+      path: '/account-details', name: 'Account Details', navigable: isLoggedIn,
+      element: isLoggedIn ? <AccountDetails user={user} userLoading={userLoading  } availability={availability} setAvailability={setAvailability} /> : <NeedsLogIn />
     },
-    { path: '/account-details/add-schedule-record', name: 'Add Schedule Record', navigable: isLoggedIn,
-      element: isLoggedIn ? <AddScheduleRecord userId={userData.userId} availability={availability} /> : <NeedsLogIn />
+    {
+      path: '/account-details/add-schedule-record', name: 'Add Schedule Record', navigable: isLoggedIn,
+      element: isLoggedIn ? <AddScheduleRecord user={user} availability={availability} /> : <NeedsLogIn />
     },
   ]
   return (
@@ -117,7 +197,7 @@ function App() {
       <Routes>
         <Route path='/feedback' element={<Feedback />} />
         <Route path='/InviteForm' element={<InviteForm userId={userData?.userId} />} />
-        <Route path="/AssignedTasks" element={<AssignedTasks tasks={tasks} />} />
+        <Route path="/AssignedTasks" element={<AssignedTasks tasks={tasks} user={user} activities={allActivities} />} />
         <Route path="/AllActivities" element={<AllActivities />} />
         <Route path="/activity/:id" element={<ActivityDetailsPage />} />
         {/* <Route path='/scheduleApproval' element={<ScheduleApprovalPage taskRequests={taskRequests} />} /> */}

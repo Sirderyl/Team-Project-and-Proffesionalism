@@ -93,7 +93,7 @@ export default function SignUp({
                     type='tel'
                     value={phoneNumber}
                     setValue={setPhoneNumber}
-                    reason='For managers to contact you if are needed at short notice.'
+                    reason='For managers to contact you if you are needed at short notice.'
                     required
                 />
 

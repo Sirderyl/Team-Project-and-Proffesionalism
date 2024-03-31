@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
-const ActivityDetailsPage = () => {
+const ActivityDetailsPage = ({ user }) => {
     const { id } = useParams();
 
     const [activity, setActivity] = useState(null);
@@ -48,9 +49,11 @@ const ActivityDetailsPage = () => {
                     </div>
                     <p className="text-gray-700 mb-4">Needed Volunteers: {activity.neededVolunteers}</p>
                     <p className="text-gray-700 mb-2">Organization: {activity.organization.name}</p>
-                    <button onClick={handleSignUp} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
-                        Sign Up
-                    </button>
+                    {!user.isManager && (
+                        <button onClick={handleSignUp} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
+                            Sign Up
+                        </button>
+                    )}
                 </div>
             ) : (
                 <p className="text-gray-600">Loading...</p>
@@ -60,3 +63,7 @@ const ActivityDetailsPage = () => {
 };
 
 export default ActivityDetailsPage;
+
+ActivityDetailsPage.propTypes = {
+    user: PropTypes.object.isRequired
+};

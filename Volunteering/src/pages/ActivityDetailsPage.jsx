@@ -24,6 +24,11 @@ const ActivityDetailsPage = () => {
     }, [id]);
 
     const handleSignUp = () => {
+        // 1. Offer the user for which day and time they want to sign up
+        // 2. Check if the user is already signed up for that day and time, and if so, show an error message
+        // 3. Check if the selected day and time is already full, and if so, show an error message
+        // 4. Check if the selected day and time matches the user's availability, and if not, show an error message
+        // 5. If all checks pass, sign up the user for the activity and remove the relevant availability from the user's schedule
         console.log('User signed up for the activity');
     };
 

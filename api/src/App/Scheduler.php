@@ -75,6 +75,7 @@ class Scheduler
                         
                         if(($activityRating >=4 || $associatedOrgRating > 2.5) || ($associatedOrgRating == NULL))
                          {
+                            $organizationName = $this->database->organizations()->get($activity->organizationId)->name;
                         
                             $activitiesSchedule[$activity->id][$activityDay][] = [
                                 'activityId' => $activity->id,
@@ -84,7 +85,9 @@ class Scheduler
                                 'activityStart' => $activityTimeRange->start,
                                 'activityEnd' => $activityTimeRange->end,
                                 'userId' => $user->userId,
-                                'userName' => $user->userName
+                                'userName' => $user->userName,
+                                'organizationId' => $activity->organizationId,
+                                'organizationName' => $organizationName
                             ];
                             
                             $usersOccupiedTimes[$user->userId][$userDay][] = [

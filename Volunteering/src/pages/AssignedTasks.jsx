@@ -11,7 +11,7 @@ const AssignedTasks = ({ tasks, user, activities }) => {
                 {tasks.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {tasks.map(task => (
-                            <div key={task.id} className="bg-gray-100 rounded-lg shadow-md p-6">
+                            <div key={task.activity.id + task.start.date} className="bg-gray-100 rounded-lg shadow-md p-6">
                                 <h3 className="text-xl font-semibold mb-2 text-blue-700">{task.activity.name}</h3>
                                 <p className="text-gray-700 mb-4">{task.activity.shortDescription}</p>
                                 <p className="text-gray-700 mb-4">Start Date: {new Date(task.start.date).toLocaleDateString('en-US',
@@ -32,7 +32,7 @@ const AssignedTasks = ({ tasks, user, activities }) => {
                 {activities.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {activities.map(activity => (
-                            <div key={activity.id} className="bg-gray-100 rounded-lg shadow-md p-6">
+                            <div key={activity.activity.id + activity.startTime.date} className="bg-gray-100 rounded-lg shadow-md p-6">
                                 <h3 className="text-xl font-semibold mb-2 text-blue-700">{activity.activity.name}</h3>
                                 <p className="text-gray-700 mb-4">{activity.activity.shortDescription}</p>
                                 <p className="text-gray-700 mb-4">Start Date: {new Date(activity.startTime.date).toLocaleDateString('en-US',

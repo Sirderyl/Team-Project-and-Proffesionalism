@@ -214,9 +214,9 @@ $app->post('/organization/{id}/user/{userId}/status', function (Request $request
     return $response->withStatus(201);
 });
 
-$app->post('/user/{email}/{name}', function (Request $request, Response $response, array $args) use ($container, $database) {
+$app->post('/user/sendNotification', function (Request $request, Response $response, array $args) use ($container, $database) {
     $handler = $container->make(App\MailerEndpoint::class, ['mailer' => $container->get(App\Mailer::class)]);
-    $response->getBody()->write($handler->sendEmail($args['email'], $args['name']));
+    $response->getBody()->write($handler->sendEmail($request->getParsedBody()));
     return $response->withHeader('Content-Type', 'application/json');
 });
 

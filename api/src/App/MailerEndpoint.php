@@ -14,7 +14,11 @@ class MailerEndpoint {
         $this->mailer = $mailer;
     }
 
-    public function sendEmail(string $recipientEmail, string $recipientName): string {
-        return $this->mailer->sendEmail($recipientEmail, $recipientName);
+    public function sendEmail(array $data): string {
+        $recipientEmail = $data['email'];
+        $recipientName = $data['name'];
+        $activity = $data['activity'];
+        $activityDetails = $data['activityDetails'];
+        return $this->mailer->sendEmail($recipientEmail, $recipientName, $activity, $activityDetails);
     }
 }

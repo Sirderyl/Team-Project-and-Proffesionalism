@@ -16,7 +16,6 @@ class Mailer
     {
         $this->mail = new PHPMailer(true);
         $this->mail->isSMTP();
-        $this->mail->SMTPDebug = SMTP::DEBUG_SERVER;
         $this->mail->Host = 'smtp.gmail.com';
         $this->mail->Port = 587;
         $this->mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
@@ -26,12 +25,12 @@ class Mailer
         $this->mail->setFrom('newcastlevolunteering@gmail.com', 'Newcastle Volunteering');
     }
 
-    public function sendEmail($recipientEmail, $recipientName) {
+    public function sendEmail($recipientEmail, $recipientName, $activity, $activityDetails) {
         $this->mail->addAddress($recipientEmail, $recipientName);
         $this->mail->isHTML(true);
-        $this->mail->Subject = 'You have signed up for {activity}!';
-        $this->mail->Body = 'Hi ' . $recipientName . ', you have signed up for {activity}.
-        Below are the details of the activity: <br><br>{activityDetails} <br><br> Thank you for signing up!
+        $this->mail->Subject = 'You have signed up for ' . $activity . '!';
+        $this->mail->Body = 'Hi ' . $recipientName . ', you have signed up for ' . $activity . '.
+        Below are the details of the activity: <br><br> ' . $activityDetails . '<br><br> Thank you for signing up!
         <br><br> Regards, <br> Newcastle Volunteering Team';
         $this->mail->AltBody = 'This is the body in plain text for non-HTML mail clients.';
 

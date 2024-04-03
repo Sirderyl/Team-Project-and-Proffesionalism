@@ -1,7 +1,33 @@
-// import React from 'react';
+import  { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
+const AssignedTasks = ({ tasks, user, activities, userData }) => {
+    const [volunteerTasks, setVolunteerTasks] = useState([]);
 
-const AssignedTasks = ({ tasks, user, activities }) => {
+    useEffect(() => {
+        const fetchVolunteerTasks = async () => {
+            if (!userData) {
+                setVolunteerTasks([]);
+                return;
+            }
+
+            const apiUrl = `https://w21017158.nuwebspace.co.uk/api/userSchedule/${userData.userId}`;
+
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch tasks');
+                }
+                const data = await response.json();
+                const sortedTasks = data.sort((a, b) => new Date(a.start.date) - new Date(b.start.date));
+                setVolunteerTasks(sortedTasks);
+            } catch (error) {
+                console.error('Error fetching tasks:', error);
+            }
+        };
+
+        fetchVolunteerTasks();
+    }, [userData]);
 
     if (!user.isManager) {
         // Volunteer view
@@ -16,11 +42,32 @@ const AssignedTasks = ({ tasks, user, activities }) => {
                                 <p className="text-gray-700 mb-4">{task.activity.shortDescription}</p>
                                 <p className="text-gray-700 mb-4">Start Date: {new Date(task.start.date).toLocaleDateString('en-US',
                                     { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+                                <Link to={`/activity/${task.activity.id}`}>
+                                    <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
+                                        View Details
+                                    </button>
+                                </Link>
                             </div>
                         ))}
                     </div>
                 ) : (
                     <p className="text-gray-700">No assigned tasks</p>
+                )}
+
+                <h1 className="text-3xl font-bold mb-4 text-blue-700 mt-8">Suggested Activities</h1>
+                {volunteerTasks.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {volunteerTasks.map(task => (
+                            <div key={task.activity.id + task.start.date} className="bg-gray-100 rounded-lg shadow-md p-6">
+                                <h3 className="text-xl font-semibold mb-2 text-blue-700">{task.activity.name}</h3>
+                                <p className="text-gray-700 mb-4">{task.activity.shortDescription}</p>
+                                <p className="text-gray-700 mb-4">Start Date: {new Date(task.start.date).toLocaleDateString('en-US',
+                                    { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <p className="text-gray-700">No suggested activities</p>   
                 )}
             </div>
         );
@@ -59,7 +106,8 @@ const AssignedTasks = ({ tasks, user, activities }) => {
 AssignedTasks.propTypes = {
     tasks: PropTypes.array.isRequired,
     user: PropTypes.object.isRequired,
-    activities: PropTypes.array.isRequired
+    activities: PropTypes.array.isRequired,
+    userData: PropTypes.object.isRequired
 };
 
 export default AssignedTasks;

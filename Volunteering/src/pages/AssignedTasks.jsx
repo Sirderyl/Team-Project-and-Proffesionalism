@@ -67,7 +67,7 @@ const AssignedTasks = ({ tasks, user, activities, userData }) => {
                         ))}
                     </div>
                 ) : (
-                    <p className="text-gray-700">No suggested activities</p>   
+                    <p className="text-gray-700">No suggested activities</p>
                 )}
             </div>
         );
@@ -92,6 +92,11 @@ const AssignedTasks = ({ tasks, user, activities, userData }) => {
                                         </span>
                                     ))}
                                 </p>
+                                <Link to={`/activity/${activity.activity.id}`}>
+                                    <button className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out">
+                                        View Details
+                                    </button>
+                                </Link>
                             </div>
                         ))}
                     </div>

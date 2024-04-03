@@ -19,7 +19,9 @@ class ActivitiesEndpoint {
         return $this->database->activities()->getAll();
     }
 
-    public function assignToUser(int $activityId, int $userId, \DateTime $start): void {
+    public function assignToUser(int $activityId, array $data): void {
+        $userId = $data['userId'];
+        $start = new \DateTime($data['start']);
         $this->database->activities()->assignToUser($activityId, $userId, $start);
     }
 }

@@ -124,8 +124,7 @@ function ActivityDetailsPage({ user, availability, setAvailability, currentDate,
                 }
             
             })
-            .catch(err => console.error(err)
-        );
+            .catch(err => console.error(err));
 
         fetch(`${apiRoot}/user/${user.userId}/availability/${daysOfWeekArr[date.getDay()]}`,
             {
@@ -139,8 +138,25 @@ function ActivityDetailsPage({ user, availability, setAvailability, currentDate,
                     setAvailability(availability.filter(item => item.day !== daysOfWeekArr[date.getDay()]));
                 }
             })
-            .catch(err => console.error(err)
-        );
+            .catch(err => console.error(err));
+
+        let formDataMail = new FormData();
+        formDataMail.append('email', user.email);
+        formDataMail.append('name', user.userName);
+        formDataMail.append('activity', activity.name);
+        formDataMail.append('activityDetails', activity.description);
+
+        fetch(`https://w20010297.nuwebspace.co.uk/api/user/sendNotification`,
+            {
+                method: 'POST',
+                body: formDataMail
+            })
+            .then(response => {
+                if (!response.status == 200) {
+                    throw new Error('Error sending email: ' + response.status);
+                }
+            })
+            .catch(err => console.error(err));
     };
 
     return (

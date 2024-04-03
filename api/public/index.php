@@ -227,9 +227,9 @@ $app->get('/activities', function (Request $request, Response $response, array $
     return $response->withHeader('Content-Type', 'application/json');
 });
 
-$app->post('/activity/{id}/{startDateTime}/assignToUser/{userId}', function (Request $request, Response $response, array $args) use ($container, $database) {
+$app->post('/activity/{id}/userSignup', function (Request $request, Response $response, array $args) use ($container, $database) {
     $handler = $container->make(App\ActivitiesEndpoint::class, ['database' => $database]);
-    $handler->assignToUser(intval($args['id']), intval($args['userId']), new DateTime($args['startDateTime']));
+    $handler->assignToUser(intval($args['id']), $request->getParsedBody());
     return $response->withStatus(201);
 });
 

@@ -1,8 +1,10 @@
 import  { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
+
+
 const AssignedTasks = ({ tasks, user, activities, userData }) => {
-    const [volunteerTasks, setVolunteerTasks] = useState([]);
+const [volunteerTasks, setVolunteerTasks] = useState([]);
 
     useEffect(() => {
         const fetchVolunteerTasks = async () => {

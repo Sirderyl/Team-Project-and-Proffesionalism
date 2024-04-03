@@ -146,7 +146,7 @@ function ActivityDetailsPage({ user, availability, setAvailability, currentDate,
         formDataMail.append('activity', activity.name);
         formDataMail.append('activityDetails', activity.description);
 
-        fetch(`https://w20010297.nuwebspace.co.uk/api/user/sendNotification`,
+        fetch(`${apiRoot}/user/sendNotification`,
             {
                 method: 'POST',
                 body: formDataMail

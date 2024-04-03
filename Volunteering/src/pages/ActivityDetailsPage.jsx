@@ -4,7 +4,7 @@ import { apiRoot } from '../settings';
 import toast, { Toaster } from 'react-hot-toast'
 import PropTypes from 'prop-types';
 
-function ActivityDetailsPage({ user, currentDate, endDate }) {
+function ActivityDetailsPage({ user, availability, setAvailability, currentDate, endDate }) {
     const { id } = useParams();
 
     const [activity, setActivity] = useState(null);
@@ -12,6 +12,7 @@ function ActivityDetailsPage({ user, currentDate, endDate }) {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [selectedDay, setSelectedDay] = useState('');
     const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    const daysOfWeekArr = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
     const fetchUserSchedule = useCallback(() => {
         fetch(`${apiRoot}/userSchedule/${user.userId}?start=${currentDate}&end=${endDate}`)
@@ -48,7 +49,6 @@ function ActivityDetailsPage({ user, currentDate, endDate }) {
     }, [id, fetchUserSchedule]);
 
     function getNextDate(dayOfWeek, time) {
-        const daysOfWeekArr = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
         const today = new Date();
         const todayIndex = today.getDay();
         const targetIndex = daysOfWeekArr.indexOf(dayOfWeek);
@@ -74,7 +74,7 @@ function ActivityDetailsPage({ user, currentDate, endDate }) {
 
         // Assign the selected day of week to a date
         const date = getNextDate(selectedDay, activity.times.find(time => time.day === selectedDay).start);
-
+        
         // Check if the user is already signed up for that day and time
         const isUserAlreadySignedUp = userSchedule.some(schedule => {
             const scheduleDate = new Date(schedule.start.date);
@@ -102,14 +102,14 @@ function ActivityDetailsPage({ user, currentDate, endDate }) {
         }
 
         // 5. If all checks pass, sign up the user for the activity and remove the relevant availability from the user's schedule
-        const formattedDate = date.toISOString().split('.')[0];
+        const formattedDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}T${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}:${String(date.getSeconds()).padStart(2, '0')}`;
 
         let formData = new FormData();
         formData.append('userId', user.userId);
-        formData.append('activityId', activity.id);
+        formData.append('activityId', id);
         formData.append('start', formattedDate);
 
-        fetch(`${apiRoot}/activity/${activity.id}/userSignup`,
+        fetch(`${apiRoot}/activity/${id}/userSignup`,
             {
                 method: 'POST',
                 body: formData
@@ -124,9 +124,23 @@ function ActivityDetailsPage({ user, currentDate, endDate }) {
                 }
             
             })
-            .catch(err => console.error(err));
-        
-        //console.log('User signed up for the activity on ' + formattedDate);
+            .catch(err => console.error(err)
+        );
+
+        fetch(`${apiRoot}/user/${user.userId}/availability/${daysOfWeekArr[date.getDay()]}`,
+            {
+                method: 'DELETE'
+            })
+            .then(response => {
+                if (!(response.status === 200 || response.status === 204)) {
+                    toast.error('Error deleting record')
+                    throw new Error('Error deleting record: ' + response.status)
+                } else {
+                    setAvailability(availability.filter(item => item.day !== daysOfWeekArr[date.getDay()]));
+                }
+            })
+            .catch(err => console.error(err)
+        );
     };
 
     return (
@@ -173,6 +187,8 @@ export default ActivityDetailsPage;
 
 ActivityDetailsPage.propTypes = {
     user: PropTypes.object.isRequired,
+    availability: PropTypes.array.isRequired,
+    setAvailability: PropTypes.func.isRequired,
     currentDate: PropTypes.string.isRequired,
     endDate: PropTypes.string.isRequired
 };

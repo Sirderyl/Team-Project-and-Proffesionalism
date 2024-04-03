@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import {apiRoot} from '../settings';
 import PropTypes from 'prop-types';
 
 // Search Component
@@ -27,7 +28,7 @@ const AllActivities = () => {
     useEffect(() => {
         const fetchActivities = async () => {
             try {
-                const response = await fetch('https://w20010297.nuwebspace.co.uk/api/activities');
+                const response = await fetch(`${apiRoot}/activities`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch activities');
                 }

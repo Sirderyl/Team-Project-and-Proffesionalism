@@ -202,7 +202,7 @@ function App() {
         <Route path='/InviteForm' element={<InviteForm userId={userData?.userId} />} />
         <Route path="/AssignedTasks" element={<AssignedTasks tasks={tasks} user={user} activities={allActivities} />} />
         <Route path="/AllActivities" element={<AllActivities />} />
-        <Route path="/activity/:id" element={<ActivityDetailsPage user={user} currentDate={currentDateStr} endDate={endDateStr} />} />
+        <Route path="/activity/:id" element={<ActivityDetailsPage user={user} availability={availability} setAvailability={setAvailability} currentDate={currentDateStr} endDate={endDateStr} />} />
         {/* <Route path='/scheduleApproval' element={<ScheduleApprovalPage taskRequests={taskRequests} />} /> */}
         {routes.map((route, index) => (
           <Route key={index} path={route.path} element={route.element} />

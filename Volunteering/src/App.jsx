@@ -155,7 +155,7 @@ function App() {
         return
       }
       try {
-        const response = await fetch(`https://w20010297.nuwebspace.co.uk/api/userSchedule/${userData.userId}?start=${currentDateStr}&end=${endDateStr}`);
+        const response = await fetch(`${apiRoot}/userSchedule/${userData.userId}?start=${currentDateStr}&end=${endDateStr}`);
         if (!response.ok) {
           throw new Error('Failed to fetch tasks');
         }
@@ -202,7 +202,7 @@ function App() {
         <Route path='/InviteForm' element={<InviteForm userId={userData?.userId} />} />
         <Route path="/AssignedTasks" element={<AssignedTasks tasks={tasks} user={user} activities={allActivities} />} />
         <Route path="/AllActivities" element={<AllActivities />} />
-        <Route path="/activity/:id" element={<ActivityDetailsPage user={user} />} />
+        <Route path="/activity/:id" element={<ActivityDetailsPage user={user} currentDate={currentDateStr} endDate={endDateStr} />} />
         {/* <Route path='/scheduleApproval' element={<ScheduleApprovalPage taskRequests={taskRequests} />} /> */}
         {routes.map((route, index) => (
           <Route key={index} path={route.path} element={route.element} />

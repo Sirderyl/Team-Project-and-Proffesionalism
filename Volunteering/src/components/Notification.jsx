@@ -17,7 +17,7 @@ export default function Notification({ message, close, priority, link, dismissib
             }
             {link && (
                 <Link to={link}>
-                    <button className={"bg-green-500 hover:bg-green-700 text-white rounded-md p-0.5 pr-2 pl-2"}>View</button>
+                    <button className={"bg-blue-500 hover:bg-blue-700 text-white rounded-md p-0.5 pr-2 pl-2"}>View</button>
                 </Link>
             )}
         </div>

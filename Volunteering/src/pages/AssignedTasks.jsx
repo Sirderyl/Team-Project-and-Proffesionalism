@@ -1,7 +1,7 @@
 import  { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-
+import { apiRoot } from '../settings';
 
 const AssignedTasks = ({ tasks, user, activities, userData }) => {
 const [volunteerTasks, setVolunteerTasks] = useState([]);
@@ -13,7 +13,7 @@ const [volunteerTasks, setVolunteerTasks] = useState([]);
                 return;
             }
 
-            const apiUrl = `https://w21017158.nuwebspace.co.uk/api/userSchedule/${userData.userId}`;
+            const apiUrl = await fetch(`${apiRoot}/userSchedule/${user.userId}`);
 
             try {
                 const response = await fetch(apiUrl);

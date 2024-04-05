@@ -97,6 +97,7 @@ class ActivityDatabaseTest extends TestCase {
             'activity' => [
                 'name' => $activity->name,
                 'id' => $activity->id,
+                'rowid' => $output[0]["activity"]["rowid"],
                 'shortDescription' => $activity->shortDescription
             ],
             'start' => $dateTime

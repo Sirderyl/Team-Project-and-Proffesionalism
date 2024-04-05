@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams,Link } from 'react-router-dom';
 import { apiRoot } from '../settings';
 import toast, { Toaster } from 'react-hot-toast'
 import PropTypes from 'prop-types';
@@ -64,6 +64,8 @@ function ActivityDetailsPage({ user, availability, setAvailability, currentDate,
         return today;
     }
 
+    
+    
     const sortedDays = activity?.times.sort((a, b) => daysOfWeek.indexOf(a.day) - daysOfWeek.indexOf(b.day));
 
     const handleSignUp = () => {
@@ -191,6 +193,14 @@ function ActivityDetailsPage({ user, availability, setAvailability, currentDate,
                             </button>
                         </>
                     )}
+                    {isLoggedIn && user.isManager ? (
+                        <Link to={`/InviteForm`} className="text-blue-700">Invite Volunteers</Link>
+                    ) : (
+                        <p className="text-gray-700">
+                            {isLoggedIn ? "You are not a manager and can sign up for activities" : "Please log in to sign up for activities"}
+                        </p>
+                    )}
+
                 </div>
             ) : (
                 <p className="text-gray-600">Loading...</p>

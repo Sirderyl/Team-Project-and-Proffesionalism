@@ -1,6 +1,5 @@
 import { Routes, Route } from 'react-router-dom'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import Home from './pages/Home'
 import AccountDetails from './pages/AccountDetails'
 import AddScheduleRecord from './pages/AddScheduleRecord'
 import Feedback from './pages/Feedback'

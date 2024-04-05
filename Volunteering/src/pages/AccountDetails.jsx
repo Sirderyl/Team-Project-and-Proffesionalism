@@ -36,7 +36,7 @@ export default function AccountDetails({ user, userLoading, availability, setAva
                 <td className='border px-4 py-2'>{item.day}</td>
                 <td className='border px-4 py-2'>{item.time.start} - {item.time.end}</td>
                 <td className='border px-4 py-2'>
-                <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" onClick={() => handleUpdateRecord(item.day)}>Update</button>
+                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" onClick={() => handleUpdateRecord(item.day)}>Update</button>
                     <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={() => handleDeleteRecord(item.day)}>Delete</button>
                 </td>
             </tr>

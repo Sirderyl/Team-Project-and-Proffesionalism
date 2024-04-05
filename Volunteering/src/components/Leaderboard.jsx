@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { v4 } from 'uuid';
 import LeaderboardEntry from "./LeaderboardEntry";
+import { apiRoot } from '../settings';
 
 export default function Leaderboard() {
     const [userData, setUserData] = useState([])
@@ -10,14 +11,14 @@ export default function Leaderboard() {
 
     const fetchUsers = useCallback(async () => {
         try {
-            const userDataResponse = await fetch("https://w21017158.nuwebspace.co.uk/api/user/all")
+            const userDataResponse = await fetch(`${apiRoot}/user/all`)
             if (!userDataResponse.ok) {
                 throw new Error("Error fetching users: " + userDataResponse.status);
             }
             const userData = await userDataResponse.json()
 
             const usersWithTasks = await Promise.all(userData.map(async (user) => {
-                const userTasksResponse = await fetch(`https://w21017158.nuwebspace.co.uk/api/userSchedule/${user.userId}`)
+                const userTasksResponse = await fetch(`${apiRoot}/userSchedule/${user.userId}`)
                 if (!userTasksResponse.ok) {
                     throw new Error(`Error fetching tasks for user ${user.userId}: ` + userTasksResponse.status)
                 }

@@ -177,22 +177,22 @@ function App() {
    * @type {Array<import('react-router-dom').RouteProps & {navigable?: boolean}>}
    */
   const routes = [
-    { path: '/', name: 'Home', element: <Home /> },
+    { path: '/', name: 'Home', element: <AssignedTasks tasks={tasks} user={user} activities={allActivities} /> },
     { path: '/login', name: 'Login', element: <Login handleLogin={handleLogin} isLoggedIn={isLoggedIn} />, navigable: !isLoggedIn },
     { path: '/signup', name: 'Sign up', element: <SignUp handleLogin={handleLogin} isLoggedIn={isLoggedIn} />, navigable: !isLoggedIn },
     {
-      path: '/account-details', name: 'Account Details', navigable: isLoggedIn,
-      element: isLoggedIn ? <AccountDetails user={user} userLoading={userLoading  } availability={availability} setAvailability={setAvailability} /> : <NeedsLogIn />
-    },
-    {
-      path: '/account-details/add-schedule-record', name: 'Add Schedule Record', navigable: isLoggedIn,
-      element: isLoggedIn ? <AddScheduleRecord user={user} availability={availability} /> : <NeedsLogIn />
+      path: '/AllActivities', name: 'All Activities', 
+      element: <AllActivities />
     },
     {
       path: '/feedback', name: 'Activity Feedback', navigable: isLoggedIn,
       element: isLoggedIn ? <Feedback user={user} /> : <NeedsLogIn />
     },
     { path: '/leaderboard', name: 'Leaderboard', element: <LeaderboardPage />, navigable: isLoggedIn },
+    {
+      path: '/account-details', name: 'Account Details', navigable: isLoggedIn,
+      element: isLoggedIn ? <AccountDetails user={user} userLoading={userLoading  } availability={availability} setAvailability={setAvailability} /> : <NeedsLogIn />
+    },
   ]
   return (
     <div className='App'>
@@ -203,9 +203,8 @@ function App() {
       />
 
       <Routes>
+        <Route path='/account-details/add-schedule-record' element={<AddScheduleRecord user={user} availability={availability} />} />
         <Route path='/InviteForm' element={<InviteForm userId={userData?.userId} />} />
-        <Route path="/AssignedTasks" element={<AssignedTasks tasks={tasks} user={user} activities={allActivities} />} />
-        <Route path="/AllActivities" element={<AllActivities />} />
         <Route path="/activity/:id" element={<ActivityDetailsPage user={user} availability={availability} setAvailability={setAvailability} currentDate={currentDateStr} endDate={endDateStr} />} />
         {/* <Route path='/scheduleApproval' element={<ScheduleApprovalPage taskRequests={taskRequests} />} /> */}
         {routes.map((route, index) => (

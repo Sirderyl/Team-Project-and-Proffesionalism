@@ -5,18 +5,14 @@ import { apiRoot } from '../settings';
 
 const AssignedTasks = ({ tasks, user, activities, userData }) => {
 const [volunteerTasks, setVolunteerTasks] = useState([]);
-
     useEffect(() => {
         const fetchVolunteerTasks = async () => {
             if (!userData) {
                 setVolunteerTasks([]);
                 return;
             }
-
-            const apiUrl = await fetch(`${apiRoot}/userSchedule/${user.userId}`);
-
             try {
-                const response = await fetch(apiUrl);
+                const response = await fetch(`${apiRoot}/userSchedule/${userData.userId}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch tasks');
                 }
@@ -30,6 +26,7 @@ const [volunteerTasks, setVolunteerTasks] = useState([]);
 
         fetchVolunteerTasks();
     }, [userData]);
+
 
     if (!user.isManager) {
         // Volunteer view

@@ -29,6 +29,9 @@ composer install
 # Create the database
 cd ..
 ./createdb.ps1
+
+# Upload api to the server. Subdirectories of the webroot are not supported
+scp -r api/ user@server:/var/www/html/
 ```
 Note: You can omit `composer install` if you have the `vendor` folder up-to-date
 

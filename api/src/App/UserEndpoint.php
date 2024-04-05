@@ -15,7 +15,16 @@ namespace App;
         $this->database = $database;
     }
 
-    public function getUser(int $userId): User {
-        return $this->database->users()->getById($userId);
+    public function getUser(int $userId): array {
+        // Return everything except password
+        $user = $this->database->users()->getById($userId);
+        return [
+            'userId' => $user->userId,
+            'isManager' => $user->isManager,
+            'userName' => $user->userName,
+            'availability' => $user->availability,
+            'phoneNumber' => $user->phoneNumber,
+            'email' => $user->email,
+        ];
     }
  }

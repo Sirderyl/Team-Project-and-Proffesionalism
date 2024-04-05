@@ -169,6 +169,8 @@ function App() {
 
     fetchTasks();
   }, [userData, currentDateStr, endDateStr]);
+
+  
   /**
    * Routes for the app. Set navigable: false to hide a route from the NavMenu while keeping it in the app
    * @type {Array<import('react-router-dom').RouteProps & {navigable?: boolean}>}

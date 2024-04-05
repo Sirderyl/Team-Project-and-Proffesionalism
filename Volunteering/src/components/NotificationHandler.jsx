@@ -36,7 +36,7 @@ export default function NotificationHandler({ tasks }) {
         // fix: This notification gets duplicated on login, it is fixed if you refresh the page
         // todo: make sure this notification doesn't appear if tasks have already happened
         if (tasks.length !== 0 && !pendingTasksNotification) {
-            addNotification("You have been assigned tasks!", "high", "AssignedTasks");
+            addNotification("You have been assigned tasks!", "high", "/");
         }
     }, [tasks, notifications, addNotification]);
 

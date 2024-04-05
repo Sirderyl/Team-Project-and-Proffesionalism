@@ -13,7 +13,7 @@ const [volunteerTasks, setVolunteerTasks] = useState([]);
             }
 
             try {
-                const response = await fetch(`${apiRoot}/userSchedule/${user.userId}`);
+                const response = await fetch(`${apiRoot}/userActivity/${user.userId}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch tasks');
                 }

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams,Link } from 'react-router-dom';
 import { apiRoot } from '../settings';
 import toast, { Toaster } from 'react-hot-toast'
 import PropTypes from 'prop-types';
@@ -63,10 +63,9 @@ function ActivityDetailsPage({ user, availability, setAvailability, currentDate,
         today.setHours(time, 0, 0, 0);
         return today;
     }
-    const handleInviteClick = () => {
-        // Redirect to InviteForm component
-        history.push('/invite'); // Change '/invite' with the appropriate path if needed
-    };
+
+    
+    
     const sortedDays = activity?.times.sort((a, b) => daysOfWeek.indexOf(a.day) - daysOfWeek.indexOf(b.day));
 
     const handleSignUp = () => {
@@ -195,7 +194,7 @@ function ActivityDetailsPage({ user, availability, setAvailability, currentDate,
                         </>
                     )}
                     {isLoggedIn && user.isManager ? (
-                        <button className="text-gray-700" onClick={handleInviteClick}>Invite Volunteers</button>
+                        <Link to={`/InviteForm`} className="text-blue-700">Invite Volunteers</Link>
                     ) : (
                         <p className="text-gray-700">
                             {isLoggedIn ? "You are not a manager and can sign up for activities" : "Please log in to sign up for activities"}

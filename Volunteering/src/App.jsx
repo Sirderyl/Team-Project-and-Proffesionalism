@@ -12,6 +12,7 @@ import SignUp from './pages/SignUp'
 import NavMenu from './components/NavMenu'
 import NeedsLogIn from './pages/NeedsLogIn'
 import NotFound from './pages/NotFound'
+import LeaderboardPage from './pages/LeaderboardPage'
 import { apiRoot } from './settings'
 import  AllActivities from './pages/AllActivities'
 import ActivityDetailsPage from './pages/ActivityDetailsPage'
@@ -191,6 +192,7 @@ function App() {
       path: '/feedback', name: 'Activity Feedback', navigable: isLoggedIn,
       element: isLoggedIn ? <Feedback user={user} /> : <NeedsLogIn />
     },
+    { path: '/leaderboard', name: 'Leaderboard', element: <LeaderboardPage />, navigable: isLoggedIn },
   ]
   return (
     <div className='App'>

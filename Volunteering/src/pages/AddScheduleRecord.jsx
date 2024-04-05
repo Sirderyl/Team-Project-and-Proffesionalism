@@ -21,31 +21,24 @@ export default function AddScheduleRecord({ user, availability }) {
     const handleTimeStartChange = time => {
         let timeArray = time.split(':')
         let hours = parseInt(timeArray[0])
-        //let minutes = parseInt(timeArray[1])
-        //let timeInMinutes = hours * 60 + minutes
         setTimeStart(time)
         setTimeStartDB(hours)
-        //console.log(timeInMinutes)
     }
 
     const handleTimeEndChange = time => {
         let timeArray = time.split(':')
         let hours = parseInt(timeArray[0])
-        //let minutes = parseInt(timeArray[1])
-        //let timeInMinutes = hours * 60 + minutes
         setTimeEnd(time)
         setTimeEndDB(hours)
-        //console.log(timeInMinutes)
     }
 
     const handleAddRecord = () => {
-        /*
-        props.scheduleRecords.push({
-            ID: props.scheduleRecords.length,
-            date: new Date(date),
-            time_range: [timeStart, timeEnd]
-        })
-        */
+        // Check if the selected day already exists in the user's availability
+        const dayExists = availability.find(item => item.day === selectListValue && item.userId === user.userId)
+        if (dayExists) {
+            toast.error('You already have a schedule record for this day')
+            return
+        }
 
         let formData = new FormData()
         formData.append('userId', user.userId)

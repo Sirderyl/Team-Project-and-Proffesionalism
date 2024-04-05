@@ -95,12 +95,11 @@ export default function Feedback({ user }) {
         )
     }
     return (
-        <div>
-
-            <h1 className="text-3xl font-bold mb-3 ml-5">Volunteering Feedback</h1>
-            <form className="max-w-sm">
-                <label htmlFor="assignedTasks" className="ml-5 block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select an activity from last week you have completed: </label>
-                <select id="assignedTasks" className="ml-5 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onChange={(e) => handleSelectActivity(e.target.value)}>
+        <div className="max-w-4xl mx-auto mt-8">
+            <h1 className="text-3xl font-bold mb-4 text-blue-700">Volunteering Feedback</h1>
+            <form className="max-w-md">
+                <p className="font-semibold mb-2">Select an activity from last week you have completed: </p>
+                <select id="assignedTasks" className="mb-2 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" onChange={(e) => handleSelectActivity(e.target.value)}>
                     {pastActivities.map((activity, index) => (
                         <option key={index + 1} value={activity.activity.id}>
                             {activity.activity.name}
@@ -111,10 +110,10 @@ export default function Feedback({ user }) {
 
             {selectedActivity && selectedActivity.activity && (
                 <>
-                    {<img className="w-40 mt-6 h-40 ml-5" src={`${apiRoot}/activity/${selectedActivity.activity.id}/previewimage`} />}
-                    <p className="text-lg mt-6 ml-5">Rate your experience doing the activity, {selectedActivity.activity.name}.</p>
-                    <p className="ml-5 mt-6">{selectedActivity.activity.name}</p>
-                    <Rating className="ml-5" value={activityRating ? activityRating : null} onChange={e => setActivityRating(parseInt(e.target.value))}></Rating>
+                    {<img className="w-40 mt-6 h-40" src={`${apiRoot}/activity/${selectedActivity.activity.id}/previewimage`} />}
+                    <p className="font-semibold mb-2">Rate your experience doing the activity, {selectedActivity.activity.name}.</p>
+                    <p className="text-gray-700 mb-2">{selectedActivity.activity.name}</p>
+                    <Rating value={activityRating ? activityRating : null} onChange={e => setActivityRating(parseInt(e.target.value))}></Rating>
                     <br></br>
                     {error && (
                         <div className="flex items-center p-4 mb-4 text-sm text-red-800 border border-red-300 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400 dark:border-red-800" role="alert">
@@ -128,12 +127,12 @@ export default function Feedback({ user }) {
                         </div>
                     )}
                     {submitted ? (
-                        <button className="ml-5 mb-5 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mt-5">
+                        <button className="inline-block px-4 py-2 mt-2 bg-green-500 text-white rounded-md hover:bg-green-700 hover:text-white transition duration-300 ease-in-out">
                             Submitted
                         </button>
                     ) : (
                         <button
-                            className="ml-5 mb-5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5"
+                            className="inline-block px-4 py-2 mt-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 hover:text-white transition duration-300 ease-in-out"
                             onClick={handleSubmitFeedback}
                         >
                             Submit Feedback

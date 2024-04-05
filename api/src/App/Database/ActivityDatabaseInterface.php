@@ -22,7 +22,7 @@ interface ActivityDatabaseInterface {
 
     /**
      * Set or remove a rating for a user's activity
-     * @param int $scheduleId `id` returned from `getAssignedActivities`
+     * @param int $scheduleId `rowid` returned from `getAssignedActivities`
      */
     public function setRating(int $scheduleId, ?int $rating): void;
 

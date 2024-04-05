@@ -118,6 +118,7 @@ function App() {
     { path: '/account-details/add-schedule-record', name: 'Add Schedule Record', navigable: isLoggedIn,
       element: isLoggedIn ? <AddScheduleRecord userId={userData.userId} availability={availability} /> : <NeedsLogIn />
     },
+    { path: '/leaderboard', name: 'Leaderboard', element: <LeaderboardPage />, navigable: isLoggedIn },
   ]
   return (
     <div className='App'>
@@ -136,7 +137,6 @@ function App() {
           <Route key={index} path={route.path} element={route.element} />
         ))}
         <Route path='*' element={<NotFound />} />
-        <Route path='/leaderboard' element={<LeaderboardPage />} />
       </Routes>
     </div>
   )

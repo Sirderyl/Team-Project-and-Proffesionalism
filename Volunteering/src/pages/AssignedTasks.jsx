@@ -3,17 +3,17 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { apiRoot } from '../settings';
 
-const AssignedTasks = ({ tasks, user, activities, userData }) => {
+const AssignedTasks = ({ tasks, user, activities }) => {
 const [volunteerTasks, setVolunteerTasks] = useState([]);
 
     useEffect(() => {
         const fetchVolunteerTasks = async () => {
-            if (!userData) {
+            if (!user) {
                 setVolunteerTasks([]);
                 return;
             }
 
-            const apiUrl = await fetch(`${apiRoot}/userSchedule/${user.userId}`);
+            const apiUrl = `${apiRoot}/userSchedule/${user.userId}`;
 
             try {
                 const response = await fetch(apiUrl);
@@ -29,7 +29,7 @@ const [volunteerTasks, setVolunteerTasks] = useState([]);
         };
 
         fetchVolunteerTasks();
-    }, [userData]);
+    }, [user]);
 
     if (!user.isManager) {
         // Volunteer view
@@ -113,8 +113,7 @@ const [volunteerTasks, setVolunteerTasks] = useState([]);
 AssignedTasks.propTypes = {
     tasks: PropTypes.array.isRequired,
     user: PropTypes.object.isRequired,
-    activities: PropTypes.array.isRequired,
-    userData: PropTypes.object.isRequired
+    activities: PropTypes.array.isRequired
 };
 
 export default AssignedTasks;

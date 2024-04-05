@@ -1,5 +1,6 @@
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
+import NotificationHandler from './NotificationHandler';
 
 /**
  * Navigation menu
@@ -8,7 +9,8 @@ import { Link } from "react-router-dom";
 export default function NavMenu({
     routes,
     isLoggedIn,
-    handleLogout
+    handleLogout,
+    tasks
 }) {
     return (
         <nav>
@@ -16,7 +18,12 @@ export default function NavMenu({
             {routes.map((route, index) => (
                 <li key={index}><Link to={route.path}>{route.name}</Link></li>
             ))}
-            {isLoggedIn && <li><button onClick={handleLogout}>Log Out</button></li>}
+            {isLoggedIn && (
+            <>
+                <li><button onClick={handleLogout}>Log Out</button></li>
+                <li><NotificationHandler tasks={tasks}/></li>
+            </>
+            )}
             </ul>
         </nav>
     )
@@ -27,5 +34,6 @@ NavMenu.propTypes = {
         name: PropTypes.string.isRequired
     })).isRequired,
     isLoggedIn: PropTypes.bool.isRequired,
-    handleLogout: PropTypes.func.isRequired
+    handleLogout: PropTypes.func.isRequired,
+    tasks: PropTypes.array.isRequired
 }

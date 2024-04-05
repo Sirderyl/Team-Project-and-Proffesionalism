@@ -199,6 +199,7 @@ function App() {
         routes={routes.filter(route => route.navigable !== false)}
         isLoggedIn={userData !== null}
         handleLogout={handleLogout}
+        tasks={tasks}
       />
 
       <Routes>

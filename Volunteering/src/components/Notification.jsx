@@ -9,7 +9,7 @@ export default function Notification({ message, close, priority, link, dismissib
     };
 
     return (
-        <div className="border flex-grow notification shadow-md rounded-md p-2 m-1 relative">
+        <div className="border text-gray-700 flex-grow notification shadow-md rounded-md p-2 m-1 relative">
             <div className={`absolute top-0 right-0 h-full ${notificationPriority[priority]} w-2 rounded-tr-md rounded-br-md`}></div>
             <p>{message}</p>
             {dismissible &&

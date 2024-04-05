@@ -45,7 +45,7 @@ export default function NotificationHandler({ tasks }) {
             <img src={bellIcon} alt="Notification Bell" className="h-10 w-10 cursor-pointer" onClick={toggleShowNotifications} />
             {showNotifications && (
                 <div className="border absolute top-full right-0 mt-2 w-64 bg-white shadow-md rounded-md p-2 max-h-64 overflow-y-scroll">
-                    <div>Notifications</div>
+                    <div className="text-gray-700 font-bold">Notifications</div>
                     {notifications.map(notification => (
                         <Notification
                             key={notification.id}
@@ -56,12 +56,12 @@ export default function NotificationHandler({ tasks }) {
                         />
                     ))}
                     {numberOfNotifications === 0 && (
-                        <div>No Notifications to Display</div>
+                        <div className="text-gray-700">No Notifications to Display</div>
                     )}
                 </div>
             )}
             {numberOfNotifications !== 0 && (
-                <div className="z-10 absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/3 flex items-center justify-center h-6 w-6 rounded-full bg-red-500 font-bold text-white">{numberOfNotifications}</div>
+                <div className="z-10 absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/3 flex items-center justify-center h-6 w-6 rounded-full bg-blue-700 font-bold text-white">{numberOfNotifications}</div>
             )}
             {numberOfNotifications === 0 && (
                 <div className="z-10 absolute top-0 right-0 transform translate-x-1/2 -translate-y-1/3 flex items-center justify-center h-6 w-6"></div>

@@ -63,7 +63,10 @@ function ActivityDetailsPage({ user, availability, setAvailability, currentDate,
         today.setHours(time, 0, 0, 0);
         return today;
     }
-
+    const handleInviteClick = () => {
+        // Redirect to InviteForm component
+        history.push('/invite'); // Change '/invite' with the appropriate path if needed
+    };
     const sortedDays = activity?.times.sort((a, b) => daysOfWeek.indexOf(a.day) - daysOfWeek.indexOf(b.day));
 
     const handleSignUp = () => {
@@ -191,6 +194,14 @@ function ActivityDetailsPage({ user, availability, setAvailability, currentDate,
                             </button>
                         </>
                     )}
+                    {isLoggedIn && user.isManager ? (
+                        <button className="text-gray-700" onClick={handleInviteClick}>Invite Volunteers</button>
+                    ) : (
+                        <p className="text-gray-700">
+                            {isLoggedIn ? "You are not a manager and can sign up for activities" : "Please log in to sign up for activities"}
+                        </p>
+                    )}
+
                 </div>
             ) : (
                 <p className="text-gray-600">Loading...</p>

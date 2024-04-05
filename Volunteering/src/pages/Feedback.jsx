@@ -31,7 +31,7 @@ export default function Feedback({ user }) {
 
                 const filteredData = data.filter(({ activity }) => {
                     if (existingActivities[activity.name]) {
-                        return false; // Filter out if activity name has been seen before
+                        return false;
                     } else {
                         existingActivities[activity.name] = true;
                         return true;
@@ -65,7 +65,7 @@ export default function Feedback({ user }) {
 
                 await axios.post(`${apiRoot}/userSchedule/rating`, null, {
                     params: {
-                        id: selectedActivity.activity.id,
+                        id: selectedActivity.activity.rowid,
                         rating: activityRating
                     }
                 });

@@ -5,6 +5,21 @@ import { apiRoot } from '../settings';
 
 const AssignedTasks = ({ tasks, user, activities }) => {
 const [volunteerTasks, setVolunteerTasks] = useState([]);
+
+    function getDayIndex(dayString) {
+        const daysOfWeek = ["Zero", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+        return daysOfWeek.indexOf(dayString);
+    }
+
+    function getDateTimeNextOccurence(day,time) {
+        const dayIndex = getDayIndex(day);
+        const result = new Date();
+        result.setDate(result.getDate() + (dayIndex + 7 - result.getDay()) % 7);
+        const [hours, minutes] = time.toString().split('.');
+        result.setHours(hours);
+        result.setMinutes(minutes ? (60 * parseFloat('.' + minutes)) : 0);     
+         return result;
+    }
     useEffect(() => {
         const fetchVolunteerTasks = async () => {
             if (!user) {
@@ -61,7 +76,7 @@ const [volunteerTasks, setVolunteerTasks] = useState([]);
                             <div key={task.activityId + task.activityStart} className="bg-gray-100 rounded-lg shadow-md p-6">
                                 <h3 className="text-xl font-semibold mb-2 text-blue-700">{task.activityName}</h3>
                                 <p className="text-gray-700 mb-4">{task.shortDescription}</p>
-                                <p className="text-gray-700 mb-4">Start Date: {new Date(task.activityStart).toLocaleDateString('en-US',
+                                <p className="text-gray-700 mb-4">Start Date: {getDateTimeNextOccurence(task.activityDay, task.activityStart).toLocaleDateString('en-US',
                                     { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
                             </div>
                         ))}

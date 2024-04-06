@@ -35,22 +35,6 @@ $app->add(function (Request $request, RequestHandler $handler) {
         ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
 });
 
-
-$app->get('/greetings[/{language}]', function (Request $request, Response $response, array $args) use ($container) {
-    $greetings = $container->get(App\Greetings::class);
-    $language = $args['language'] ?? null;
-
-    if($language !== null){
-        $data = $greetings->getGreeting($args['language']);
-    }else {
-        $data = $greetings->getGreetings();
-    }
-
-    $body = json_encode($data, JSON_PRETTY_PRINT);
-    $response->getBody()->write($body);
-    return $response->withHeader('Content-Type', 'application/json');
-});
-
 $app->get('/recommendedActivities/{userId}', function (Request $request, Response $response, array $args) use ($container, $database) {
     $handler = $container->make(App\Scheduler::class, ['database' => $database]);
     $data = $handler->getRecommendedActivities(intval($args['userId']));

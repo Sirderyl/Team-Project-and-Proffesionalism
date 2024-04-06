@@ -86,10 +86,10 @@ export default function Feedback({ user }) {
 
     if (user.isManager) {
         return (
-            <div>
-                <h1 className="text-3xl font-bold mb-3 ml-5">Managers are not allowed to rate activities</h1>
+            <div className="max-w-4xl mx-auto mt-8">
+                <h1 className="text-3xl font-bold mb-4 text-blue-700">Managers are not allowed to rate activities</h1>
                 <Link to='/'>
-                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5 ml-5">Back</button>
+                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5">Back</button>
                 </Link>
             </div>
         )

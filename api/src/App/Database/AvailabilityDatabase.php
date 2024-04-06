@@ -57,7 +57,7 @@ class AvailabilityDatabase implements AvailabilityDatabaseInterface {
 
     public function update(\App\Availability $availability): void {
         $this->connection->execute(
-            "UPDATE availability SET day_of_week = :day, start_hour = :startTime, end_hour = :endTime WHERE user_id = :user_id",
+            "UPDATE user_availability SET start_hour = :startTime, end_hour = :endTime WHERE user_id = :user_id AND day_of_week = :day",
             [
                 ':user_id' => $availability->userId,
                 ':day' => $availability->day->value,

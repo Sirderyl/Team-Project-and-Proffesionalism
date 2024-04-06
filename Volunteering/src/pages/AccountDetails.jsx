@@ -1,9 +1,11 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { apiRoot } from '../settings'
 import toast, { Toaster } from 'react-hot-toast'
 
 export default function AccountDetails({ user, userLoading, availability, setAvailability }) {
+
+    const navigate = useNavigate()
 
     const handleDeleteRecord = day => {
         fetch(`${apiRoot}/user/${user.userId}/availability/${day}`,
@@ -23,7 +25,7 @@ export default function AccountDetails({ user, userLoading, availability, setAva
     }
 
     const handleUpdateRecord = day => {
-        
+        navigate('/account-details/update-schedule-record', { state: { day: day } })
     }
 
     let formattedPhoneNumber = user.phoneNumber

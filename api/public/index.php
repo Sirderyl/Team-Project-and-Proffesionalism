@@ -175,9 +175,9 @@ $app->post('/user/{id}/availability', function (Request $request, Response $resp
     return $response->withStatus(201);
 });
 
-$app->put('/user/{id}/availability', function (Request $request, Response $response, array $args) use ($container, $database) {
+$app->post('/user/{id}/availability/update', function (Request $request, Response $response, array $args) use ($container, $database) {
     $handler = $container->make(App\AvailabilityEndpoint::class, ['database' => $database]);
-    $handler->updateAvailability($request->getParsedBody());
+    $handler->updateAvailability(intval($args['id']), $request->getParsedBody());
     return $response->withStatus(200);
 });
 

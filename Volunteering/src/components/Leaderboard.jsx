@@ -61,10 +61,10 @@ export default function Leaderboard() {
             {totalPages > 1 && (
                 <div>
                     {currentPage > 1 && (
-                        <button onClick={() => setCurrentPage(currentPage - 1)}>Previous Page</button>
+                        <button className='px-4 py-2 bg-gray-200 rounded-md text-gray-700 hover:bg-gray-300 transition duration-300 ease-in-out float-left' onClick={() => setCurrentPage(currentPage - 1)}>Previous Page</button>
                     )}
                     {currentPage < totalPages && (
-                        <button onClick={() => setCurrentPage(currentPage + 1)}>Next Page</button>
+                        <button className='px-4 py-2 bg-gray-200 rounded-md text-gray-700 hover:bg-gray-300 transition duration-300 ease-in-out float-right' onClick={() => setCurrentPage(currentPage + 1)}>Next Page</button>
                     )}
                 </div>
             )}

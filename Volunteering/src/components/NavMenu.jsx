@@ -14,14 +14,14 @@ export default function NavMenu({
 }) {
     return (
         <nav>
-            <ul className="flex flex-col md:flex-row justify-evenly">
+            <ul className="bg-blue-500 flex md:flex-row justify-evenly text-white text-center items-center p-2">
             {routes.map((route, index) => (
-                <li key={index}><Link to={route.path}>{route.name}</Link></li>
+                <li className="hover:bg-blue-700 rounded p-2 transition duration-300 ease-in-out" key={index}><Link to={route.path}>{route.name}</Link></li>
             ))}
             {isLoggedIn && (
             <>
-                <li><button onClick={handleLogout}>Log Out</button></li>
-                <li><NotificationHandler tasks={tasks}/></li>
+                <li><button className="hover:bg-blue-700 rounded p-2 transition duration-300 ease-in-out" onClick={handleLogout}>Log Out</button></li>
+                <li className="text-left"><NotificationHandler tasks={tasks}/></li>
             </>
             )}
             </ul>

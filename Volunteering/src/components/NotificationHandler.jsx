@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { v4 } from 'uuid';
 import PropTypes from 'prop-types';
 import Notification from './Notification';
-import bellIcon from '../../public/bell.png';
+import bellIcon from '../assets/bell.png';
 
 export default function NotificationHandler({ tasks }) {
     const [notifications, setNotifications] = useState([]);
@@ -36,7 +36,7 @@ export default function NotificationHandler({ tasks }) {
         // fix: This notification gets duplicated on login, it is fixed if you refresh the page
         // todo: make sure this notification doesn't appear if tasks have already happened
         if (tasks.length !== 0 && !pendingTasksNotification) {
-            addNotification("You have been assigned tasks!", "high", "AssignedTasks");
+            addNotification("You have been assigned tasks!", "high", "/", false);
         }
     }, [tasks, notifications, addNotification]);
 
@@ -45,18 +45,19 @@ export default function NotificationHandler({ tasks }) {
             <img src={bellIcon} alt="Notification Bell" className="h-10 w-10 cursor-pointer" onClick={toggleShowNotifications} />
             {showNotifications && (
                 <div className="border absolute top-full right-0 mt-2 w-64 bg-white shadow-md rounded-md p-2 max-h-64 overflow-y-scroll">
-                    <div>Notifications</div>
+                    <div className="text-blue-700 font-bold">Notifications</div>
                     {notifications.map(notification => (
                         <Notification
                             key={notification.id}
                             message={notification.message}
                             priority={notification.priority}
                             link={notification.link}
+                            dismissible={notification.dismissible}
                             close={() => removeNotification(notification.id)}
                         />
                     ))}
                     {numberOfNotifications === 0 && (
-                        <div>No Notifications to Display</div>
+                        <div className="text-gray-700">No Notifications to Display</div>
                     )}
                 </div>
             )}

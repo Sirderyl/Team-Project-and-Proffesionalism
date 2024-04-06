@@ -177,12 +177,12 @@ function App() {
    */
   const routes = [
     { path: '/', name: 'Home', element: <AssignedTasks tasks={tasks} user={user} activities={allActivities} /> },
-    { path: '/login', name: 'Login', element: <Login handleLogin={handleLogin} isLoggedIn={isLoggedIn} />, navigable: !isLoggedIn },
-    { path: '/signup', name: 'Sign up', element: <SignUp handleLogin={handleLogin} isLoggedIn={isLoggedIn} />, navigable: !isLoggedIn },
     {
       path: '/AllActivities', name: 'All Activities', 
       element: <AllActivities />
     },
+    { path: '/login', name: 'Login', element: <Login handleLogin={handleLogin} isLoggedIn={isLoggedIn} />, navigable: !isLoggedIn },
+    { path: '/signup', name: 'Sign up', element: <SignUp handleLogin={handleLogin} isLoggedIn={isLoggedIn} />, navigable: !isLoggedIn },
     {
       path: '/feedback', name: 'Volunteering Feedback', navigable: isLoggedIn,
       element: isLoggedIn ? <Feedback user={user} /> : <NeedsLogIn />

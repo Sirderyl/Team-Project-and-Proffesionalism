@@ -1,9 +1,11 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { apiRoot } from '../settings'
 import toast, { Toaster } from 'react-hot-toast'
 
 export default function AccountDetails({ user, userLoading, availability, setAvailability }) {
+
+    const navigate = useNavigate()
 
     const handleDeleteRecord = day => {
         fetch(`${apiRoot}/user/${user.userId}/availability/${day}`,
@@ -22,6 +24,10 @@ export default function AccountDetails({ user, userLoading, availability, setAva
             .catch(err => console.error(err))
     }
 
+    const handleUpdateRecord = day => {
+        navigate('/account-details/update-schedule-record', { state: { day: day } })
+    }
+
     let formattedPhoneNumber = user.phoneNumber
         ? user.phoneNumber.replace(/(\+\d{2})(\d{4})(\d{6})/, '$1 $2 $3')
         : '';
@@ -32,6 +38,7 @@ export default function AccountDetails({ user, userLoading, availability, setAva
                 <td className='border px-4 py-2'>{item.day}</td>
                 <td className='border px-4 py-2'>{item.time.start} - {item.time.end}</td>
                 <td className='border px-4 py-2'>
+                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2" onClick={() => handleUpdateRecord(item.day)}>Update</button>
                     <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={() => handleDeleteRecord(item.day)}>Delete</button>
                 </td>
             </tr>

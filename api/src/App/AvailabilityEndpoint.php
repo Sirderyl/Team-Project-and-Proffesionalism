@@ -25,6 +25,14 @@ class AvailabilityEndpoint {
         $this->database->availability()->add($availability, $userId);
     }
 
+    public function updateAvailability(int $userId, array $data): void {
+        $availability = new Availability();
+        $availability->userId = $userId;
+        $availability->day = DayOfWeek::from($data['day']);
+        $availability->time = new TimeRange($data['start'], $data['end']);
+        $this->database->availability()->update($availability);
+    }
+
     public function deleteAvailability(int $userId, DayOfWeek $day): void {
         $this->database->availability()->delete($userId, $day);
     }

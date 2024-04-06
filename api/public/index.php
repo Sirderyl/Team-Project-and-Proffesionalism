@@ -126,9 +126,9 @@ $app->get('/user/{id}/organizations', function (Request $request, Response $resp
 
 $app->get('/user/{id}/profilepicture', function (Request $request, Response $response, array $args) use ($container, $database) {
     $handler = $container->make(App\ProfilePicture::class, ['database' => $database]);
-    $data = $handler->executeGet(intval($args['id']));
+    [$contentType, $data] = $handler->executeGet(intval($args['id']));
     $response->getBody()->write($data);
-    return $response->withHeader('Content-Type', $handler->getContentType());
+    return $response->withHeader('Content-Type', $contentType);
 });
 $app->post('/user/{id}/profilepicture', function (Request $request, Response $response, array $args) use ($container, $database) {
     $handler = $container->make(App\ProfilePicture::class, ['database' => $database]);

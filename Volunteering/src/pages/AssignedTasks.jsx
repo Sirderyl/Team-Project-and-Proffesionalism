@@ -6,13 +6,9 @@ import { apiRoot } from '../settings';
 const AssignedTasks = ({ tasks, user, activities }) => {
 const [volunteerTasks, setVolunteerTasks] = useState([]);
 
-    function getDayIndex(dayString) {
-        const daysOfWeek = ["Zero", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-        return daysOfWeek.indexOf(dayString);
-    }
-
     function getDateTimeNextOccurence(day,time) {
-        const dayIndex = getDayIndex(day);
+        const daysOfWeek = ["Zero", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+        const dayIndex = daysOfWeek.indexOf(day);
         const result = new Date();
         result.setDate(result.getDate() + (dayIndex + 7 - result.getDay()) % 7);
         const [hours, minutes] = time.toString().split('.');
@@ -32,8 +28,12 @@ const [volunteerTasks, setVolunteerTasks] = useState([]);
                 if (!response.ok) {
                     throw new Error('Failed to fetch tasks');
                 }
-                const data = await response.json();
-                const sortedTasks = data.sort((a, b) => new Date(a.activityStart) - new Date(b.activityStart));
+                let data = await response.json();
+                data = data.map(task => ({
+                    ...task,
+                    startDateTime: getDateTimeNextOccurence(task.activityDay, task.activityStart)
+                }));
+                const sortedTasks =  data.sort((a, b) => new Date(a.startDateTime) - new Date(b.startDateTime));
                 setVolunteerTasks(sortedTasks);
             } catch (error) {
                 console.error('Error fetching tasks:', error);
@@ -76,7 +76,7 @@ const [volunteerTasks, setVolunteerTasks] = useState([]);
                             <div key={task.activityId + task.activityStart} className="bg-gray-100 rounded-lg shadow-md p-6">
                                 <h3 className="text-xl font-semibold mb-2 text-blue-700">{task.activityName}</h3>
                                 <p className="text-gray-700 mb-4">{task.shortDescription}</p>
-                                <p className="text-gray-700 mb-4">Start Date: {getDateTimeNextOccurence(task.activityDay, task.activityStart).toLocaleDateString('en-US',
+                                <p className="text-gray-700 mb-4">Start Date: {task.startDateTime.toLocaleDateString('en-US',
                                     { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
                             </div>
                         ))}

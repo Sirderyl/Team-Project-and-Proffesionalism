@@ -13,12 +13,12 @@ const [volunteerTasks, setVolunteerTasks] = useState([]);
             }
 
             try {
-                const response = await fetch(`${apiRoot}/userSchedule/${user.userId}`);
+                const response = await fetch(`${apiRoot}/recommendedActivities/${user.userId}`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch tasks');
                 }
                 const data = await response.json();
-                const sortedTasks = data.sort((a, b) => new Date(a.start.date) - new Date(b.start.date));
+                const sortedTasks = data.sort((a, b) => new Date(a.activityStart) - new Date(b.activityStart));
                 setVolunteerTasks(sortedTasks);
             } catch (error) {
                 console.error('Error fetching tasks:', error);
@@ -58,10 +58,10 @@ const [volunteerTasks, setVolunteerTasks] = useState([]);
                 {volunteerTasks.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {volunteerTasks.map(task => (
-                            <div key={task.activity.id + task.start.date} className="bg-gray-100 rounded-lg shadow-md p-6">
-                                <h3 className="text-xl font-semibold mb-2 text-blue-700">{task.activity.name}</h3>
-                                <p className="text-gray-700 mb-4">{task.activity.shortDescription}</p>
-                                <p className="text-gray-700 mb-4">Start Date: {new Date(task.start.date).toLocaleDateString('en-US',
+                            <div key={task.activityId + task.activityStart} className="bg-gray-100 rounded-lg shadow-md p-6">
+                                <h3 className="text-xl font-semibold mb-2 text-blue-700">{task.activityName}</h3>
+                                <p className="text-gray-700 mb-4">{task.shortDescription}</p>
+                                <p className="text-gray-700 mb-4">Start Date: {new Date(task.activityStart).toLocaleDateString('en-US',
                                     { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
                             </div>
                         ))}

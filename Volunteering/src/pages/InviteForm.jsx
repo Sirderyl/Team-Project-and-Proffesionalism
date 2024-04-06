@@ -7,7 +7,7 @@ const sendInvitations = async (userId, organizationId, setError) => {
         const response = await fetch(`https://w21010679.nuwebspace.co.uk/api/organization/${organizationId}/user/${userId}/status?status=Invited`, {
             method: 'POST',
         });
-
+//
         if (!response.ok) {
             throw new Error('Failed to send invitations');
         }

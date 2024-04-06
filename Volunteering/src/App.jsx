@@ -15,6 +15,7 @@ import LeaderboardPage from './pages/LeaderboardPage'
 import { apiRoot } from './settings'
 import  AllActivities from './pages/AllActivities'
 import ActivityDetailsPage from './pages/ActivityDetailsPage'
+import UpdateScheduleRecord from './pages/UpdateScheduleRecord'
 /** @typedef {import('./types/UserData').UserData} UserData */
 
 function App() {
@@ -47,7 +48,6 @@ function App() {
       return
     }
 
-    // Change to `${apiRoot}/user/${userId}/availability` in production
     fetch(`${apiRoot}/user/${userData.userId}/availability`)
       .then(response => handleResponse(response))
       .then(data => handleJSON(data))
@@ -184,7 +184,7 @@ function App() {
       element: <AllActivities />
     },
     {
-      path: '/feedback', name: 'Activity Feedback', navigable: isLoggedIn,
+      path: '/feedback', name: 'Volunteering Feedback', navigable: isLoggedIn,
       element: isLoggedIn ? <Feedback user={user} /> : <NeedsLogIn />
     },
     { path: '/leaderboard', name: 'Leaderboard', element: <LeaderboardPage />, navigable: isLoggedIn },
@@ -199,10 +199,12 @@ function App() {
         routes={routes.filter(route => route.navigable !== false)}
         isLoggedIn={userData !== null}
         handleLogout={handleLogout}
+        tasks={tasks}
       />
 
       <Routes>
         <Route path='/account-details/add-schedule-record' element={<AddScheduleRecord user={user} availability={availability} />} />
+        <Route path='/account-details/update-schedule-record' element={<UpdateScheduleRecord user={user} availability={availability} setAvailability={setAvailability} />} />
         <Route path='/InviteForm' element={<InviteForm userId={userData?.userId} />} />
         <Route path="/activity/:id" element={<ActivityDetailsPage user={user} availability={availability} setAvailability={setAvailability} currentDate={currentDateStr} endDate={endDateStr} />} />
         {/* <Route path='/scheduleApproval' element={<ScheduleApprovalPage taskRequests={taskRequests} />} /> */}

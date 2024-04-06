@@ -43,7 +43,8 @@ extension=gd
 extension=pdo_sqlite
 ```
 
-Note: The `createdb.ps1` script is for Windows. No Linux or MacOS equivalent is provided, but the script is simple enough to be easily ported.
+Note: The `createdb.ps1` script is for Windows. No Linux or MacOS equivalent is provided, but the script is simple enough to be easily ported
+or run manually.
 
 ### Credentials For Dummy Users
 Dummy email addresses and passwords are generated in a deterministic manner with email `$id@example.com` and password `password$id`

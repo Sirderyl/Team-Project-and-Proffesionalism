@@ -35,22 +35,6 @@ $app->add(function (Request $request, RequestHandler $handler) {
         ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
 });
 
-
-$app->get('/greetings[/{language}]', function (Request $request, Response $response, array $args) use ($container) {
-    $greetings = $container->get(App\Greetings::class);
-    $language = $args['language'] ?? null;
-
-    if($language !== null){
-        $data = $greetings->getGreeting($args['language']);
-    }else {
-        $data = $greetings->getGreetings();
-    }
-
-    $body = json_encode($data, JSON_PRETTY_PRINT);
-    $response->getBody()->write($body);
-    return $response->withHeader('Content-Type', 'application/json');
-});
-
 $app->get('/recommendedActivities/{userId}', function (Request $request, Response $response, array $args) use ($container, $database) {
     $handler = $container->make(App\Scheduler::class, ['database' => $database]);
     $data = $handler->getRecommendedActivities(intval($args['userId']));
@@ -142,9 +126,9 @@ $app->get('/user/{id}/organizations', function (Request $request, Response $resp
 
 $app->get('/user/{id}/profilepicture', function (Request $request, Response $response, array $args) use ($container, $database) {
     $handler = $container->make(App\ProfilePicture::class, ['database' => $database]);
-    $data = $handler->executeGet(intval($args['id']));
+    [$contentType, $data] = $handler->executeGet(intval($args['id']));
     $response->getBody()->write($data);
-    return $response->withHeader('Content-Type', $handler->getContentType());
+    return $response->withHeader('Content-Type', $contentType);
 });
 $app->post('/user/{id}/profilepicture', function (Request $request, Response $response, array $args) use ($container, $database) {
     $handler = $container->make(App\ProfilePicture::class, ['database' => $database]);
@@ -173,6 +157,12 @@ $app->post('/user/{id}/availability', function (Request $request, Response $resp
     $handler = $container->make(App\AvailabilityEndpoint::class, ['database' => $database]);
     $handler->addAvailability(intval($args['id']), $request->getParsedBody());
     return $response->withStatus(201);
+});
+
+$app->post('/user/{id}/availability/update', function (Request $request, Response $response, array $args) use ($container, $database) {
+    $handler = $container->make(App\AvailabilityEndpoint::class, ['database' => $database]);
+    $handler->updateAvailability(intval($args['id']), $request->getParsedBody());
+    return $response->withStatus(200);
 });
 
 $app->delete('/user/{id}/availability/{day}', function (Request $request, Response $response, array $args) use ($container, $database) {

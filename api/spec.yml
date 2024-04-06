@@ -146,7 +146,7 @@ paths:
   /user/{id}/profilepicture:
     get:
       tags: [User]
-      summary: Get a user's profile picture
+      summary: Get a user's profile picture, or a default image if they don't have one
       parameters:
         - $ref: "#/components/parameters/id"
       responses:
@@ -217,9 +217,13 @@ components:
             $ref: "#/components/schemas/Error"
 
     Image:
-      description: An image file
+      description: An image file. May be one of several formats, determined by the Content-Type header
       content:
         image/jpeg:
+          schema:
+            type: string
+            format: binary
+        image/svg+xml:
           schema:
             type: string
             format: binary

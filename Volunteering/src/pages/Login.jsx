@@ -32,7 +32,7 @@ export default function Login({
             });
             const data = await response.json();
 
-            if (!response.ok) throw new Error(data.message);
+            if (!response.ok) throw new Error(data.error);
 
             handleLogin(data);
             setEmail('');

@@ -184,7 +184,7 @@ function App() {
       element: <AllActivities />
     },
     {
-      path: '/feedback', name: 'Activity Feedback', navigable: isLoggedIn,
+      path: '/feedback', name: 'Volunteering Feedback', navigable: isLoggedIn,
       element: isLoggedIn ? <Feedback user={user} /> : <NeedsLogIn />
     },
     { path: '/leaderboard', name: 'Leaderboard', element: <LeaderboardPage />, navigable: isLoggedIn },

@@ -13,7 +13,7 @@ export default function Notification({ message, close, priority, link, dismissib
             <div className={`absolute top-0 right-0 h-full ${notificationPriority[priority]} w-2 rounded-tr-md rounded-br-md`}></div>
             <p>{message}</p>
             {dismissible &&
-                <button className={"bg-red-500 hover:bg-red-700 text-white mr-2 rounded-md p-0.5 pr-2 pl-2 transition duration-300 ease-in-out"} onClick={close}>Dismiss</button>
+                <button className={"bg-red-500 hover:bg-red-700 text-white mr-2 rounded-md p-0.5 pr-2 pl-2 transition duration-300 ease-in-out font-bold"} onClick={close}>Dismiss</button>
             }
             {link && (
                 <Link to={link}>

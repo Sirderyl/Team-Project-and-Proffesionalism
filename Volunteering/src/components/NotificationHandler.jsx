@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { v4 } from 'uuid';
 import PropTypes from 'prop-types';
 import Notification from './Notification';
-import bellIcon from '../../public/bell.png';
+import bellIcon from '../assets/bell.png';
 
 export default function NotificationHandler({ tasks }) {
     const [notifications, setNotifications] = useState([]);
@@ -36,7 +36,7 @@ export default function NotificationHandler({ tasks }) {
         // fix: This notification gets duplicated on login, it is fixed if you refresh the page
         // todo: make sure this notification doesn't appear if tasks have already happened
         if (tasks.length !== 0 && !pendingTasksNotification) {
-            addNotification("You have been assigned tasks!", "high", "/");
+            addNotification("You have been assigned tasks!", "high", "/", false);
         }
     }, [tasks, notifications, addNotification]);
 
@@ -52,6 +52,7 @@ export default function NotificationHandler({ tasks }) {
                             message={notification.message}
                             priority={notification.priority}
                             link={notification.link}
+                            dismissible={notification.dismissible}
                             close={() => removeNotification(notification.id)}
                         />
                     ))}

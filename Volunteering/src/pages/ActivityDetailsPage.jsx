@@ -144,7 +144,7 @@ function ActivityDetailsPage({ user, availability, setAvailability, currentDate,
 
         let emailDate = new Date(formattedDate);
         let options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
-        let formattedEmailDate = emailDate.toLocaleString('en-US', options).replace(',', ' at').replace(':', ' ');
+        let formattedEmailDate = emailDate.toLocaleString('en-US', options).replace(',', ' at');
 
         let formDataMail = new FormData();
         formDataMail.append('email', user.email);

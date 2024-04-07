@@ -9,6 +9,7 @@ export default function Leaderboard() {
     const [totalPages, setTotalPages] = useState(1)
     const usersPerPage = 20
     const [loading, setLoading] = useState(true);
+    const currentDate = new Date()
 
     const fetchUsers = useCallback(async () => {
         try {
@@ -25,7 +26,8 @@ export default function Leaderboard() {
                     throw new Error(`Error fetching tasks for user ${user.userId}: ` + userTasksResponse.status)
                 }
                 const userTasks = await userTasksResponse.json()
-                const totalStats = userTasks.length
+                const filteredTasks = userTasks.filter(task => new Date(task.start.date) >= currentDate);
+                const totalStats = filteredTasks.length
                 return { ...user, stats: totalStats }
             }));
             setUserData(usersWithTasks)
@@ -40,7 +42,7 @@ export default function Leaderboard() {
         fetchUsers();
     }, [fetchUsers]);
 
-    const volunteerUsers = userData.filter(user => !user.isManager && user.stats !== 0);
+    const volunteerUsers = userData.filter(user => !user.isManager && user.stats !== 0 );
     volunteerUsers.sort((a, b) => b.stats - a.stats);
 
     useEffect(() => {
@@ -58,7 +60,7 @@ export default function Leaderboard() {
                 <div className="text-blue-700">Loading...</div>
             ) : (
                 <>
-                    <div className="rounded-lg text-2xl text-blue-700 p-3 m-2 flex justify-between items-center">
+                    <div className="rounded-lg text-lg font-semibold text-blue-700 p-3 m-2 flex justify-between items-center">
                         <h2>Rank</h2>
                         <h2>Name</h2>
                         <h2>Tasks</h2>

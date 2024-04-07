@@ -63,3 +63,6 @@ A test task is configured to run the unit tests via `Tasks: Run Test Task` in VS
 `Tasks: Run Task` -> `Build XDebug Container` before running the tests.
 
 Tests are written with the PHPUnit framework and are located in the `./api/tests` directory. Coverage reports are generated in the `./coverage` directory.
+
+## Attributions
+"Notification" icon by Icons8 - icons8.com

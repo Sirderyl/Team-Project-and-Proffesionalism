@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 export default function LeaderboardEntry({ position, name, stats }) {
 
     return (
-        <li className="list-none rounded-lg text-gray-700 shadow-md p-3 m-2">
+        <li className="list-none rounded-lg text-gray-700 shadow-md p-3 m-2 flex justify-between items-center">
             <span>{position} </span>
             <span>{name} </span>
             <span>{stats} </span>

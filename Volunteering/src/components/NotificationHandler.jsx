@@ -9,8 +9,6 @@ export default function NotificationHandler({ tasks }) {
     const [showNotifications, setShowNotifications] = useState(false);
     const numberOfNotifications = notifications.length
 
-    console.log(tasks)
-
     const addNotification = useCallback((message, priority, link, dismissible) => {
         setNotifications(prevNotifications => [
             ...prevNotifications, { 

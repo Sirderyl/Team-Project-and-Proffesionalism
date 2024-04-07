@@ -1,5 +1,6 @@
 import { apiRoot } from "../settings"
 import { useEffect, useState } from "react";
+import toast, { Toaster } from 'react-hot-toast'
 import PropTypes from 'prop-types'
 
 export default function Invites({ userId }) {
@@ -14,6 +15,8 @@ export default function Invites({ userId }) {
             if (!response.ok) {
                 throw new Error('Failed to set status');
             }
+            toast.success('You have accepted the invitation')
+            setInvites(invites.filter(invite => invite.id !== organizationId));
         } catch (error) {
             console.error('Error accepting invitation:', error.message);
         }
@@ -27,6 +30,8 @@ export default function Invites({ userId }) {
             if (!response.ok) {
                 throw new Error('Failed to set status')
             }
+            toast.error('You have declined the invitation')
+            setInvites(invites.filter(invite => invite.id !== organizationId));
         } catch (error) {
             console.error('Error declining invitation:', error.message)
         }
@@ -51,6 +56,7 @@ export default function Invites({ userId }) {
 
     return (
         <main className="max-w-4xl mx-auto mt-8">
+            <Toaster />
             <h1 className="text-3xl text-blue-700 font-bold mb-4">Invites</h1>
             {invites.length === 0 ? (
                 <p className="text-lg text-gray-600">You have no pending invites.</p>

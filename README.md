@@ -66,3 +66,4 @@ Tests are written with the PHPUnit framework and are located in the `./api/tests
 
 ## Attributions
 "Notification" icon by Icons8 - icons8.com
+Volunteering browser tab icon by Freepik - Flaticon: https://www.flaticon.com/free-icon/help_4767194?term=volunteering&page=1&position=8&origin=search&related_id=4767194

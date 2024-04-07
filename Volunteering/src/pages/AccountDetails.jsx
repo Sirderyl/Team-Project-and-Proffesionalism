@@ -46,28 +46,28 @@ export default function AccountDetails({ user, userLoading, availability, setAva
     })
 
     return (
-        <div>
+        <div className='max-w-4xl mx-3 mt-8'>
             <Toaster />
-            <h1 className="text-3xl font-bold mb-3 ml-5">Account Details</h1>
+            <h1 className="text-3xl font-bold mb-4 ml-3 text-blue-700">Account Details</h1>
             <div className="flex flex-row">
                 <div className="flex flex-col ml-5">
                     {!userLoading && <img src={`${apiRoot}/user/${user.userId}/profilepicture`} className="w-40 h-40 rounded-full" />}
                 </div>
                 <div className="flex flex-col ml-5">
-                    <p className="text-lg mt-10"><strong>Name: </strong>{!userLoading && user.userName}</p>
-                    <p className="text-lg"><strong>Email: </strong>{!userLoading && user.email}</p>
-                    <p className="text-lg"><strong>Phone: </strong>{!userLoading && formattedPhoneNumber}</p>
+                    <p className="text-lg mt-10"><strong className='text-blue-700'>Name: </strong>{!userLoading && user.userName}</p>
+                    <p className="text-lg"><strong className='text-blue-700'>Email: </strong>{!userLoading && user.email}</p>
+                    <p className="text-lg"><strong className='text-blue-700'>Phone: </strong>{!userLoading && formattedPhoneNumber}</p>
                 </div>
             </div>
 
             {!userLoading && !user.isManager && (
                 <div className='mt-10 ml-5'>
-                    <h1 className='font-bold mb-5'>Availability Schedule</h1>
+                    <h1 className='font-bold mb-5 text-blue-700'>Availability Schedule</h1>
                     <table className='table-auto'>
                         <thead>
                             <tr>
-                                <th className='px-4 py-2'>Week Day</th>
-                                <th className='px-4 py-2'>Time</th>
+                                <th className='px-4 py-2 text-blue-700'>Week Day</th>
+                                <th className='px-4 py-2 text-blue-700'>Time</th>
                             </tr>
                         </thead>
                         <tbody>

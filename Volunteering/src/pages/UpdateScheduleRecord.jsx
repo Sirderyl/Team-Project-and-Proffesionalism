@@ -70,7 +70,7 @@ export default function UpdateScheduleRecord({ user, availability, setAvailabili
 
     if(user.isManager) {
         return (
-            <div>
+            <div className='max-w-4xl mx-3 mt-8'>
                 <h1 className="text-3xl font-bold mb-3 ml-5">You are not allowed to modify schedule records</h1>
                 <Link to='/account-details'>
                     <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5 ml-5">Account Details</button>
@@ -79,9 +79,9 @@ export default function UpdateScheduleRecord({ user, availability, setAvailabili
         )
     } else {
         return (
-            <div>
+            <div className='max-w-4xl mx-3 mt-8'>
                 <Toaster />
-                <h1 className="text-3xl font-bold mb-3 ml-5">Update Schedule Record for {day}</h1>
+                <h1 className="text-3xl font-bold mb-4 ml-5 text-blue-700">Update Schedule Record for {day}</h1>
                 <div className="flex flex-row">
                     <div className="flex flex-col ml-5">
                         <label htmlFor='timeStartInput' className="text-lg mt-6">Time Start</label>

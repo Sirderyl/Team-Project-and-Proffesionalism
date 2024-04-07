@@ -1,10 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
 import PropTypes from 'prop-types'
 import { apiRoot } from '../settings'
 import toast, { Toaster } from 'react-hot-toast'
 
 export default function AccountDetails({ user, userLoading, availability, setAvailability }) {
 
+    const [isChecked, setIsChecked] = useState(false);
     const navigate = useNavigate()
 
     const handleDeleteRecord = day => {
@@ -27,6 +29,15 @@ export default function AccountDetails({ user, userLoading, availability, setAva
     const handleUpdateRecord = day => {
         navigate('/account-details/update-schedule-record', { state: { day: day } })
     }
+
+    const handleOptInOut = () => {
+        setIsChecked(!isChecked);
+        if (isChecked) {
+            toast.success('You have successfully opted in to leaderboard statistics.');
+        } else {
+            toast.success('You have successfully opted out of leaderboard statistics.');
+        }
+    };
 
     let formattedPhoneNumber = user.phoneNumber
         ? user.phoneNumber.replace(/(\+\d{2})(\d{4})(\d{6})/, '$1 $2 $3')
@@ -78,6 +89,10 @@ export default function AccountDetails({ user, userLoading, availability, setAva
                     <Link to='/account-details/add-schedule-record'>
                         <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-5">Add Record</button>
                     </Link>
+                    <div className='mt-5'>
+                        <input type="checkbox" id="optOut" name="optOut" checked={isChecked} onChange={handleOptInOut} />
+                        <label htmlFor="optOut"> Opt out of leaderboard statistics</label>
+                    </div>
                 </div>
             )}
         </div>

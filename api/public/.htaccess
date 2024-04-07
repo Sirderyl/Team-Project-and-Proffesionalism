@@ -3,7 +3,7 @@ RewriteEngine On
 # Redirect /api/.* to index.php
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
-RewriteRule ^api/(.*)$ index.php [QSA,L]
+RewriteRule ^(.*)$ index.php [QSA,L]
 
 # Redirect everything else to index.html, unless there is a file or directory that matches the request
 RewriteCond %{REQUEST_FILENAME} !-f

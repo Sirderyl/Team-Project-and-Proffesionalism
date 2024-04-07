@@ -10,7 +10,8 @@ export default function NavMenu({
     routes,
     isLoggedIn,
     handleLogout,
-    tasks
+    tasks,
+    userId
 }) {
     return (
         <nav>
@@ -21,7 +22,7 @@ export default function NavMenu({
             {isLoggedIn && (
             <>
                 <li><button className="hover:bg-blue-700 rounded p-2 transition duration-300 ease-in-out" onClick={handleLogout}>Log Out</button></li>
-                <li className="text-left"><NotificationHandler tasks={tasks}/></li>
+                <li className="text-left"><NotificationHandler tasks={tasks} userId={userId}/></li>
             </>
             )}
             </ul>
@@ -35,5 +36,6 @@ NavMenu.propTypes = {
     })).isRequired,
     isLoggedIn: PropTypes.bool.isRequired,
     handleLogout: PropTypes.func.isRequired,
-    tasks: PropTypes.array.isRequired
+    tasks: PropTypes.array.isRequired,
+    userId: PropTypes.number.isRequired
 }

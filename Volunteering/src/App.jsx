@@ -201,6 +201,7 @@ function App() {
         isLoggedIn={userData !== null}
         handleLogout={handleLogout}
         tasks={tasks}
+        userId={userData?.userId}
       />
       <Routes>
         <Route path='/account-details/add-schedule-record' element={<AddScheduleRecord user={user} availability={availability} />} />

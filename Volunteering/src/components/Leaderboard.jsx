@@ -71,6 +71,7 @@ export default function Leaderboard() {
                             stats={user.stats}
                         />
                     ))}
+                    <div className='text-center'>Page {currentPage} of {totalPages}</div>
                     {totalPages > 1 && (
                         <div>
                             {currentPage > 1 && (

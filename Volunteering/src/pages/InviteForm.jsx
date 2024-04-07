@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react';
 import { MailIcon } from '@heroicons/react/outline';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
+import { apiRoot } from '../settings';
 
 const sendInvitations = async (userId, organizationId, setError) => {
     try {
-        const response = await fetch(`https://w21010679.nuwebspace.co.uk/api/organization/${organizationId}/user/${userId}/status?status=Invited`, {
+        const response = await fetch(`${apiRoot}/organization/${organizationId}/user/${userId}/status?status=Invited`, {
             method: 'POST',
         });
 //
@@ -34,7 +35,7 @@ const InviteForm = (props) => {
     useEffect(() => {
         async function fetchOrganizations() {
             try {
-                const response = await fetch(`https://w20013000.nuwebspace.co.uk/api/user/${props.userId}/organizations`);
+                const response = await fetch(`${apiRoot}/user/${props.userId}/organizations`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch organizations');
                 }
@@ -52,7 +53,7 @@ const InviteForm = (props) => {
         const fetchVolunteers = async () => {
             try {
                 setLoading(true);
-                const response = await fetch(`https://w21010679.nuwebspace.co.uk/api/user/all`);
+                const response = await fetch(`${apiRoot}/user/all`);
                 if (!response.ok) {
                     throw new Error('Failed to fetch volunteers');
                 }

@@ -3,10 +3,12 @@ import { v4 } from 'uuid';
 import PropTypes from 'prop-types';
 import Notification from './Notification';
 import bellIcon from '../assets/bell.png';
+import { apiRoot } from '../settings';
 
-export default function NotificationHandler({ tasks }) {
+export default function NotificationHandler({ tasks, userId }) {
     const [notifications, setNotifications] = useState([]);
     const [showNotifications, setShowNotifications] = useState(false);
+    const [invites, setInvites] = useState([]);
     const numberOfNotifications = notifications.length
 
     const addNotification = useCallback((message, priority, link, dismissible) => {
@@ -30,13 +32,34 @@ export default function NotificationHandler({ tasks }) {
     };
 
     useEffect(() => {
+        const fetchInvites = async () => {
+            try {
+                const response = await fetch(`${apiRoot}/invites/${userId}`)
+                if (!response.ok) {
+                    throw new Error('Failed to fetch invites')
+                }
+                const data = await response.json()
+                setInvites(data);
+            } catch (error) {
+                console.error('Error fetching invites:', error)
+            }
+        };
+
+        fetchInvites();
+    }, [userId]);
+
+    useEffect(() => {
         const pendingTasksNotification = notifications.find(notification => notification.message === "You have been assigned tasks!");
+        const pendingInviteNotification = notifications.find(notification => notification.message === "You have pending a invite!");
         // fix: This notification gets duplicated on login, it is fixed if you refresh the page
         // todo: make sure this notification doesn't appear if tasks have already happened
         if (tasks.length !== 0 && !pendingTasksNotification) {
             addNotification("You have been assigned tasks!", "high", "/", false);
         }
-    }, [tasks, notifications, addNotification]);
+        if (invites.length !== 0 && !pendingInviteNotification) {
+            addNotification("You have pending a invite!", "low", "/invites", false)
+        }
+    }, [tasks, addNotification, notifications, invites]);
 
     return (
         <div className="relative flex items-center">
@@ -70,5 +93,6 @@ export default function NotificationHandler({ tasks }) {
 }
 
 NotificationHandler.propTypes = {
-    tasks: PropTypes.array.isRequired
+    tasks: PropTypes.array.isRequired,
+    userId: PropTypes.number.isRequired
 };

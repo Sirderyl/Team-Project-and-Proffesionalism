@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { MailIcon } from '@heroicons/react/outline';
 import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 
 const sendInvitations = async (userId, organizationId, setError) => {
     try {
@@ -27,6 +28,8 @@ const InviteForm = (props) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+
 
     useEffect(() => {
         async function fetchOrganizations() {
@@ -92,6 +95,8 @@ const InviteForm = (props) => {
         for (const volunteer of selectedVolunteers) {
             await sendInvitations(volunteer.userId, selectedOrganization, setError);
         }
+        navigate('/')
+
     };
 
 

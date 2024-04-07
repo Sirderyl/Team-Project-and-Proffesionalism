@@ -65,5 +65,5 @@ A test task is configured to run the unit tests via `Tasks: Run Test Task` in VS
 Tests are written with the PHPUnit framework and are located in the `./api/tests` directory. Coverage reports are generated in the `./coverage` directory.
 
 ## Attributions
-"Notification" icon by Icons8 - icons8.com
+"Notification" icon by Icons8 - icons8.com  
 Volunteering browser tab icon by Freepik - Flaticon: https://www.flaticon.com/free-icon/help_4767194?term=volunteering&page=1&position=8&origin=search&related_id=4767194

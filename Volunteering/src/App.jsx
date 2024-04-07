@@ -176,7 +176,7 @@ function App() {
    * @type {Array<import('react-router-dom').RouteProps & {navigable?: boolean}>}
    */
   const routes = [
-    { path: '/', name: 'Home', element: <AssignedTasks tasks={tasks} user={user} activities={allActivities} /> },
+    { path: '/', name: 'Home', element: <AssignedTasks tasks={tasks} user={user} activities={allActivities} isLoggedIn={!! userData} /> },
     {
       path: '/AllActivities', name: 'All Activities', 
       element: <AllActivities />

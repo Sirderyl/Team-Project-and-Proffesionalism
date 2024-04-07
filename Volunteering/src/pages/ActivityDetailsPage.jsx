@@ -142,12 +142,16 @@ function ActivityDetailsPage({ user, availability, setAvailability, currentDate,
             })
             .catch(err => console.error(err));
 
+        let emailDate = new Date(formattedDate);
+        let options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' };
+        let formattedEmailDate = emailDate.toLocaleString('en-US', options).replace(',', ' at').replace(':', ' ');
+
         let formDataMail = new FormData();
         formDataMail.append('email', user.email);
         formDataMail.append('name', user.userName);
         formDataMail.append('activity', activity.name);
         formDataMail.append('activityDetails', activity.description);
-        formDataMail.append('start', formattedDate);
+        formDataMail.append('start', formattedEmailDate);
 
         fetch(`${apiRoot}/user/sendNotification`,
             {

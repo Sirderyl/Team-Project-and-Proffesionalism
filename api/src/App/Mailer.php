@@ -29,7 +29,7 @@ class Mailer
         $this->mail->addAddress($recipientEmail, $recipientName);
         $this->mail->isHTML(true);
         $this->mail->Subject = 'You have signed up for ' . $activity . '!';
-        $this->mail->Body = 'Hi ' . $recipientName . ', <br><br> You have signed up for &nbsp;
+        $this->mail->Body = 'Hi ' . $recipientName . ', <br><br> You have signed up for
         <strong>' . $activity . '</strong>.
         Below are the details of the activity: <br><br> ' . $activityDetails . '<br><br> <strong>Date: </strong> '
         . $start . '<br><br> Thank you for signing up!

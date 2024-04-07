@@ -9,7 +9,6 @@ export default function Leaderboard() {
     const [totalPages, setTotalPages] = useState(1)
     const usersPerPage = 20
     const [loading, setLoading] = useState(true);
-    const currentDate = new Date()
 
     const fetchUsers = useCallback(async () => {
         try {
@@ -26,6 +25,7 @@ export default function Leaderboard() {
                     throw new Error(`Error fetching tasks for user ${user.userId}: ` + userTasksResponse.status)
                 }
                 const userTasks = await userTasksResponse.json()
+                const currentDate = new Date()
                 const filteredTasks = userTasks.filter(task => new Date(task.start.date) >= currentDate);
                 const totalStats = filteredTasks.length
                 return { ...user, stats: totalStats }
@@ -57,7 +57,7 @@ export default function Leaderboard() {
     return (
         <>
             {loading ? (
-                <div className="text-blue-700">Loading...</div>
+                <div className="text-blue-700 text-3x1">Loading...</div>
             ) : (
                 <>
                     <div className="rounded-lg text-lg font-semibold text-blue-700 p-3 m-2 flex justify-between items-center">

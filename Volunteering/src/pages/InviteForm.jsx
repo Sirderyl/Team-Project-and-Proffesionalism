@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react';
 import { MailIcon } from '@heroicons/react/outline';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
+import { apiRoot } from '../settings';
 
 const sendInvitations = async (userId, organizationId, setError) => {
     try {
-        const response = await fetch(`https://w21010679.nuwebspace.co.uk/api/organization/${organizationId}/user/${userId}/status?status=Invited`, {
+        const response = await fetch(`${apiRoot}/organization/${organizationId}/user/${userId}/status?status=Invited`, {
             method: 'POST',
         });
 //

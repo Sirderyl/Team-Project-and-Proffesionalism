@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { MailIcon } from '@heroicons/react/outline';
 import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 
 const sendInvitations = async (userId, organizationId, setError) => {
     try {
@@ -27,6 +28,8 @@ const InviteForm = (props) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+
 
     useEffect(() => {
         async function fetchOrganizations() {
@@ -92,6 +95,8 @@ const InviteForm = (props) => {
         for (const volunteer of selectedVolunteers) {
             await sendInvitations(volunteer.userId, selectedOrganization, setError);
         }
+        navigate('/')
+
     };
 
 
@@ -167,13 +172,17 @@ const InviteForm = (props) => {
                 </div>
             </div>
             <button
-                className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                className={`inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white ${!selectedOrganization || selectedVolunteers.length === 0 || !invitationMessage.trim()
+                        ? 'bg-gray-400 cursor-not-allowed'
+                        : 'bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'
+                    }`}
                 onClick={handleSendInvitations}
                 disabled={!selectedOrganization || selectedVolunteers.length === 0 || !invitationMessage.trim()}
             >
                 <MailIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true" />
                 Send Invitations
             </button>
+
         </div>
     );
 };

@@ -147,6 +147,7 @@ function ActivityDetailsPage({ user, availability, setAvailability, currentDate,
         formDataMail.append('name', user.userName);
         formDataMail.append('activity', activity.name);
         formDataMail.append('activityDetails', activity.description);
+        formDataMail.append('start', formattedDate);
 
         fetch(`${apiRoot}/user/sendNotification`,
             {

@@ -16,6 +16,7 @@ import { apiRoot } from './settings'
 import  AllActivities from './pages/AllActivities'
 import ActivityDetailsPage from './pages/ActivityDetailsPage'
 import UpdateScheduleRecord from './pages/UpdateScheduleRecord'
+import Invites from './pages/Invites'
 /** @typedef {import('./types/UserData').UserData} UserData */
 
 function App() {
@@ -200,12 +201,13 @@ function App() {
         isLoggedIn={userData !== null}
         handleLogout={handleLogout}
         tasks={tasks}
+        userId={userData?.userId}
       />
-
       <Routes>
         <Route path='/account-details/add-schedule-record' element={<AddScheduleRecord user={user} availability={availability} />} />
         <Route path='/account-details/update-schedule-record' element={<UpdateScheduleRecord user={user} availability={availability} setAvailability={setAvailability} />} />
         <Route path='/InviteForm' element={<InviteForm userId={userData?.userId} />} />
+        <Route path='/invites' element={<Invites userId={userData?.userId}/>}/>
         <Route path="/activity/:id" element={<ActivityDetailsPage user={user} availability={availability} setAvailability={setAvailability} currentDate={currentDateStr} endDate={endDateStr} />} />
         {/* <Route path='/scheduleApproval' element={<ScheduleApprovalPage taskRequests={taskRequests} />} /> */}
         {routes.map((route, index) => (

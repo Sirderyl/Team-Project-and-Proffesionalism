@@ -9,7 +9,10 @@ uuid
 
 ## How to use
 
-### Frontend
+To run the front-end side of the application, you need to have node.js installed - https://nodejs.org/en  
+Before uploading the back-end, you need to download dependency files through composer - https://getcomposer.org  
+
+### Frontend - to run the web app locally
 
 Pull from the main branch
 ```sh
@@ -18,6 +21,16 @@ npm install
 npm run dev
 ```
 Note: You can omit `npm install` if you have the `node_modules` folder up-to-date
+
+### Frontent - to upload files on a remote server
+
+Pull from the main branch
+```sh
+cd Volunteering
+npm install
+npm run build
+```
+Upload the contents of `dist` folder to the root folder of your web server
 
 ### Backend
 

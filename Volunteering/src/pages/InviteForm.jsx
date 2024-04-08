@@ -189,7 +189,7 @@ const InviteForm = (props) => {
 };
 
 InviteForm.propTypes = {
-    userId: PropTypes.number.isRequired,
+    userId: PropTypes.number
 };
 
 export default InviteForm;

@@ -37,5 +37,5 @@ NavMenu.propTypes = {
     isLoggedIn: PropTypes.bool.isRequired,
     handleLogout: PropTypes.func.isRequired,
     tasks: PropTypes.array.isRequired,
-    userId: PropTypes.number.isRequired
+    userId: PropTypes.number
 }

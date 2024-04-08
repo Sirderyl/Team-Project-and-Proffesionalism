@@ -77,5 +77,5 @@ export default function Invites({ userId }) {
 }
 
 Invites.propTypes = {
-    userId: PropTypes.number.isRequired,
+    userId: PropTypes.number
 }

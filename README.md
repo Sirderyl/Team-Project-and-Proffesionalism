@@ -50,6 +50,8 @@ Note: You can omit `composer install` if you have the `vendor` folder up-to-date
 
 Note: The `createdb.ps1` script requires `sqlite3` and `php` to be available on your PATH
 
+Note: The `createdb.ps1` script requires PowerShell window with admin rights and `Set-ExecutionPolicy RemoteSigned`
+
 Note: PHP must have the following extensions enabled in `php.ini`:
 ```ini
 extension=gd
